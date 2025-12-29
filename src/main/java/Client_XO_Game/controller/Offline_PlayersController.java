@@ -2,27 +2,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
  */
-package com.mycompany.client_xo_game;
+package Client_XO_Game.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
  *
  * @author Omar
  */
-public class Mode_SelectionController implements Initializable {
+public class Offline_PlayersController implements Initializable {
 
     @FXML
-    private Button btn_single_mode_id;
+    private TextField player_one_id;
     @FXML
-    private Button btn_double_mode_id;
+    private TextField Player_two_id;
     @FXML
-    private Button btn_online_mode_id;
+    private Button back_id;
+    @FXML
+    private Button play_id;
 
     /**
      * Initializes the controller class.

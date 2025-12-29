@@ -1,5 +1,6 @@
-package com.mycompany.client_xo_game;
+package com.mycompany.Client_XO_Game;
 
+import com.mycompany.Client_XO_Game.Client_XO_Game;
 import java.io.IOException;
 import javafx.fxml.FXML;
 
@@ -7,6 +8,6 @@ public class SecondaryController {
 
     @FXML
     private void switchToPrimary() throws IOException {
-        App.setRoot("primary");
+        Client_XO_Game.setRoot("primary");
     }
 }
