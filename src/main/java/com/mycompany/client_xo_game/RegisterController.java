@@ -2,8 +2,7 @@ package com.mycompany.client_xo_game;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
-import java.io.IOException;
+import com.mycompany.client_xo_game.navigation.Navigation;
 
 public class RegisterController {
 
@@ -38,10 +37,6 @@ public class RegisterController {
 
     @FXML
     private void goToLogin() {
-        try {
-            App.setRoot("login"); // 🔥 FIXED
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Navigation.goTo("login");
     }
 }
