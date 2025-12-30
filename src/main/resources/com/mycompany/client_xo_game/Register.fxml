@@ -3,9 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefWidth="400" prefHeight="450"
+<AnchorPane prefWidth="400" prefHeight="500"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.client_xo_game.LoginController"
+            fx:controller="com.mycompany.client_xo_game.RegisterController"
             stylesheets="@style.css">
 
     <VBox spacing="15" alignment="CENTER"
@@ -13,18 +13,22 @@
           AnchorPane.leftAnchor="40"
           AnchorPane.rightAnchor="40">
 
-        <Label text="Login" styleClass="title"/>
+        <Label text="Register" styleClass="title"/>
 
         <TextField fx:id="usernameField" promptText="Username"/>
 
         <PasswordField fx:id="passwordField" promptText="Password"/>
 
-        <Button text="Login" onAction="#handleLogin" styleClass="primary-btn"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password"/>
+
+        <Button text="Create Account"
+                onAction="#handleRegister"
+                styleClass="primary-btn"/>
 
         <Label fx:id="messageLabel" styleClass="error"/>
 
-        <Hyperlink text="Don't have an account? Register"
-                   onAction="#goToRegister"/>
+        <Hyperlink text="Already have an account? Login"
+                   onAction="#goToLogin"/>
 
     </VBox>
 </AnchorPane>
