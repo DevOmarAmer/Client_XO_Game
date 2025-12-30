@@ -24,10 +24,9 @@ public class LoginController {
             return;
         }
 
-        // TEMP LOGIN LOGIC
         if (username.equals("admin") && password.equals("1234")) {
             try {
-                App.setRoot("Mode_Selection"); // SUCCESS → next page
+                App.setRoot("OnlinePlayers");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -39,7 +38,7 @@ public class LoginController {
     @FXML
     private void goToRegister() {
         try {
-            App.setRoot("register"); // 🔥 FIXED
+            App.setRoot("Register");
         } catch (IOException e) {
             e.printStackTrace();
         }

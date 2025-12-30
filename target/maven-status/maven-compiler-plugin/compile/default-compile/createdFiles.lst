@@ -1,10 +1,12 @@
-com\mycompany\client_xo_game\SecondaryController.class
 com\mycompany\client_xo_game\Offline_PlayersController.class
-com\mycompany\client_xo_game\App.class
-com\mycompany\client_xo_game\Win_LoseController.class
 module-info.class
 com\mycompany\client_xo_game\Mode_SelectionController.class
-com\mycompany\client_xo_game\GameboardController.class
+com\mycompany\client_xo_game\RegisterController.class
 com\mycompany\client_xo_game\PrimaryController.class
-com\mycompany\client_xo_game\Level_SelectionController.class
 com\mycompany\client_xo_game\LoginController.class
+com\mycompany\client_xo_game\SecondaryController.class
+com\mycompany\client_xo_game\App.class
+com\mycompany\client_xo_game\Win_LoseController.class
+com\mycompany\client_xo_game\OnlinePlayersController.class
+com\mycompany\client_xo_game\GameboardController.class
+com\mycompany\client_xo_game\Level_SelectionController.class

@@ -14,7 +14,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("Win_Lose"), 640, 480);
+        scene = new Scene(loadFXML("Login"), 640, 480);
         stage.setScene(scene);
         stage.setTitle("XO Game");
         stage.show();
@@ -25,9 +25,9 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader
+        FXMLLoader loader
                 = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
+        return loader.load();
     }
 
     public static void main(String[] args) {

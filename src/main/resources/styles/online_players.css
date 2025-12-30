@@ -1,0 +1,33 @@
+
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #141e30, #243b55);
+    -fx-font-family: "Segoe UI";
+}
+
+.title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.list-view {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12;
+}
+
+.list-cell:selected {
+    -fx-background-color: #ff9800;
+    -fx-text-fill: white;
+}
+
+.list-cell:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}

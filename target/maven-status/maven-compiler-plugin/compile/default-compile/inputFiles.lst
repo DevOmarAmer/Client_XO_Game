@@ -1,9 +1,12 @@
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\GameboardController.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Mode_SelectionController.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\App.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\PrimaryController.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Level_SelectionController.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Offline_PlayersController.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Win_LoseController.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\SecondaryController.java
-C:\Users\alaaa\Desktop\Client_XO_Game\src\main\java\module-info.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\PrimaryController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\SecondaryController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\module-info.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\App.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Level_SelectionController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Mode_SelectionController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\GameboardController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\RegisterController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Win_LoseController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\LoginController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\Offline_PlayersController.java
+D:\projects\ITI\java\java project\Client_XO_Game\src\main\java\com\mycompany\client_xo_game\OnlinePlayersController.java

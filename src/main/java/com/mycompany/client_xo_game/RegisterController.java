@@ -39,7 +39,7 @@ public class RegisterController {
     @FXML
     private void goToLogin() {
         try {
-            App.setRoot("login"); // 🔥 FIXED
+            App.setRoot("login"); // ✅ BACK TO LOGIN
         } catch (IOException e) {
             e.printStackTrace();
         }
