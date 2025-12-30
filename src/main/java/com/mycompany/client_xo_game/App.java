@@ -17,9 +17,11 @@ public class App extends Application {
         scene = new Scene(loadFXML("login"), 640, 480); // start with login
         stage.setScene(scene);
         stage.setTitle("XO Game");
+        stage.setTitle("XO Game");
         stage.show();
     }
 
+    public static void setRoot(String fxml) throws IOException {
     public static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }
@@ -34,3 +36,4 @@ public class App extends Application {
         launch();
     }
 }
+
