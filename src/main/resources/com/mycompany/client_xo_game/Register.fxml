@@ -6,7 +6,8 @@
 <AnchorPane prefWidth="400" prefHeight="500"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mycompany.client_xo_game.RegisterController"
-            stylesheets="@style.css">
+            stylesheets="@/styles/register.css"
+>
 
     <VBox spacing="15" alignment="CENTER"
           AnchorPane.topAnchor="40"

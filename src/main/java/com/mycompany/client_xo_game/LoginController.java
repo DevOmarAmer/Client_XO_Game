@@ -27,7 +27,7 @@ public class LoginController {
         // TEMP LOGIN LOGIC
         if (username.equals("admin") && password.equals("1234")) {
             try {
-                App.setRoot("Mode_Selection"); // SUCCESS → next page
+                App.setRoot("OnlinePlayers"); // SUCCESS → next page
             } catch (IOException e) {
                 e.printStackTrace();
             }
