@@ -11,35 +11,37 @@ import java.io.IOException;
 
 public class Navigation {
 
-    public static void goTo(String fxml) {
+    public static void goTo(String route) {
         try {
-            App.setRoot(fxml);
+            App.setRoot(route);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to navigate to: " + fxml, e);
+            throw new RuntimeException("Failed to navigate to: " + route, e);
         }
     }
 
-    public static <T> T loadController(String fxml) {
+    public static <T> T loadController(String route) {
         try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
             loader.load();
             return loader.getController();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load controller for: " + fxml, e);
+            throw new RuntimeException("Failed to load controller for: " + route, e);
         }
     }
 
-    public static void openModal(String fxml, String title) {
+    public static void openModal(String route, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
             Parent root = loader.load();
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle(title == null ? "" : title);
             stage.setScene(new Scene(root));
             stage.showAndWait();
+
         } catch (IOException e) {
-            throw new RuntimeException("Failed to open modal: " + fxml, e);
+            throw new RuntimeException("Failed to open modal: " + route, e);
         }
     }
 }
