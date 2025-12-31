@@ -1,35 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package com.mycompany.client_xo_game;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
+import com.mycompany.client_xo_game.navigation.Navigation;
+import com.mycompany.client_xo_game.navigation.Routes;
 
-/**
- * FXML Controller class
- *
- * @author Omar
- */
-public class Mode_SelectionController implements Initializable {
+public class Mode_SelectionController {
 
     @FXML
-    private Button btn_single_mode_id;
-    @FXML
-    private Button btn_double_mode_id;
-    @FXML
-    private Button btn_online_mode_id;
+    private void goToLevelSelection() {
+        Navigation.goTo(Routes.LEVEL_SELECTION);
+    }
 
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+    @FXML
+    private void goToOfflinePlayers() {
+        Navigation.goTo(Routes.OFFLINE_PLAYERS);
+    }
+
+    @FXML
+    private void goToLogin() {
+        Navigation.goTo(Routes.LOGIN);
+    }
 }
