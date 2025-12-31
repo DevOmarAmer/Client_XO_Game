@@ -1,37 +1,28 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package com.mycompany.client_xo_game;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
+import com.mycompany.client_xo_game.navigation.Navigation;
+import com.mycompany.client_xo_game.navigation.Routes;
 
-/**
- * FXML Controller class
- *
- * @author Omar
- */
-public class Level_SelectionController implements Initializable {
+public class Level_SelectionController {
 
     @FXML
-    private Button easy_level_id;
-    @FXML
-    private Button medium_level_id;
-    @FXML
-    private Button hard_level_id;
-    @FXML
-    private Button back_id;
+    private void easy() {
+        System.out.println("Easy level selected");
+    }
 
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+    @FXML
+    private void medium() {
+        System.out.println("Medium level selected");
+    }
+
+    @FXML
+    private void hard() {
+        System.out.println("Hard level selected");
+    }
+
+    @FXML
+    private void goBack() {
+        Navigation.goTo(Routes.MODE_SELECTION);
+    }
 }
