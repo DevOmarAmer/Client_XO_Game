@@ -16,8 +16,8 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
             messageLabel.setText("Please fill all fields");
@@ -35,4 +35,10 @@ public class LoginController {
     private void goToRegister() {
         Navigation.goTo(Routes.REGISTER);
     }
+
+    @FXML
+    private void goBack() {
+        Navigation.goTo(Routes.MODE_SELECTION);
+    }
+
 }
