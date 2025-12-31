@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.client_xo_game.Mode_SelectionController">
-
+<StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="800.0" 
+           styleClass="main-root" stylesheets="@/styles/mode_selection.css" 
+           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" 
+           fx:controller="com.mycompany.client_xo_game.Mode_SelectionController">
+   
    <children>
-      <Button fx:id="Vs_Computer"
-              layoutX="220.0" layoutY="64.0"
-              prefHeight="70.0" prefWidth="158.0"
-              text="Vs Computer"
-              onAction="#goToLevelSelection"/>
-
-      <Button fx:id="Offline_Multiplayer"
-              layoutX="221.0" layoutY="156.0"
-              prefHeight="70.0" prefWidth="158.0"
-              text="Offline Multiplayer"
-              onAction="#goToOfflinePlayers"/>
-
-      <Button fx:id="Online_Multiplayer"
-              layoutX="220.0" layoutY="244.0"
-              prefHeight="70.0" prefWidth="158.0"
-              text="Online Multiplayer"
-              onAction="#goToLogin"/>
+      <VBox fx:id="contentBox" alignment="CENTER" spacing="40.0" maxWidth="500.0">
+         <children>
+            <Label fx:id="titleLabel" styleClass="neon-title" text="CHOOSE MODE" />
+            
+            <VBox fx:id="buttonContainer" spacing="20.0" alignment="CENTER" fillWidth="true">
+                <children>
+                    <Button fx:id="btnComputer" maxWidth="Infinity" minHeight="80.0" 
+                            onAction="#goToLevelSelection" styleClass="cyber-button blue-side" 
+                            text="VS COMPUTER" />
+                    <Button fx:id="btnOffline" maxWidth="Infinity" minHeight="80.0" 
+                            onAction="#goToOfflinePlayers" styleClass="cyber-button blue-side" 
+                            text="OFFLINE PLAYERS" />
+                    <Button fx:id="btnOnline" maxWidth="Infinity" minHeight="80.0" 
+                            onAction="#goToLogin" styleClass="cyber-button pink-side" 
+                            text="ONLINE BATTLE" />
+                </children>
+            </VBox>
+         </children>
+      </VBox>
    </children>
-</AnchorPane>
+</StackPane>
