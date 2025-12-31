@@ -3,6 +3,7 @@ package com.mycompany.client_xo_game;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import com.mycompany.client_xo_game.navigation.Navigation;
+import com.mycompany.client_xo_game.navigation.Routes;
 
 public class LoginController {
 
@@ -23,9 +24,8 @@ public class LoginController {
             return;
         }
 
-        // TEMP LOGIN LOGIC
         if (username.equals("admin") && password.equals("1234")) {
-            Navigation.goTo("OnlinePlayers");
+            Navigation.goTo(Routes.ONLINE_PLAYERS);
         } else {
             messageLabel.setText("Invalid username or password");
         }
@@ -33,6 +33,6 @@ public class LoginController {
 
     @FXML
     private void goToRegister() {
-        Navigation.goTo("register");
+        Navigation.goTo(Routes.REGISTER);
     }
 }
