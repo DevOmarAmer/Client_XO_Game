@@ -29,6 +29,17 @@ public class Navigation {
         }
     }
 
+    public static <T> T loadAndGoTo(String route) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
+            Parent root = loader.load();
+            App.setRoot(route);
+            return loader.getController();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load and navigate to: " + route, e);
+        }
+    }
+
     public static void openModal(String route, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));

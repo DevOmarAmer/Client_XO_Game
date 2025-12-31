@@ -30,14 +30,29 @@ public class GameboardController implements Initializable {
     private GridPane board;
 
     private String level;
+    private String player1;
+    private String player2;
 
     public void setLevel(String level) {
         this.level = level;
     }
 
+    public void setPlayerNames(String p1, String p2) {
+        this.player1 = p1;
+        this.player2 = p2;
+        updatePlayerLabels();
+    }
+
+    private void updatePlayerLabels() {
+        if (scoreP1 != null && scoreP2 != null) {
+            scoreP1.setText(player1 + " Score: 0");
+            scoreP2.setText(player2 + " Score: 0");
+            turnLabel.setText(player1 + " Turn");
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 onSceneShown();
@@ -46,10 +61,12 @@ public class GameboardController implements Initializable {
     }
 
     private void onSceneShown() {
-        System.out.println("Game started on level: " + level);
-
         if (level != null) {
             turnLabel.setText(level + " MODE");
+        } else if (player1 != null && player2 != null) {
+            scoreP1.setText(player1 + " Score: 0");
+            scoreP2.setText(player2 + " Score: 0");
+            turnLabel.setText(player1 + "'s Turn");
         }
     }
 
