@@ -27,10 +27,18 @@
             xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.mycompany.client_xo_game.GameboardController">
 
     <top>
-        <HBox alignment="CENTER" spacing="10" styleClass="turn-bar">
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="turn-bar">
             <padding>
-                <Insets bottom="16" top="16" />
+                <Insets bottom="16" top="16" left="16" right="16"/>
             </padding>
+
+            <!-- Back Button -->
+            <Button fx:id="backButton"
+                    text="Back"
+                    onAction="#goBack"
+                    style="-fx-font-size: 14; -fx-padding: 5 10 5 10;" />
+
+            <!-- Turn Label -->
             <Label fx:id="turnLabel" styleClass="turn-label" text="Player 1 Turn">
                 <font>
                     <Font size="32" />
@@ -38,6 +46,7 @@
             </Label>
         </HBox>
     </top>
+
 
     <center>
         <StackPane fx:id="boardContainer" styleClass="board-container">

@@ -1,9 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.navigation.Navigation;
+import com.mycompany.client_xo_game.navigation.Routes;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -14,11 +12,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
-/**
- * FXML Controller class
- *
- * @author Alaa
- */
 public class GameboardController implements Initializable {
 
     @FXML
@@ -36,12 +29,32 @@ public class GameboardController implements Initializable {
     @FXML
     private GridPane board;
 
-    /**
-     * Initializes the controller class.
-     */
+    private String level;
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+
+        rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                onSceneShown();
+            }
+        });
+    }
+
+    private void onSceneShown() {
+        System.out.println("Game started on level: " + level);
+
+        if (level != null) {
+            turnLabel.setText(level + " MODE");
+        }
+    }
+
+    @FXML
+    private void goBack() {
+        Navigation.goTo(Routes.MODE_SELECTION);
+    }
 }

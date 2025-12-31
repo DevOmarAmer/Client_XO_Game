@@ -10,4 +10,6 @@ public class Routes {
     public static final String LOGIN = "Login";
     public static final String REGISTER = "Register";
     public static final String ONLINE_PLAYERS = "Online_Players";
+    public static final String GAMEBOARD = "Gameboard";
+
 }

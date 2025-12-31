@@ -8,17 +8,25 @@ public class Level_SelectionController {
 
     @FXML
     private void easy() {
-        System.out.println("Easy level selected");
+        goToGameboard("EASY");
     }
 
     @FXML
     private void medium() {
-        System.out.println("Medium level selected");
+        goToGameboard("MEDIUM");
     }
 
     @FXML
     private void hard() {
-        System.out.println("Hard level selected");
+        goToGameboard("HARD");
+    }
+
+    private void goToGameboard(String level) {
+        GameboardController controller
+                = Navigation.loadController(Routes.GAMEBOARD);
+
+        controller.setLevel(level);
+        Navigation.goTo(Routes.GAMEBOARD);
     }
 
     @FXML

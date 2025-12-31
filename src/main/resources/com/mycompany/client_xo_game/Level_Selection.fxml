@@ -28,7 +28,7 @@
                 onAction="#hard"/>
 
         <Button fx:id="back_id"
-                layoutX="487.0" layoutY="355.0"
+                layoutX="28.0" layoutY="355.0"
                 prefHeight="30.0" prefWidth="98.0"
                 text="Back"
                 onAction="#goBack"/>
