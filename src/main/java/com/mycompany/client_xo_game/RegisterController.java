@@ -3,6 +3,7 @@ package com.mycompany.client_xo_game;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import com.mycompany.client_xo_game.navigation.Navigation;
+import com.mycompany.client_xo_game.navigation.Routes;
 
 public class RegisterController {
 
@@ -37,6 +38,6 @@ public class RegisterController {
 
     @FXML
     private void goToLogin() {
-        Navigation.goTo("login");
+        Navigation.goTo(Routes.LOGIN);
     }
 }
