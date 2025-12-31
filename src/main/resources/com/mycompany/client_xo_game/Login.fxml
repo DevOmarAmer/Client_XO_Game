@@ -6,9 +6,7 @@
 <AnchorPane prefWidth="400" prefHeight="450"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mycompany.client_xo_game.LoginController"
-            stylesheets="@/styles/login.css"
-
->
+            stylesheets="@/styles/login.css">
 
     <VBox spacing="15" alignment="CENTER"
           AnchorPane.topAnchor="40"
@@ -27,6 +25,13 @@
 
         <Hyperlink text="Don't have an account? Register"
                    onAction="#goToRegister"/>
-
     </VBox>
+
+    <Button fx:id="back_id"
+            layoutX="28.0"
+            layoutY="344.0"
+            prefHeight="36.0"
+            prefWidth="88.0"
+            text="Back"
+            onAction="#goBack"/>
 </AnchorPane>
