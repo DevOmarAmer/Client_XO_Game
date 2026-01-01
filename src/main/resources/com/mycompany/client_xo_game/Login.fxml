@@ -2,36 +2,69 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefWidth="400" prefHeight="450"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.client_xo_game.LoginController"
-            stylesheets="@/styles/login.css">
+<StackPane fx:id="rootPane"
+           prefWidth="900" prefHeight="700"
+           stylesheets="@/styles/login.css"
+           styleClass="login-root"
+           xmlns="http://javafx.com/javafx/13"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.client_xo_game.LoginController">
 
-    <VBox spacing="15" alignment="CENTER"
-          AnchorPane.topAnchor="40"
-          AnchorPane.leftAnchor="40"
-          AnchorPane.rightAnchor="40">
-
-        <Label text="Login" styleClass="title"/>
-
-        <TextField fx:id="usernameField" promptText="Username"/>
-
-        <PasswordField fx:id="passwordField" promptText="Password"/>
-
-        <Button text="Login" onAction="#handleLogin" styleClass="primary-btn"/>
-
-        <Label fx:id="messageLabel" styleClass="error"/>
-
-        <Hyperlink text="Don't have an account? Register"
-                   onAction="#goToRegister"/>
-    </VBox>
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-50" translateY="50"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="50" translateY="-50"/>
 
     <Button fx:id="back_id"
-            layoutX="28.0"
-            layoutY="344.0"
-            prefHeight="36.0"
-            prefWidth="88.0"
-            text="Back"
-            onAction="#goBack"/>
-</AnchorPane>
+            text="← BACK"
+            onAction="#goBack"
+            styleClass="xo-back-btn"
+            StackPane.alignment="TOP_LEFT"
+            translateX="25"
+            translateY="25"/>
+
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="35"
+          maxWidth="450"
+          maxHeight="550"
+          styleClass="xo-glass-panel">
+
+        <VBox alignment="CENTER" spacing="10">
+            <HBox alignment="CENTER" spacing="15">
+                <Text text="X" styleClass="logo-x"/>
+                <Text text="O" styleClass="logo-o"/>
+            </HBox>
+            <Label fx:id="titleLabel" text="ARENA LOGIN" styleClass="login-title"/>
+            <Line endX="150" stroke="#00fff0" strokeWidth="2.0" opacity="0.6"/>
+        </VBox>
+
+        <VBox fx:id="inputContainer" spacing="20" fillWidth="true">
+            <TextField fx:id="usernameField"
+                       promptText="Username"
+                       styleClass="xo-input"/>
+
+            <PasswordField fx:id="passwordField"
+                           promptText="Password"
+                           styleClass="xo-input"/>
+        </VBox>
+
+        <VBox spacing="15" alignment="CENTER" fillWidth="true">
+            <Button fx:id="loginBtn"
+                    text="ENTER ARENA"
+                    onAction="#handleLogin"
+                    maxWidth="Infinity"
+                    styleClass="xo-btn cyan-glow"/>
+
+            <Label fx:id="messageLabel"
+                   styleClass="error-label"
+                   alignment="CENTER"/>
+
+            <Hyperlink fx:id="registerLink"
+                       text="Don't have an account? Register"
+                       onAction="#goToRegister"
+                       styleClass="neon-link"/>
+        </VBox>
+    </VBox>
+</StackPane>

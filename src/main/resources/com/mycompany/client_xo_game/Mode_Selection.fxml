@@ -1,32 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="800.0" 
-           styleClass="main-root" stylesheets="@/styles/mode_selection.css" 
-           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" 
+<StackPane fx:id="rootPane"
+           prefWidth="900" prefHeight="700"
+           stylesheets="@/styles/mode_selection.css"
+           styleClass="mode-root"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mycompany.client_xo_game.Mode_SelectionController">
-   
-   <children>
-      <VBox fx:id="contentBox" alignment="CENTER" spacing="40.0" maxWidth="500.0">
-         <children>
-            <Label fx:id="titleLabel" styleClass="neon-title" text="CHOOSE MODE" />
-            
-            <VBox fx:id="buttonContainer" spacing="20.0" alignment="CENTER" fillWidth="true">
-                <children>
-                    <Button fx:id="btnComputer" maxWidth="Infinity" minHeight="80.0" 
-                            onAction="#goToLevelSelection" styleClass="cyber-button blue-side" 
-                            text="VS COMPUTER" />
-                    <Button fx:id="btnOffline" maxWidth="Infinity" minHeight="80.0" 
-                            onAction="#goToOfflinePlayers" styleClass="cyber-button blue-side" 
-                            text="OFFLINE PLAYERS" />
-                    <Button fx:id="btnOnline" maxWidth="Infinity" minHeight="80.0" 
-                            onAction="#goToLogin" styleClass="cyber-button pink-side" 
-                            text="ONLINE BATTLE" />
-                </children>
-            </VBox>
-         </children>
-      </VBox>
-   </children>
+
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_LEFT" translateX="50" translateY="50"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_RIGHT" translateX="-50" translateY="-50"/>
+
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="40"
+          maxWidth="500"
+          maxHeight="550"
+          styleClass="xo-glass-panel">
+
+        <VBox alignment="CENTER" spacing="10">
+            <HBox alignment="CENTER" spacing="15">
+                <Text text="X" styleClass="logo-x"/>
+                <Text text="O" styleClass="logo-o"/>
+            </HBox>
+            <Label fx:id="titleLabel" text="BATTLE ARENA" styleClass="mode-title"/>
+            <Line endX="150" stroke="#00fff0" strokeWidth="2.0" opacity="0.6"/>
+        </VBox>
+
+        <VBox fx:id="buttonContainer"
+              alignment="CENTER"
+              spacing="20"
+              fillWidth="true">
+
+            <Button fx:id="btnComputer"
+                    text="SINGLE PLAYER"
+                    onAction="#goToLevelSelection"
+                    maxWidth="Infinity"
+                    styleClass="xo-btn blue-glow"/>
+
+            <Button fx:id="btnOffline"
+                    text="LOCAL MULTIPLAYER"
+                    onAction="#goToOfflinePlayers"
+                    maxWidth="Infinity"
+                    styleClass="xo-btn cyan-glow"/>
+
+            <Button fx:id="btnOnline"
+                    text="ONLINE MATCH"
+                    onAction="#goToLogin"
+                    maxWidth="Infinity"
+                    styleClass="xo-btn pink-glow"/>
+        </VBox>
+    </VBox>
 </StackPane>

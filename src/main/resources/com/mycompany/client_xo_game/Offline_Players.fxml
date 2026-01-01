@@ -1,35 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.client_xo_game.Offline_PlayersController">
+<StackPane fx:id="rootPane"
+           prefWidth="900" prefHeight="700"
+           stylesheets="@/styles/offline_players.css"
+           styleClass="offline-root"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.client_xo_game.Offline_PlayersController">
 
-   <children>
-      <TextField fx:id="player_one_id"
-                 layoutX="207.0" layoutY="127.0"
-                 prefHeight="36.0" prefWidth="206.0"
-                 promptText="Enter Player one name"/>
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-50" translateY="50"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="50" translateY="-50"/>
 
-      <TextField fx:id="Player_two_id"
-                 layoutX="207.0" layoutY="182.0"
-                 prefHeight="36.0" prefWidth="206.0"
-                 promptText="Enter Player two name"/>
+    <Button fx:id="back_id"
+            text="← BACK"
+            onAction="#goBack"
+            styleClass="xo-back-btn"
+            StackPane.alignment="TOP_LEFT"
+            translateX="25"
+            translateY="25"/>
 
-      <Button fx:id="back_id"
-              layoutX="28.0" layoutY="344.0"
-              prefHeight="36.0" prefWidth="88.0"
-              text="Back"
-              onAction="#goBack"/>
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="45"
+          maxWidth="450"
+          maxHeight="550"
+          styleClass="xo-glass-panel">
 
-      <Button fx:id="play_id"
-              layoutX="487.0" layoutY="344.0"
-              prefHeight="36.0" prefWidth="88.0"
-              text="Play"
-              onAction="#playGame"/>
-   </children>
-</AnchorPane>
+        <VBox alignment="CENTER" spacing="10">
+            <HBox alignment="CENTER" spacing="15">
+                <Text text="X" styleClass="logo-x"/>
+                <Text text="O" styleClass="logo-o"/>
+            </HBox>
+            <Label fx:id="titleLabel" text="OFFLINE BATTLE" styleClass="offline-title"/>
+            <Line endX="180" stroke="#00fff0" strokeWidth="2.0" opacity="0.6"/>
+        </VBox>
+
+        <VBox fx:id="inputContainer" spacing="25" fillWidth="true">
+            <TextField fx:id="player_one_id"
+                       promptText="Player One Name"
+                       styleClass="xo-input"/>
+
+            <TextField fx:id="Player_two_id"
+                       promptText="Player Two Name"
+                       styleClass="xo-input"/>
+        </VBox>
+
+        <Button fx:id="play_id"
+                text="START MATCH"
+                onAction="#playGame"
+                maxWidth="Infinity"
+                styleClass="xo-btn cyan-glow"/>
+                
+    </VBox>
+</StackPane>
