@@ -1,0 +1,103 @@
+/* ======================================
+   ROOT
+   ====================================== */
+.offline-root {
+    -fx-background-color: radial-gradient(
+        center 50% 50%, radius 100%,
+        #0f2027 0%,
+        #203a43 40%,
+        #0a0f14 100%
+    );
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* ======================================
+   TITLE
+   ====================================== */
+.offline-title {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Black";
+    -fx-effect: dropshadow(gaussian, #00fff0, 28, 0.55, 0, 0);
+}
+
+/* ======================================
+   INPUT FIELDS (NEON PILL)
+   ====================================== */
+.neon-input {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-border-width: 2;
+    -fx-border-color: rgba(0,255,240,0.6);
+
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.55);
+
+    -fx-padding: 10 16 10 16;
+    -fx-min-height: 48;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,255,240,0.25), 10, 0.3, 0, 0);
+}
+
+.neon-input:focused {
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(gaussian, #00fff0, 20, 0.45, 0, 0);
+}
+
+/* ======================================
+   BUTTON BASE
+   ====================================== */
+.cyber-btn,
+.cyber-btn > .button {
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        rgba(255,255,255,0.05),
+        rgba(255,255,255,0.02)
+    );
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-border-width: 2;
+
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+
+    -fx-padding: 10 24 10 24;
+    -fx-min-height: 48;
+    -fx-cursor: hand;
+}
+
+.cyber-btn:pressed,
+.cyber-btn:pressed > .button {
+    -fx-scale-x: 0.94;
+    -fx-scale-y: 0.94;
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+}
+
+/* ======================================
+   BACK & PLAY BUTTON STYLE
+   ====================================== */
+.back-btn,
+.play-btn,
+.back-btn > .button,
+.play-btn > .button {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(0,255,240,0.6);
+    -fx-border-radius: 30;
+    -fx-text-fill: #00fff0;
+    -fx-font-weight: bold;
+    -fx-padding: 10 24 10 24;
+    -fx-cursor: hand;
+}
+
+.back-btn:hover,
+.play-btn:hover,
+.back-btn:hover > .button,
+.play-btn:hover > .button {
+    -fx-background-color: rgba(0,255,240,0.15);
+    -fx-text-fill: #001a1a;
+    -fx-translate-y: -4;
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-effect: dropshadow(gaussian, #00fff0, 18, 0.4, 0, 0);
+}
