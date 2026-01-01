@@ -1,14 +1,19 @@
 /* ======================================
-   ROOT
+   ROOT & GLASS PANEL
    ====================================== */
 .mode-root {
-    -fx-background-color: radial-gradient(
-        center 50% 50%, radius 100%,
-        #1a1a2e 0%,
-        #16213e 40%,
-        #0f0f1a 100%
-    );
-    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #050a10; /* Solid dark start */
+    -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #1a1a2e 0%, #0f0f1a 100%);
+}
+
+.glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+    -fx-background-radius: 40;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-radius: 40;
+    -fx-border-width: 1.5;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 30, 0.5, 0, 10);
 }
 
 /* ======================================
@@ -17,102 +22,35 @@
 .mode-title {
     -fx-text-fill: white;
     -fx-font-family: "Arial Black";
-    -fx-font-size: 26px;
-    -fx-effect: dropshadow(gaussian, #00d2ff, 26, 0.6, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.4, 0, 0);
+    -fx-letter-spacing: 2px;
 }
 
 /* ======================================
-   BASE BUTTON (FORCED PILL)
+   CYBER BUTTONS (PILL STYLE)
    ====================================== */
-.cyber-btn,
-.cyber-btn > .button {
-    -fx-background-color: linear-gradient(
-        to bottom right,
-        rgba(255,255,255,0.06),
-        rgba(255,255,255,0.02)
-    );
-
-    -fx-background-radius: 30;
-    -fx-border-radius: 30;
-    -fx-border-width: 2;
-
+.cyber-btn {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-background-radius: 40;
+    -fx-border-radius: 40;
+    -fx-border-width: 2.5;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-
-    -fx-padding: 10 0 10 0;
-    -fx-min-height: 52;
-    -fx-max-height: 56;
-
+    -fx-min-height: 60;
     -fx-cursor: hand;
+    -fx-transition: 0.3s;
 }
 
-/* ======================================
-   PRESS (KEEP ROUND)
-   ====================================== */
-.cyber-btn:pressed,
-.cyber-btn:pressed > .button {
-    -fx-scale-x: 0.94;
-    -fx-scale-y: 0.94;
-    -fx-background-radius: 30;
-    -fx-border-radius: 30;
-}
+.blue-neon { -fx-border-color: #00d2ff; -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.3), 12, 0, 0, 0); }
+.cyan-neon { -fx-border-color: #00fff0; -fx-effect: dropshadow(gaussian, rgba(0,255,240,0.3), 12, 0, 0, 0); }
+.pink-neon { -fx-border-color: #ff007f; -fx-effect: dropshadow(gaussian, rgba(255,0,127,0.3), 12, 0, 0, 0); }
 
-/* ======================================
-   BLUE (VS COMPUTER)
-   ====================================== */
-.blue,
-.blue > .button {
-    -fx-border-color: #00d2ff;
-    -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.25), 10, 0.3, 0, 0);
-}
-.blue:hover,
-.blue:hover > .button {
-    -fx-background-color: linear-gradient(
-        to bottom right,
-        #00d2ff,
-        #0099cc
-    );
-    -fx-text-fill: #00141a;
-    -fx-translate-y: -4;
-    -fx-effect: dropshadow(gaussian, #00d2ff, 22, 0.4, 0, 0);
-}
+/* HOVER STATES */
+.blue-neon:hover { -fx-background-color: #00d2ff; -fx-text-fill: #050a10; -fx-effect: dropshadow(gaussian, #00d2ff, 25, 0.5, 0, 0); }
+.cyan-neon:hover { -fx-background-color: #00fff0; -fx-text-fill: #050a10; -fx-effect: dropshadow(gaussian, #00fff0, 25, 0.5, 0, 0); }
+.pink-neon:hover { -fx-background-color: #ff007f; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, #ff007f, 25, 0.5, 0, 0); }
 
-/* ======================================
-   CYAN (OFFLINE)
-   ====================================== */
-.cyan,
-.cyan > .button {
-    -fx-border-color: #00fff0;
-    -fx-effect: dropshadow(gaussian, rgba(0,255,240,0.25), 10, 0.3, 0, 0);
-}
-.cyan:hover,
-.cyan:hover > .button {
-    -fx-background-color: linear-gradient(
-        to bottom right,
-        #00fff0,
-        #00cfc4
-    );
-    -fx-text-fill: #002020;
-    -fx-translate-y: -4;
-    -fx-effect: dropshadow(gaussian, #00fff0, 22, 0.4, 0, 0);
-}
-
-/* ======================================
-   PINK (ONLINE)
-   ====================================== */
-.pink,
-.pink > .button {
-    -fx-border-color: #ff007f;
-    -fx-effect: dropshadow(gaussian, rgba(255,0,127,0.25), 10, 0.3, 0, 0);
-}
-.pink:hover,
-.pink:hover > .button {
-    -fx-background-color: linear-gradient(
-        to bottom right,
-        #ff007f,
-        #c80063
-    );
-    -fx-text-fill: white;
-    -fx-translate-y: -4;
-    -fx-effect: dropshadow(gaussian, #ff007f, 24, 0.45, 0, 0);
+.cyber-btn:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
 }
