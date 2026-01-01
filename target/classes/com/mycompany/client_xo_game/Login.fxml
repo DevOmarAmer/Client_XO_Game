@@ -3,35 +3,63 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefWidth="400" prefHeight="450"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.client_xo_game.LoginController"
-            stylesheets="@/styles/login.css">
+<StackPane fx:id="rootPane"
+           prefWidth="800" prefHeight="600"
+           stylesheets="@/styles/login.css"
+           styleClass="login-root"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.client_xo_game.LoginController">
 
-    <VBox spacing="15" alignment="CENTER"
-          AnchorPane.topAnchor="40"
-          AnchorPane.leftAnchor="40"
-          AnchorPane.rightAnchor="40">
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="30"
+          maxWidth="600"
+          fillWidth="true">
 
-        <Label text="Login" styleClass="title"/>
+        <Label fx:id="titleLabel"
+               text="LOGIN"
+               styleClass="login-title"
+               alignment="CENTER"
+               maxWidth="Infinity"/>
 
-        <TextField fx:id="usernameField" promptText="Username"/>
+        <VBox fx:id="inputContainer"
+              spacing="20"
+              fillWidth="true">
 
-        <PasswordField fx:id="passwordField" promptText="Password"/>
+            <TextField fx:id="usernameField"
+                       promptText="Username"
+                       styleClass="neon-input"/>
 
-        <Button text="Login" onAction="#handleLogin" styleClass="primary-btn"/>
+            <PasswordField fx:id="passwordField"
+                           promptText="Password"
+                           styleClass="neon-input"/>
+        </VBox>
 
-        <Label fx:id="messageLabel" styleClass="error"/>
+        <Button fx:id="loginBtn"
+                text="LOGIN"
+                onAction="#handleLogin"
+                styleClass="primary-btn"
+                maxWidth="Infinity"/>
 
-        <Hyperlink text="Don't have an account? Register"
-                   onAction="#goToRegister"/>
+        <Label fx:id="messageLabel"
+               styleClass="error-label"
+               maxWidth="Infinity"
+               alignment="CENTER"/>
+
+        <Hyperlink fx:id="registerLink"
+                   text="Don't have an account? Register"
+                   onAction="#goToRegister"
+                   styleClass="neon-link"/>
+
     </VBox>
 
     <Button fx:id="back_id"
-            layoutX="28.0"
-            layoutY="344.0"
-            prefHeight="36.0"
-            prefWidth="88.0"
-            text="Back"
-            onAction="#goBack"/>
-</AnchorPane>
+            text="← BACK"
+            onAction="#goBack"
+            styleClass="back-btn"
+            StackPane.alignment="TOP_LEFT"
+            translateX="20"
+            translateY="20"/>
+
+</StackPane>

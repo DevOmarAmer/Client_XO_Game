@@ -1,45 +1,61 @@
-.root {
-    -fx-background-color: linear-gradient(to bottom right, #42275a, #734b6d);
-    -fx-font-family: "Segoe UI";
+.register-root {
+    -fx-background-color: radial-gradient(
+        center 50% 50%, radius 100%,
+        #0f2027 0%,
+        #203a43 50%,
+        #0a0f14 100%
+    );
+    -fx-font-family: "Segoe UI", sans-serif;
 }
 
-.title {
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
+.register-title {
     -fx-text-fill: white;
+    -fx-font-family: "Arial Black";
+    -fx-effect: dropshadow(gaussian, #00fff0, 35, 0.6, 0, 0);
 }
 
-.text-field,
-.password-field {
-    -fx-pref-width: 260px;
-    -fx-pref-height: 42px;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-font-size: 14px;
+.neon-input {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-background-radius: 40; /* Rounder for wider look */
+    -fx-border-radius: 40;
+    -fx-border-width: 2.5;
+    -fx-border-color: rgba(0,255,240,0.4);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.3);
+    -fx-padding: 0 30 0 30; /* More side padding for wide inputs */
+    -fx-effect: dropshadow(gaussian, rgba(0,255,240,0.15), 15, 0.3, 0, 0);
+}
+
+.neon-input:focused {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(gaussian, #00fff0, 25, 0.45, 0, 0);
 }
 
 .primary-btn {
-    -fx-background-color: #4caf50;
-    -fx-text-fill: white;
-    -fx-font-size: 15px;
+    -fx-background-color: rgba(0,255,240,0.15);
+    -fx-background-radius: 40;
+    -fx-border-radius: 40;
+    -fx-border-width: 2;
+    -fx-border-color: #00fff0;
+    -fx-text-fill: #00fff0;
     -fx-font-weight: bold;
-    -fx-pref-width: 260px;
-    -fx-pref-height: 42px;
-    -fx-background-radius: 8;
     -fx-cursor: hand;
 }
 
 .primary-btn:hover {
-    -fx-background-color: #66bb6a;
+    -fx-background-color: #00fff0;
+    -fx-text-fill: #01161d;
+    -fx-effect: dropshadow(gaussian, #00fff0, 30, 0.5, 0, 0);
 }
 
-.hyperlink {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 13px;
+.neon-link {
+    -fx-text-fill: #00fff0;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
 }
 
-.error {
-    -fx-text-fill: #ffdddd;
-    -fx-font-size: 13px;
+.error-label {
+    -fx-text-fill: #ff4d4d;
+    -fx-font-weight: bold;
 }
-

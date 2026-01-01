@@ -3,33 +3,71 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefWidth="400" prefHeight="500"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.client_xo_game.RegisterController"
-            stylesheets="@/styles/register.css"
->
+<StackPane fx:id="rootPane"
+           prefWidth="800" prefHeight="600"
+           stylesheets="@/styles/register.css"
+           styleClass="register-root"
+           xmlns="http://javafx.com/javafx/13"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.client_xo_game.RegisterController">
 
-    <VBox spacing="15" alignment="CENTER"
-          AnchorPane.topAnchor="40"
-          AnchorPane.leftAnchor="40"
-          AnchorPane.rightAnchor="40">
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="40"
+          maxWidth="1200" 
+          fillWidth="true">
 
-        <Label text="Register" styleClass="title"/>
+        <Label fx:id="titleLabel"
+               text="CREATE ACCOUNT"
+               styleClass="register-title"
+               alignment="CENTER"
+               maxWidth="Infinity"/>
 
-        <TextField fx:id="usernameField" promptText="Username"/>
+        <GridPane fx:id="inputGrid" hgap="30" vgap="25" alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="45" />
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="45" />
+            </columnConstraints>
+            
+            <TextField fx:id="usernameField"
+                       promptText="Username"
+                       styleClass="neon-input"
+                       maxWidth="Infinity"
+                       GridPane.columnIndex="0" GridPane.rowIndex="0"/>
 
-        <PasswordField fx:id="passwordField" promptText="Password"/>
+            <TextField fx:id="emailField"
+                       promptText="Email Address"
+                       styleClass="neon-input"
+                       maxWidth="Infinity"
+                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password"/>
+            <PasswordField fx:id="passwordField"
+                           promptText="Password"
+                           styleClass="neon-input"
+                           maxWidth="Infinity"
+                           GridPane.columnIndex="0" GridPane.rowIndex="1"/>
 
-        <Button text="Create Account"
-                onAction="#handleRegister"
-                styleClass="primary-btn"/>
+            <PasswordField fx:id="confirmPasswordField"
+                           promptText="Confirm Password"
+                           styleClass="neon-input"
+                           maxWidth="Infinity"
+                           GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
 
-        <Label fx:id="messageLabel" styleClass="error"/>
+        <VBox spacing="20" alignment="CENTER" fillWidth="true">
+            <Button fx:id="registerBtn"
+                    text="SIGN UP"
+                    onAction="#handleRegister"
+                    styleClass="primary-btn"
+                    maxWidth="400"/> <Label fx:id="messageLabel"
+                   styleClass="error-label"
+                   alignment="CENTER"/>
 
-        <Hyperlink text="Already have an account? Login"
-                   onAction="#goToLogin"/>
+            <Hyperlink fx:id="loginLink"
+                       text="Already have an account? Login"
+                       onAction="#goToLogin"
+                       styleClass="neon-link"/>
+        </VBox>
 
     </VBox>
-</AnchorPane>
+</StackPane>
