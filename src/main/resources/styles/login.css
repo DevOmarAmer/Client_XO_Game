@@ -1,98 +1,124 @@
 /* ======================================
-   ROOT BACKGROUND
+   THEMATIC BACKGROUND
    ====================================== */
 .login-root {
-    -fx-background-color: radial-gradient(
-        center 50% 50%, radius 100%,
-        #0f2027 0%,
-        #203a43 50%,
-        #0a0f14 100%
-    );
-    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #080a12;
+    -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #111a33 0%, #080a12 100%);
+}
+
+.bg-symbol-x { 
+    -fx-font-size: 220px; 
+    -fx-font-family: "Arial Black"; 
+    -fx-text-fill: rgba(0, 210, 255, 0.04); 
+}
+.bg-symbol-o { 
+    -fx-font-size: 220px; 
+    -fx-font-family: "Arial Black"; 
+    -fx-text-fill: rgba(255, 0, 127, 0.04); 
 }
 
 /* ======================================
-   TITLE STYLING
+   LOGO & TITLE TEXT
    ====================================== */
+.logo-x { 
+    -fx-fill: #00d2ff; 
+    -fx-font-size: 52px; 
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); 
+}
+.logo-o { 
+    -fx-fill: #ff007f; 
+    -fx-font-size: 52px; 
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); 
+}
+
 .login-title {
     -fx-text-fill: white;
-    -fx-font-family: "Arial Black";
-    -fx-effect: dropshadow(gaussian, #00fff0, 25, 0.5, 0, 0);
+    -fx-font-family: "Impact";
+    -fx-letter-spacing: 2px;
 }
 
 /* ======================================
-   INPUT FIELDS
+   GLASS PANEL
    ====================================== */
-.neon-input {
-    -fx-background-color: rgba(255,255,255,0.08);
-    -fx-background-radius: 30;
-    -fx-border-radius: 30;
+.xo-glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 40;
+    -fx-border-color: rgba(0, 255, 240, 0.1);
+    -fx-border-radius: 40;
+    -fx-padding: 50 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 50, 0, 0, 0);
+}
+
+/* ======================================
+   INPUT FIELDS (NEON PILLS)
+   ====================================== */
+.xo-input {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 80;
+    -fx-border-radius: 80;
     -fx-border-width: 2;
-    -fx-border-color: rgba(0,255,240,0.5);
+    -fx-border-color: rgba(0, 255, 240, 0.3);
     -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255,255,255,0.4);
-    -fx-padding: 0 25 0 25;
-}
-
-.neon-input:focused {
-    -fx-border-color: #00fff0;
-    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.4, 0, 0);
-}
-
-/* ======================================
-   PRIMARY LOGIN BUTTON
-   ====================================== */
-.primary-btn {
-    -fx-background-color: rgba(0,255,240,0.15);
-    -fx-background-radius: 30;
-    -fx-border-radius: 30;
-    -fx-border-width: 2;
-    -fx-border-color: #00fff0;
-    -fx-text-fill: #00fff0;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-padding: 12 25;
+    -fx-min-height: 55;
     -fx-transition: 0.3s;
 }
 
-.primary-btn:hover {
+.xo-input:focused {
+    -fx-border-color: #00fff0;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-effect: dropshadow(gaussian, #00fff0, 12, 0.3, 0, 0);
+}
+
+/* ======================================
+   BUTTONS
+   ====================================== */
+.xo-btn {
+    -fx-background-color: rgba(255, 255, 255, 0.02);
+    -fx-background-radius: 80;
+    -fx-border-radius: 80;
+    -fx-border-width: 2.5;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-min-height: 58;
+    -fx-cursor: hand;
+}
+
+.cyan-glow { -fx-border-color: #00fff0; }
+.cyan-glow:hover {
     -fx-background-color: #00fff0;
-    -fx-text-fill: #001a1a;
-    -fx-effect: dropshadow(gaussian, #00fff0, 20, 0.5, 0, 0);
+    -fx-text-fill: #080a12;
+    -fx-effect: dropshadow(gaussian, #00fff0, 25, 0.5, 0, 0);
 }
 
 /* ======================================
    BACK BUTTON
    ====================================== */
-.back-btn {
+.xo-back-btn {
     -fx-background-color: transparent;
-    -fx-border-color: rgba(0,255,240,0.6);
-    -fx-border-radius: 30;
+    -fx-border-color: rgba(0, 255, 240, 0.4);
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+    -fx-background-insets: 0;
     -fx-text-fill: #00fff0;
     -fx-font-weight: bold;
-    -fx-padding: 8 20 8 20;
+    -fx-padding: 10 25;
     -fx-cursor: hand;
 }
 
-.back-btn:hover {
-    -fx-background-color: rgba(0,255,240,0.1);
-    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.3, 0, 0);
+.xo-back-btn:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.12);
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 15, 0.4, 0, 0);
 }
 
 /* ======================================
-   EXTRAS
+   LINKS & ERROR LABEL
    ====================================== */
-.neon-link {
-    -fx-text-fill: #00fff0;
-    -fx-font-weight: bold;
-    -fx-underline: false;
-}
+.neon-link { -fx-text-fill: #00fff0; -fx-font-weight: bold; }
+.neon-link:hover { -fx-text-fill: white; }
 
-.neon-link:hover {
-    -fx-text-fill: white;
-}
-
-.error-label {
-    -fx-text-fill: #ff4d4d;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-}
+.error-label { -fx-text-fill: #ff004c; -fx-font-weight: bold; }
