@@ -2,55 +2,66 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
 <StackPane fx:id="rootPane"
-           prefWidth="800" prefHeight="600"
+           prefWidth="900" prefHeight="700"
            stylesheets="@/styles/level_selection.css"
            styleClass="level-root"
            xmlns="http://javafx.com/javafx/25"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mycompany.client_xo_game.Level_SelectionController">
 
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-50" translateY="50"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="50" translateY="-50"/>
+
+<Button fx:id="btnBack"
+        text="← BACK"
+        onAction="#goBack"
+        styleClass="xo-back-btn"
+        StackPane.alignment="TOP_LEFT"
+        translateX="25"
+        translateY="25"/>
+
     <VBox fx:id="contentBox"
           alignment="CENTER"
           spacing="40"
-          maxWidth="520">
+          maxWidth="500"
+          maxHeight="550"
+          styleClass="xo-glass-panel">
 
-        <!-- TITLE -->
-        <Label fx:id="titleLabel"
-               text="SELECT DIFFICULTY"
-               styleClass="level-title"/>
+        <VBox alignment="CENTER" spacing="10">
+            <HBox alignment="CENTER" spacing="15">
+                <Text text="X" styleClass="logo-x"/>
+                <Text text="O" styleClass="logo-o"/>
+            </HBox>
+            <Label fx:id="titleLabel" text="ARENA DIFFICULTY" styleClass="level-title"/>
+            <Line endX="180" stroke="#00fff0" strokeWidth="2.0" opacity="0.6"/>
+        </VBox>
 
-        <!-- LEVEL BUTTONS -->
         <VBox fx:id="buttonContainer"
               alignment="CENTER"
-              spacing="25"
+              spacing="22"
               fillWidth="true">
 
             <Button fx:id="btnEasy"
-                    text="EASY"
+                    text="EASY MODE"
                     onAction="#easy"
                     maxWidth="Infinity"
-                    styleClass="cyber-btn green"/>
+                    styleClass="xo-btn green-glow"/>
 
             <Button fx:id="btnMedium"
-                    text="MEDIUM"
+                    text="MEDIUM MODE"
                     onAction="#medium"
                     maxWidth="Infinity"
-                    styleClass="cyber-btn yellow"/>
+                    styleClass="xo-btn yellow-glow"/>
 
             <Button fx:id="btnHard"
-                    text="HARD"
+                    text="IMPOSSIBLE"
                     onAction="#hard"
                     maxWidth="Infinity"
-                    styleClass="cyber-btn red"/>
+                    styleClass="xo-btn red-glow"/>
         </VBox>
-
-        <!-- BACK BUTTON -->
-        <Button fx:id="btnBack"
-                text="← BACK"
-                onAction="#goBack"
-                styleClass="back-btn"/>
-
     </VBox>
 </StackPane>
