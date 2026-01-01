@@ -16,8 +16,49 @@ import com.mycompany.client_xo_game.model.Move;
  * @author Alaa
  */
 public class Minimax {
-//   
+   
+    public Move getBestMove(Board board, AIDifficulty difficulty) {
+        int maxDepth;
+       
+        switch (difficulty) {
+            case EASY:   
+                maxDepth = 1; 
+                break;
+            case MEDIUM: 
+                maxDepth = 2; 
+                break; 
+            case HARD:   
+                maxDepth = 9; 
+                break; 
+            default:     
+                maxDepth = 9;
+        }
 
+        int bestScore = Integer.MIN_VALUE;
+        Move bestMove = null;
+
+        
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (board.getGrid()[row][col] == Cell.EMPTY) {
+               
+                    board.getGrid()[row][col] = Cell.O;
+                    
+               
+                    int score = minimax(board, maxDepth, false);
+                    
+                 
+                    board.getGrid()[row][col] = Cell.EMPTY;
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = new Move(row, col);
+                    }
+                }
+            }
+        }
+        return bestMove;
+    }
 
     private int minimax(Board board, int depth, boolean isMaximizing) {
      
