@@ -1,5 +1,6 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.enums.GameMode;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +14,7 @@ import com.mycompany.client_xo_game.navigation.Routes;
 
 public class Level_SelectionController {
 
+    private static String selectedDifficulty = "EASY"; // default
     @FXML
     private StackPane rootPane;
     @FXML
@@ -104,12 +106,17 @@ public class Level_SelectionController {
 
     private void goToGameboard(String level, Button btn) {
         press(btn);
-
+        selectedDifficulty = level;
         GameboardController controller
                 = Navigation.loadController(Routes.GAMEBOARD);
         controller.setLevel(level);
-
+        controller.setGameMode(GameMode.HUMAN_VS_COMPUTER_MODE);
+        controller.setPlayerNames("You", "AI");
         Navigation.goTo(Routes.GAMEBOARD);
+    }
+
+    public static String getSelectedDifficulty() {
+        return selectedDifficulty;
     }
 
     @FXML
