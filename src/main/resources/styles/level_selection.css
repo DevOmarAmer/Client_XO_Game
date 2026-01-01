@@ -6,14 +6,33 @@
     -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #111a33 0%, #080a12 100%);
 }
 
-.bg-symbol-x { -fx-font-size: 220px; -fx-font-family: "Arial Black"; -fx-text-fill: rgba(0, 210, 255, 0.04); }
-.bg-symbol-o { -fx-font-size: 220px; -fx-font-family: "Arial Black"; -fx-text-fill: rgba(255, 0, 127, 0.04); }
+/* Background faded symbols */
+.bg-symbol-x { 
+    -fx-font-size: 220px; 
+    -fx-font-family: "Arial Black"; 
+    -fx-text-fill: rgba(0, 210, 255, 0.04); 
+}
+.bg-symbol-o { 
+    -fx-font-size: 220px; 
+    -fx-font-family: "Arial Black"; 
+    -fx-text-fill: rgba(255, 0, 127, 0.04); 
+}
 
 /* ======================================
    LOGO TEXT
    ====================================== */
-.logo-x { -fx-fill: #00d2ff; -fx-font-size: 52px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); }
-.logo-o { -fx-fill: #ff007f; -fx-font-size: 52px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); }
+.logo-x { 
+    -fx-fill: #00d2ff; 
+    -fx-font-size: 52px; 
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); 
+}
+.logo-o { 
+    -fx-fill: #ff007f; 
+    -fx-font-size: 52px; 
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); 
+}
 
 /* ======================================
    ARENA GLASS PANEL
@@ -27,6 +46,7 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 50, 0, 0, 0);
 }
 
+/* Level title */
 .level-title {
     -fx-text-fill: white;
     -fx-font-family: "Impact";
@@ -34,61 +54,95 @@
 }
 
 /* ======================================
-   DIFFICULTY PILL BUTTONS (Increased Radius)
+   DIFFICULTY PILL BUTTONS (NEON)
    ====================================== */
 .xo-btn {
     -fx-background-color: rgba(255, 255, 255, 0.02);
-    -fx-background-radius: 80; /* Max rounding for pill shape */
-    -fx-border-radius: 80;     /* Max rounding for pill shape */
+    -fx-background-radius: 80;  /* full pill */
+    -fx-border-radius: 80;
     -fx-border-width: 2.5;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-min-height: 58;
     -fx-cursor: hand;
+    -fx-transition: 0.3s;
 }
 
-.green-glow { -fx-border-color: #00ff99; }
-.green-glow:hover { -fx-background-color: #00ff99; -fx-text-fill: #080a12; -fx-effect: dropshadow(gaussian, #00ff99, 25, 0.5, 0, 0); }
+/* Green neon button */
+.green-glow {
+    -fx-border-color: #00fff0;
+}
+.green-glow:hover {
+    -fx-background-color: #00fff0;
+    -fx-text-fill: #080a12;
+    -fx-effect: dropshadow(gaussian, #00fff0, 25, 0.5, 0, 0);
+}
 
-.yellow-glow { -fx-border-color: #ffd700; }
-.yellow-glow:hover { -fx-background-color: #ffd700; -fx-text-fill: #080a12; -fx-effect: dropshadow(gaussian, #ffd700, 25, 0.5, 0, 0); }
+/* Yellow neon button */
+.yellow-glow {
+    -fx-border-color: #ffd700;
+}
+.yellow-glow:hover {
+    -fx-background-color: #ffd700;
+    -fx-text-fill: #080a12;
+    -fx-effect: dropshadow(gaussian, #ffd700, 25, 0.5, 0, 0);
+}
 
-.red-glow { -fx-border-color: #ff004c; }
-.red-glow:hover { -fx-background-color: #ff004c; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, #ff004c, 25, 0.5, 0, 0); }
+/* Red neon button */
+.red-glow {
+    -fx-border-color: #ff004c;
+}
+.red-glow:hover {
+    -fx-background-color: #ff004c;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #ff004c, 25, 0.5, 0, 0);
+}
 
 /* ======================================
-   BACK BUTTON (Glow Only - No Movement)
+   BACK BUTTON (Glow + Press Effect)
    ====================================== */
 .xo-back-btn {
     -fx-background-color: transparent;
     -fx-border-color: rgba(0, 255, 240, 0.4);
-    
-    /* Perfect alignment of border and background shapes */
     -fx-border-radius: 40;
     -fx-background-radius: 40;
-    -fx-background-insets: 0; 
-
+    -fx-background-insets: 0;
     -fx-text-fill: #00fff0;
     -fx-font-weight: bold;
     -fx-padding: 10 25;
     -fx-cursor: hand;
-    
-    /* Smooth transition for the glow effect */
     -fx-transition: 0.3s;
 }
 
 .xo-back-btn:hover {
-    /* Only change colors and glow, no translation/movement */
     -fx-background-color: rgba(0, 255, 240, 0.12);
     -fx-border-color: #00fff0;
-    
-    /* Subtle neon glow */
     -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 15, 0.4, 0, 0);
 }
 
 .xo-back-btn:pressed {
-    /* Slight shrink effect to provide tactile feedback without shifting position */
-    -fx-scale-x: 0.96;
-    -fx-scale-y: 0.96;
-    -fx-opacity: 0.8;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* ======================================
+   OPTIONAL: Neon Input Fields (Match Offline)
+   ====================================== */
+.xo-input {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 80;
+    -fx-border-radius: 80;
+    -fx-border-width: 2;
+    -fx-border-color: rgba(0, 255, 240, 0.3);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-padding: 12 25 12 25;
+    -fx-min-height: 55;
+    -fx-transition: 0.3s;
+}
+
+.xo-input:focused {
+    -fx-border-color: #00fff0;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-effect: dropshadow(gaussian, #00fff0, 12, 0.3, 0, 0);
 }
