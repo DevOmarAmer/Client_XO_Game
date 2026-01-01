@@ -1,56 +1,70 @@
 /* ======================================
-   ROOT & GLASS PANEL
+   THEMATIC BACKGROUND
    ====================================== */
 .mode-root {
-    -fx-background-color: #050a10; /* Solid dark start */
-    -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #1a1a2e 0%, #0f0f1a 100%);
+    -fx-background-color: #080a12;
+    -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #111a33 0%, #080a12 100%);
 }
 
-.glass-panel {
-    -fx-background-color: rgba(255, 255, 255, 0.04);
-    -fx-background-radius: 40;
-    -fx-border-color: rgba(255, 255, 255, 0.1);
-    -fx-border-radius: 40;
-    -fx-border-width: 1.5;
-    -fx-padding: 40;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 30, 0.5, 0, 10);
+.bg-symbol-x {
+    -fx-font-size: 200px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(0, 210, 255, 0.05);
+}
+
+.bg-symbol-o {
+    -fx-font-size: 200px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(255, 0, 127, 0.05);
 }
 
 /* ======================================
-   TITLE
+   LOGO TEXT
    ====================================== */
+.logo-x { -fx-fill: #00d2ff; -fx-font-size: 48px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); }
+.logo-o { -fx-fill: #ff007f; -fx-font-size: 48px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); }
+
+/* ======================================
+   GLASS PANEL (XO STYLE)
+   ====================================== */
+.xo-glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 30;
+    -fx-border-color: rgba(0, 255, 240, 0.15);
+    -fx-border-radius: 30;
+    -fx-border-width: 1;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 40, 0, 0, 0);
+}
+
 .mode-title {
     -fx-text-fill: white;
-    -fx-font-family: "Arial Black";
-    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.4, 0, 0);
-    -fx-letter-spacing: 2px;
+    -fx-font-family: "Impact";
+    -fx-letter-spacing: 3px;
+    -fx-opacity: 0.9;
 }
 
 /* ======================================
-   CYBER BUTTONS (PILL STYLE)
+   ROUNDED ARENA BUTTONS
    ====================================== */
-.cyber-btn {
-    -fx-background-color: rgba(255,255,255,0.05);
-    -fx-background-radius: 40;
-    -fx-border-radius: 40;
-    -fx-border-width: 2.5;
+.xo-btn {
+    -fx-background-color: rgba(255, 255, 255, 0.02);
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-border-width: 2;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-min-height: 60;
+    -fx-min-height: 55;
     -fx-cursor: hand;
-    -fx-transition: 0.3s;
 }
 
-.blue-neon { -fx-border-color: #00d2ff; -fx-effect: dropshadow(gaussian, rgba(0,210,255,0.3), 12, 0, 0, 0); }
-.cyan-neon { -fx-border-color: #00fff0; -fx-effect: dropshadow(gaussian, rgba(0,255,240,0.3), 12, 0, 0, 0); }
-.pink-neon { -fx-border-color: #ff007f; -fx-effect: dropshadow(gaussian, rgba(255,0,127,0.3), 12, 0, 0, 0); }
+.blue-glow { -fx-border-color: #00d2ff; }
+.blue-glow:hover { -fx-background-color: #00d2ff; -fx-text-fill: #080a12; -fx-effect: dropshadow(gaussian, #00d2ff, 20, 0.5, 0, 0); }
 
-/* HOVER STATES */
-.blue-neon:hover { -fx-background-color: #00d2ff; -fx-text-fill: #050a10; -fx-effect: dropshadow(gaussian, #00d2ff, 25, 0.5, 0, 0); }
-.cyan-neon:hover { -fx-background-color: #00fff0; -fx-text-fill: #050a10; -fx-effect: dropshadow(gaussian, #00fff0, 25, 0.5, 0, 0); }
-.pink-neon:hover { -fx-background-color: #ff007f; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, #ff007f, 25, 0.5, 0, 0); }
+.cyan-glow { -fx-border-color: #00fff0; }
+.cyan-glow:hover { -fx-background-color: #00fff0; -fx-text-fill: #080a12; -fx-effect: dropshadow(gaussian, #00fff0, 20, 0.5, 0, 0); }
 
-.cyber-btn:pressed {
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
-}
+.pink-glow { -fx-border-color: #ff007f; }
+.pink-glow:hover { -fx-background-color: #ff007f; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, #ff007f, 20, 0.5, 0, 0); }
+
+.xo-btn:pressed { -fx-scale-x: 0.96; -fx-scale-y: 0.96; }

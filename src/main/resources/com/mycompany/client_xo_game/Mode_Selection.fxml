@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
 <StackPane fx:id="rootPane"
            prefWidth="900" prefHeight="700"
@@ -12,21 +13,23 @@
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mycompany.client_xo_game.Mode_SelectionController">
 
-    <Circle radius="150" fill="#00d2ff22" StackPane.alignment="TOP_RIGHT" translateX="50" translateY="-50" />
-    <Circle radius="100" fill="#ff007f11" StackPane.alignment="BOTTOM_LEFT" translateX="-30" translateY="30" />
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_LEFT" translateX="50" translateY="50"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_RIGHT" translateX="-50" translateY="-50"/>
 
     <VBox fx:id="contentBox"
           alignment="CENTER"
-          spacing="50"
-          maxWidth="550"
-          maxHeight="600"
-          styleClass="glass-panel">
+          spacing="40"
+          maxWidth="500"
+          maxHeight="550"
+          styleClass="xo-glass-panel">
 
-        <VBox alignment="CENTER" spacing="5">
-            <Label fx:id="titleLabel"
-                   text="SELECT MODE"
-                   styleClass="mode-title"/>
-            <Rectangle width="120" height="3" fill="#00fff0" arcWidth="5" arcHeight="5"/>
+        <VBox alignment="CENTER" spacing="10">
+            <HBox alignment="CENTER" spacing="15">
+                <Text text="X" styleClass="logo-x"/>
+                <Text text="O" styleClass="logo-o"/>
+            </HBox>
+            <Label fx:id="titleLabel" text="BATTLE ARENA" styleClass="mode-title"/>
+            <Line endX="150" stroke="#00fff0" strokeWidth="2.0" opacity="0.6"/>
         </VBox>
 
         <VBox fx:id="buttonContainer"
@@ -35,24 +38,22 @@
               fillWidth="true">
 
             <Button fx:id="btnComputer"
-                    text="VS COMPUTER"
+                    text="SINGLE PLAYER"
                     onAction="#goToLevelSelection"
                     maxWidth="Infinity"
-                    styleClass="cyber-btn blue-neon"/>
+                    styleClass="xo-btn blue-glow"/>
 
             <Button fx:id="btnOffline"
                     text="LOCAL MULTIPLAYER"
                     onAction="#goToOfflinePlayers"
                     maxWidth="Infinity"
-                    styleClass="cyber-btn cyan-neon"/>
+                    styleClass="xo-btn cyan-glow"/>
 
             <Button fx:id="btnOnline"
-                    text="GLOBAL BATTLE"
+                    text="ONLINE MATCH"
                     onAction="#goToLogin"
                     maxWidth="Infinity"
-                    styleClass="cyber-btn pink-neon"/>
+                    styleClass="xo-btn pink-glow"/>
         </VBox>
-        
-        <Label text="v1.0.2 Cyber Edition" style="-fx-text-fill: rgba(255,255,255,0.3); -fx-font-size: 10px;"/>
     </VBox>
 </StackPane>
