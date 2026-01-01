@@ -1,32 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="800.0" 
-           styleClass="main-root" stylesheets="@/styles/mode_selection.css" 
-           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" 
+<StackPane fx:id="rootPane"
+           prefWidth="800" prefHeight="600"
+           stylesheets="@/styles/mode_selection.css"
+           styleClass="mode-root"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mycompany.client_xo_game.Mode_SelectionController">
-   
-   <children>
-      <VBox fx:id="contentBox" alignment="CENTER" spacing="40.0" maxWidth="500.0">
-         <children>
-            <Label fx:id="titleLabel" styleClass="neon-title" text="CHOOSE MODE" />
-            
-            <VBox fx:id="buttonContainer" spacing="20.0" alignment="CENTER" fillWidth="true">
-                <children>
-                    <Button fx:id="btnComputer" maxWidth="Infinity" minHeight="80.0" 
-                            onAction="#goToLevelSelection" styleClass="cyber-button blue-side" 
-                            text="VS COMPUTER" />
-                    <Button fx:id="btnOffline" maxWidth="Infinity" minHeight="80.0" 
-                            onAction="#goToOfflinePlayers" styleClass="cyber-button blue-side" 
-                            text="OFFLINE PLAYERS" />
-                    <Button fx:id="btnOnline" maxWidth="Infinity" minHeight="80.0" 
-                            onAction="#goToLogin" styleClass="cyber-button pink-side" 
-                            text="ONLINE BATTLE" />
-                </children>
-            </VBox>
-         </children>
-      </VBox>
-   </children>
+
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="40"
+          maxWidth="520">
+
+        <!-- TITLE -->
+        <Label fx:id="titleLabel"
+               text="CHOOSE MODE"
+               styleClass="mode-title"/>
+
+        <!-- MODE BUTTONS -->
+        <VBox fx:id="buttonContainer"
+              alignment="CENTER"
+              spacing="25"
+              fillWidth="true">
+
+            <Button fx:id="btnComputer"
+                    text="VS COMPUTER"
+                    onAction="#goToLevelSelection"
+                    maxWidth="Infinity"
+                    styleClass="cyber-btn blue"/>
+
+            <Button fx:id="btnOffline"
+                    text="OFFLINE PLAYERS"
+                    onAction="#goToOfflinePlayers"
+                    maxWidth="Infinity"
+                    styleClass="cyber-btn cyan"/>
+
+            <Button fx:id="btnOnline"
+                    text="ONLINE BATTLE"
+                    onAction="#goToLogin"
+                    maxWidth="Infinity"
+                    styleClass="cyber-btn pink"/>
+        </VBox>
+
+    </VBox>
 </StackPane>

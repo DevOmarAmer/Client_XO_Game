@@ -45,7 +45,7 @@ public class Mode_SelectionController {
             double width = newVal.doubleValue();
 
             // Font scaling
-            double titleFontSize = Math.max(24, width / 13);
+            double titleFontSize = Math.max(24, width / 20);
             double btnFontSize = Math.max(16, width / 35);
 
             titleLabel.setStyle("-fx-font-size: " + titleFontSize + "px;");
