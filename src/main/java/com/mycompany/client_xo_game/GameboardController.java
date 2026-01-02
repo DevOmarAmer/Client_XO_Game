@@ -99,7 +99,13 @@ public class GameboardController implements Initializable {
 
     @FXML
     private void goBack() {
+        if(mode == GameMode.HUMAN_VS_COMPUTER_MODE){
+            Navigation.goTo(Routes.LEVEL_SELECTION);
+        }
+        else{
         Navigation.goTo(Routes.MODE_SELECTION);
+        }
+        
     }
 
     @FXML
