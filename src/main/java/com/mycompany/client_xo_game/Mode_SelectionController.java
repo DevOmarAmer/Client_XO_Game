@@ -1,5 +1,7 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.enums.GameMode;
+import com.mycompany.client_xo_game.model.GameSession;
 import javafx.fxml.FXML;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
@@ -74,18 +76,22 @@ public class Mode_SelectionController {
     // -----------------------------
     // Button navigation
     // -----------------------------
+
     @FXML private void goToLevelSelection() { 
         animateButton(btnComputer); 
+         GameSession.setGameMode(GameMode.HUMAN_VS_COMPUTER_MODE);
         Navigation.goTo(Routes.LEVEL_SELECTION); 
     }
 
     @FXML private void goToOfflinePlayers() { 
         animateButton(btnOffline); 
+         GameSession.setGameMode(GameMode.LOCAL_MODE);
         Navigation.goTo(Routes.OFFLINE_PLAYERS); 
     }
 
     @FXML private void goToLogin() { 
         animateButton(btnOnline); 
+         GameSession.setGameMode(GameMode.ONLINE_MODE);
         Navigation.goTo(Routes.LOGIN); 
     }
 
