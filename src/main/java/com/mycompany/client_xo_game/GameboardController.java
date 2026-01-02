@@ -156,8 +156,41 @@ public class GameboardController implements Initializable {
                 }
             }
         }
+        else if(mode == GameMode.LOCAL_MODE){
+             if (clickedCell.getChildren().isEmpty()) {
+               
+                if (Xturn && gameBoard.checkWinner() == Cell.EMPTY) {
+                    placeMove(clickedCell, Cell.X);
+                    gameBoard.getGrid()[row][col] = Cell.X;
+                    Xturn = false;
+                } else {
+                    if(!actionTaken && gameBoard.checkWinner() == Cell.EMPTY){
+                    placeMove(clickedCell, Cell.O);
+                    gameBoard.getGrid()[row][col] = Cell.O;
+                    Xturn = true; 
+                }}
 
-    }
+                
+                Cell winnerCell = gameBoard.checkWinner();
+                if (winnerCell != Cell.EMPTY) {
+                    System.out.println("Winner: " + winnerCell);
+                    turnLabel.setText("Winner: " + winnerCell);
+                    actionTaken = true;
+                } else if (gameBoard.isFull()) {
+                    System.out.println("Draw!");
+                    turnLabel.setText("Draw!");
+                    actionTaken = true;
+                }
+                
+             
+                if (!actionTaken) {
+                    turnLabel.setText(Xturn ? player1 + " Turn" : player2 + " Turn");
+                }
+            }
+        }
+        }
+
+    
 
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
