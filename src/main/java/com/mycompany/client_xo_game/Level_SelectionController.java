@@ -1,5 +1,8 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.enums.AIDifficulty;
+import com.mycompany.client_xo_game.enums.GameMode;
+import com.mycompany.client_xo_game.model.GameSession;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +16,7 @@ import com.mycompany.client_xo_game.navigation.Routes;
 
 public class Level_SelectionController {
 
+     AIDifficulty level;
     @FXML
     private StackPane rootPane;
     @FXML
@@ -89,28 +93,32 @@ public class Level_SelectionController {
        =============================== */
     @FXML
     private void easy() {
+        GameSession.setDifficulty(AIDifficulty.EASY);
         goToGameboard("EASY", btnEasy);
     }
 
     @FXML
     private void medium() {
+         GameSession.setDifficulty(AIDifficulty.MEDIUM);
         goToGameboard("MEDIUM", btnMedium);
     }
 
     @FXML
     private void hard() {
+         GameSession.setDifficulty(AIDifficulty.HARD);
         goToGameboard("HARD", btnHard);
     }
 
-    private void goToGameboard(String level, Button btn) {
+       private void goToGameboard(String level, Button btn) {
         press(btn);
 
         GameboardController controller
                 = Navigation.loadController(Routes.GAMEBOARD);
-        controller.setLevel(level);
+//        controller.setLevel(level);
 
         Navigation.goTo(Routes.GAMEBOARD);
     }
+
 
     @FXML
     private void goBack() {

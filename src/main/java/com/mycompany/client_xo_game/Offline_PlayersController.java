@@ -1,5 +1,6 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.enums.GameMode;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -107,20 +108,21 @@ public class Offline_PlayersController {
     }
 
     @FXML
-    private void playGame() {
-        animateButton(play_id);
-        
-        String p1 = player_one_id.getText().trim();
-        String p2 = Player_two_id.getText().trim();
 
-        if (p1.isEmpty() || p2.isEmpty()) {
-            System.out.println("Both players must enter names");
-            return;
-        }
+private void playGame() {
 
-        GameboardController controller = Navigation.loadAndGoTo(Routes.GAMEBOARD);
-        controller.setPlayerNames(p1, p2);
-    }
+    String p1 = player_one_id.getText().trim();
+    String p2 = Player_two_id.getText().trim();
+
+    if (p1.isEmpty() || p2.isEmpty()) return;
+
+    GameboardController controller =
+            Navigation.loadAndGoTo(Routes.GAMEBOARD);
+
+   
+    controller.setPlayerNames(p1, p2);
+}
+
 
     // -----------------------------
     // Smooth button press animation
