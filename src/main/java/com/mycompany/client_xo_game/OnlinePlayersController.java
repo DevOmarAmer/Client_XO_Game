@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -18,7 +19,7 @@ public class OnlinePlayersController {
     @FXML
     private VBox contentBox;
     @FXML
-    private ListView<Player> playersList; // Changed to Player object
+    private ListView<Player> playersList;
     @FXML
     private Button profileBtn;
 
@@ -26,7 +27,7 @@ public class OnlinePlayersController {
     private static class Player {
 
         String name;
-        boolean isOnline; // true = Online, false = In Game/Busy
+        boolean isOnline;
 
         public Player(String name, boolean isOnline) {
             this.name = name;
@@ -69,22 +70,27 @@ public class OnlinePlayersController {
                     // Col 1: Name
                     Label nameLabel = new Label(player.name);
                     nameLabel.getStyleClass().add("player-name");
-                    nameLabel.setPrefWidth(250); // Fixed width for alignment
+                    nameLabel.setPrefWidth(250);
 
                     // Col 2: Status
-                    Label statusLabel = new Label(player.isOnline ? "🟢 Online" : "🔴 In Game");
+                    Label statusLabel = new Label(player.isOnline ? "●  Online" : "●  In Game");                    // Note: Emojis provide the color for the circle, CSS provides color for text.
+                    // Changed In-Game emoji to yellow/orange circle if desired, or keep red.
+                    // If you want purely CSS circles, you'd use Shapes, but emojis are simpler here.
+
                     statusLabel.getStyleClass().add(player.isOnline ? "status-online" : "status-busy");
                     statusLabel.setPrefWidth(150);
-                    statusLabel.setAlignment(Pos.CENTER);
+
+                    // --- ALIGNMENT: Start from beginning of column ---
+                    statusLabel.setAlignment(Pos.CENTER_LEFT);
+                    statusLabel.setPadding(new Insets(0, 0, 0, 10));
 
                     // Col 3: Action (Spacer + Button)
                     Region spacer = new Region();
-                    HBox.setHgrow(spacer, Priority.ALWAYS); // Push button to right
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
 
                     Button inviteBtn = new Button("SEND INVITE");
                     inviteBtn.getStyleClass().add("invite-btn");
 
-                    // Logic: Only show invite if online
                     if (!player.isOnline) {
                         inviteBtn.setVisible(false);
                     } else {
@@ -94,7 +100,7 @@ public class OnlinePlayersController {
                     // Container
                     HBox container = new HBox(10, nameLabel, statusLabel, spacer, inviteBtn);
                     container.setAlignment(Pos.CENTER_LEFT);
-                    container.setPadding(new javafx.geometry.Insets(5, 10, 5, 10));
+                    container.setPadding(new Insets(5, 10, 5, 10));
 
                     setGraphic(container);
                 }
@@ -110,7 +116,6 @@ public class OnlinePlayersController {
 
     private void handleInvite(String playerName) {
         System.out.println("Sending invitation to: " + playerName);
-        // Add network logic here
     }
 
     private void playExitTransition(Runnable onFinished) {
@@ -123,7 +128,6 @@ public class OnlinePlayersController {
     // --- Navigation Actions ---
     @FXML
     private void goToProfile() {
-        // Ensure "Profile" is added to your Routes class
         playExitTransition(() -> Navigation.goTo(Routes.Profile));
     }
 
