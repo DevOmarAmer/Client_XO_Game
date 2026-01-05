@@ -33,14 +33,16 @@
     -fx-fill: #00fff0;
     -fx-font-family: "Impact";
     -fx-font-size: 48px;
-    -fx-effect: dropshadow(gaussian, #00fff0, 20, 0.4, 0, 0);
+    /* Reduced Glow: Radius 10, Spread 0.1 */
+    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.1, 0, 0);
 }
 
 .title-neon-pink {
     -fx-fill: #ff007f;
     -fx-font-family: "Impact";
     -fx-font-size: 48px;
-    -fx-effect: dropshadow(gaussian, #ff007f, 20, 0.4, 0, 0);
+    /* Reduced Glow: Radius 10, Spread 0.1 */
+    -fx-effect: dropshadow(gaussian, #ff007f, 10, 0.1, 0, 0);
 }
 
 /* ======================================

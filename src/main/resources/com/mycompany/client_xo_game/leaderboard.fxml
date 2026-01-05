@@ -13,32 +13,32 @@
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mycompany.client_xo_game.LeaderboardController">
 
-    <Circle radius="200" styleClass="bg-glow" StackPane.alignment="CENTER"/>
+    <Circle radius="250" styleClass="bg-glow" StackPane.alignment="CENTER"/>
 
     <Button text="← BACK"
             onAction="#goBack"
             styleClass="xo-back-btn"
             StackPane.alignment="TOP_LEFT"
-            translateX="30"
-            translateY="30"/>
+            translateX="40"
+            translateY="40"/>
 
     <VBox fx:id="contentBox"
           alignment="CENTER"
-          spacing="15"
-          maxWidth="550"
+          spacing="20"
+          maxWidth="600"
           maxHeight="650"
           styleClass="xo-glass-panel">
 
         <VBox alignment="CENTER" spacing="5">
             <Text text="LEADERBOARD" styleClass="title-gold"/>
             <Text text="TOP PLAYERS" styleClass="subtitle"/>
-            <Line endX="180" stroke="#FFD700" strokeWidth="3.0" opacity="0.8"/>
+            <Line endX="200" stroke="#FFD700" strokeWidth="3.0" opacity="0.8"/>
         </VBox>
 
-        <HBox spacing="10" styleClass="list-header">
-            <Label text="RANK" minWidth="60"/>
-            <Label text="PLAYER" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
-            <Label text="SCORE" minWidth="80" alignment="CENTER_RIGHT"/>
+        <HBox spacing="10" styleClass="list-header" alignment="CENTER_LEFT">
+            <Label text="RANK" styleClass="header-label" prefWidth="80" alignment="CENTER"/>
+            <Label text="PLAYER" styleClass="header-label" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+            <Label text="SCORE" styleClass="header-label" prefWidth="100" alignment="CENTER_RIGHT"/>
         </HBox>
 
         <ListView fx:id="scoreList" VBox.vgrow="ALWAYS" styleClass="neon-list-view"/>

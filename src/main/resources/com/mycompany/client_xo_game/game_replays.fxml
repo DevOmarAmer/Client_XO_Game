@@ -20,14 +20,14 @@
             onAction="#goBack"
             styleClass="xo-back-btn"
             StackPane.alignment="TOP_LEFT"
-            translateX="30"
-            translateY="30"/>
+            translateX="40"
+            translateY="40"/>
 
     <VBox fx:id="contentBox"
           alignment="CENTER"
           spacing="20"
           maxWidth="600"
-          maxHeight="600"
+          maxHeight="650"
           styleClass="xo-glass-panel">
 
         <VBox alignment="CENTER" spacing="5">

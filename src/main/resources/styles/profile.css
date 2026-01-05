@@ -124,7 +124,7 @@
     -fx-background-color: rgba(0, 255, 240, 0.12);
     -fx-border-color: #00fff0;
     -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 10, 0.5, 0, 0);
-
+    
 }
 .action-btn {
     -fx-background-color: transparent;
