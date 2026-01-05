@@ -1,0 +1,145 @@
+/* ======================================
+   THEMATIC BACKGROUND
+   ====================================== */
+.main-root {
+    -fx-background-color: #080a12;
+    -fx-background-image: radial-gradient(center 50% 0%, radius 100%, #1c0b24 0%, #080a12 100%);
+}
+
+.bg-symbol-x {
+    -fx-font-size: 250px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(0, 210, 255, 0.03);
+}
+.bg-symbol-o {
+    -fx-font-size: 250px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(255, 0, 127, 0.03);
+}
+
+/* ======================================
+   GLASS PANEL
+   ====================================== */
+.xo-glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 30;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-radius: 30;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 40, 0, 0, 0);
+}
+
+/* ======================================
+   AVATAR & INFO
+   ====================================== */
+.avatar-circle {
+    -fx-fill: rgba(255, 255, 255, 0.05);
+    -fx-stroke: #00fff0;
+    -fx-stroke-width: 3;
+    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.4, 0, 0);
+}
+
+.edit-avatar-btn {
+    -fx-background-color: #00fff0;
+    -fx-background-radius: 20;
+    -fx-text-fill: black;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-padding: 5;
+}
+
+.profile-name {
+    -fx-text-fill: white;
+    -fx-font-family: "Impact";
+    -fx-font-size: 32px;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 10, 0, 0, 0);
+}
+
+.profile-email {
+    -fx-text-fill: gray;
+    -fx-font-size: 16px;
+}
+.profile-score {
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+/* ======================================
+   STATS BOXES
+   ====================================== */
+.stat-box {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-background-radius: 15;
+    -fx-padding: 15;
+    -fx-min-width: 100;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+}
+
+.stat-title {
+    -fx-text-fill: rgba(255,255,255,0.6);
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.stat-value {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.stat-win   {
+    -fx-border-color: #00ff00;
+    -fx-effect: dropshadow(gaussian, rgba(0,255,0,0.2), 10, 0, 0, 0);
+}
+.stat-draw  {
+    -fx-border-color: #ffff00;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,0,0.2), 10, 0, 0, 0);
+}
+.stat-loss  {
+    -fx-border-color: #ff004c;
+    -fx-effect: dropshadow(gaussian, rgba(255,0,76,0.2), 10, 0, 0, 0);
+}
+
+/* ======================================
+   BUTTONS
+   ====================================== */
+.action-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #00fff0;
+    -fx-border-radius: 30;
+    -fx-text-fill: #00fff0;
+    -fx-font-weight: bold;
+    -fx-min-width: 200;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+}
+.action-btn:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.1);
+}
+
+.logout-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #ff004c;
+    -fx-border-radius: 30;
+    -fx-text-fill: #ff004c;
+    -fx-font-weight: bold;
+    -fx-min-width: 200;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+}
+.logout-btn:hover {
+    -fx-background-color: rgba(255, 0, 76, 0.1);
+}
+
+.xo-back-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 40;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 8 20;
+}
+.xo-back-btn:hover {
+    -fx-border-color: white;
+}

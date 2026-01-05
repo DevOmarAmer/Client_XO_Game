@@ -6,43 +6,51 @@
 <?import javafx.scene.text.*?>
 
 <StackPane fx:id="rootPane"
-           prefWidth="900" prefHeight="700"
+           prefWidth="1024" prefHeight="768"
            stylesheets="@/styles/online_players.css"
            styleClass="main-root"
            xmlns="http://javafx.com/javafx/13"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mycompany.client_xo_game.OnlinePlayersController">
 
-    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-30" translateY="80"/>
-    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="30" translateY="-50"/>
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-50" translateY="60"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="40" translateY="-40"/>
 
-    <Button text="← BACK"
-            onAction="#goBack"
-            styleClass="xo-back-btn"
+    <Button fx:id="profileBtn"
+            text="👤"
+            onAction="#goToProfile"
+            styleClass="profile-btn"
             StackPane.alignment="TOP_LEFT"
-            translateX="30"
-            translateY="30"/>
+            translateX="40"
+            translateY="40"/>
 
     <VBox fx:id="contentBox"
           alignment="CENTER"
-          spacing="20"
-          maxWidth="600"
-          maxHeight="600"
+          spacing="25"
+          maxWidth="750"
+          maxHeight="700"
           styleClass="xo-glass-panel">
 
-        <VBox alignment="CENTER" spacing="5">
-            <HBox alignment="CENTER" spacing="10">
+        <VBox alignment="CENTER" spacing="8">
+            <HBox alignment="CENTER" spacing="15">
                 <Text text="ONLINE" styleClass="title-neon-blue"/>
                 <Text text="PLAYERS" styleClass="title-neon-pink"/>
             </HBox>
-            <Line endX="200" stroke="#00fff0" strokeWidth="2.0" opacity="0.6"/>
+            <Line endX="300" stroke="#00fff0" strokeWidth="3.0" opacity="0.6"/>
         </VBox>
+
+        <HBox spacing="10" styleClass="list-header" alignment="CENTER_LEFT">
+            <Label text="PLAYER NAME" styleClass="header-label" prefWidth="250"/>
+            <Label text="STATUS" styleClass="header-label" alignment="CENTER" prefWidth="150"/>
+            <Region HBox.hgrow="ALWAYS"/> 
+            <Label text="ACTION" styleClass="header-label" alignment="CENTER_RIGHT" prefWidth="120"/>
+        </HBox>
 
         <ListView fx:id="playersList" VBox.vgrow="ALWAYS" styleClass="neon-list-view"/>
 
-        <HBox alignment="CENTER" spacing="30" styleClass="nav-bar">
+        <HBox alignment="CENTER" spacing="50" styleClass="nav-bar">
             <Button text="📺 Game Replays" onAction="#goToReplays" styleClass="nav-btn"/>
-            <Line startY="0" endY="20" stroke="white" opacity="0.3"/>
+            <Line startY="0" endY="30" stroke="white" opacity="0.3"/>
             <Button text="🏆 Leaderboard" onAction="#goToLeaderboard" styleClass="nav-btn"/>
         </HBox>
 
