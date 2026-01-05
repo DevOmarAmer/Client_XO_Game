@@ -5,4 +5,5 @@ module com.mycompany.client_xo_game {
     requires javafx.media;
     opens com.mycompany.client_xo_game to javafx.fxml;
     exports com.mycompany.client_xo_game;
+    requires org.json;
 }

@@ -15,7 +15,7 @@ public class NetworkConnection {
     private BufferedReader in;
     private PrintWriter out;
     private String ip = "127.0.0.1"; // Change to Server IP if on different machine
-    private int port = 6666;         // Must match Server.PORT
+    private int port = 8888;         // Must match Server.PORT
     private Consumer<JSONObject> listener;
 
     private NetworkConnection() {
