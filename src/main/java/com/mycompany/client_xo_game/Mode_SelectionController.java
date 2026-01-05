@@ -16,8 +16,7 @@ public class Mode_SelectionController {
     @FXML private VBox contentBox;
     @FXML private VBox buttonContainer;
     @FXML private Label titleLabel;
-
-    @FXML private Button btnComputer, btnOffline, btnOnline;
+    @FXML private Button btnComputer, btnOffline, btnOnline , btnviewPreviousMatches;
 
     @FXML
     public void initialize() {
@@ -56,6 +55,7 @@ public class Mode_SelectionController {
             btnComputer.setStyle(buttonFontStyle);
             btnOffline.setStyle(buttonFontStyle);
             btnOnline.setStyle(buttonFontStyle);
+            btnviewPreviousMatches.setStyle(buttonFontStyle);
 
             // Dynamic spacing
             contentBox.setSpacing(width * 0.06);
@@ -71,6 +71,7 @@ public class Mode_SelectionController {
         addHoverAnimation(btnComputer, "#00d2ff");
         addHoverAnimation(btnOffline, "#00d2ff");
         addHoverAnimation(btnOnline, "#ff007f");
+        addHoverAnimation(btnviewPreviousMatches, "#ff007f");
     }
 
     // -----------------------------
@@ -95,6 +96,12 @@ public class Mode_SelectionController {
         Navigation.goTo(Routes.LOGIN); 
     }
 
+    @FXML 
+    private void onViewPreviousMatches() { 
+         animateButton(btnviewPreviousMatches); 
+         Navigation.goTo(Routes.GAME_RECORDS_OFFLINE); 
+     
+    }
     // -----------------------------
     // Smooth button press animation
     // -----------------------------

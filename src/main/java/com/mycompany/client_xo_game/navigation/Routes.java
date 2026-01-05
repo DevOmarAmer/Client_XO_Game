@@ -12,4 +12,5 @@ public class Routes {
     public static final String ONLINE_PLAYERS = "Online_Players";
     public static final String GAMEBOARD = "Gameboard";
     public static final String WIN_LOSE = "Win_Lose";
+    public static final String GAME_RECORDS_OFFLINE = "Offline_Game_Records";
 }
