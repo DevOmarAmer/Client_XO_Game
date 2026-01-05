@@ -36,149 +36,125 @@ public class Win_LoseController implements Initializable {
     private GameMode currentMode;
     private Stage stage;
     
-    /**
-     * Initializes the controller class.
-     */
+   
+ 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         currentMode = GameSession.getGameMode();
     }
     
-    /**
-     * Set the stage for this controller (called by Navigation)
-     */
+   
     public void setStage(Stage stage) {
         this.stage = stage;
     }
     
-    /**
-     * Show the modal window (call this after configuring the controller)
-     */
+
     public void show() {
         if (stage != null) {
             stage.showAndWait();
         }
     }
-    
-    /**
-     * Set result for Human vs Computer mode - Win or Lose
-     * @param won true if player won, false if player lost
-     */
+ 
     public void setResult(boolean won) {
-        System.out.println("setResult called with won=" + won); // Debug
+        System.out.println("setResult called with won=" + won); 
         
         if (won) {
             stateText.setText("You Won !!!!!");
             stateText.getStyleClass().clear();
             stateText.getStyleClass().add("win-text");
-            playWinMedia();
+//            playWinMedia();
         } else {
             stateText.setText("You Lost :(");
             stateText.getStyleClass().clear();
             stateText.getStyleClass().add("lose-text");
-            playLoseMedia();
+//            playLoseMedia();
         }
         
-        // Show the stage after setting the content
+
         show();
     }
    
-    /**
-     * Set result for Draw (both modes)
-     */
+  
     public void setResultDraw() {
-        System.out.println("setResultDraw called"); // Debug
+        System.out.println("setResultDraw called"); 
         
         stateText.setText("It's a Draw!");
         stateText.getStyleClass().clear();
         stateText.getStyleClass().add("draw-text");
-        playDrawMedia();
-        
-        // Show the stage after setting the content
+//        playDrawMedia();
+  
         show();
     }
     
-    /**
-     * Set result for Local Mode - displays winner name
-     * @param winnerName name of the winning player
-     */
+   
     public void setResultLocalMode(String winnerName) {
         System.out.println("setResultLocalMode called with winner=" + winnerName); // Debug
         
         stateText.setText(winnerName + " Wins!");
         stateText.getStyleClass().clear();
         stateText.getStyleClass().add("win-text");
-        playWinMedia();
+//        playWinMedia();
         
-        // Show the stage after setting the content
+   
         show();
     }
+   
+//    private void playWinMedia() {
+//        try {
+//            stopCurrentMedia();
+//            String mediaPath = getClass().getResource("/assets/win.mp4").toExternalForm();
+//            Media media = new Media(mediaPath);
+//            mediaPlayer = new MediaPlayer(media);
+//            mediaView.setMediaPlayer(mediaPlayer);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+//            mediaPlayer.play();
+//        } catch (Exception e) {
+//            System.out.println("Win media not found (this is okay for now): " + e.getMessage());
+//        }
+//    }
     
-    /**
-     * Play winning animation/video
-     */
-    private void playWinMedia() {
-        try {
-            stopCurrentMedia();
-            String mediaPath = getClass().getResource("/assets/win.mp4").toExternalForm();
-            Media media = new Media(mediaPath);
-            mediaPlayer = new MediaPlayer(media);
-            mediaView.setMediaPlayer(mediaPlayer);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.play();
-        } catch (Exception e) {
-            System.out.println("Win media not found (this is okay for now): " + e.getMessage());
-        }
-    }
+  
+//    private void playLoseMedia() {
+//        try {
+//            stopCurrentMedia();
+//            String mediaPath = getClass().getResource("/assets/lose.mp4").toExternalForm();
+//            Media media = new Media(mediaPath);
+//            mediaPlayer = new MediaPlayer(media);
+//            mediaView.setMediaPlayer(mediaPlayer);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+//            mediaPlayer.play();
+//        } catch (Exception e) {
+//            System.out.println("Lose media not found (this is okay for now): " + e.getMessage());
+//        }
+//    }
     
-    /**
-     * Play losing animation/video
-     */
-    private void playLoseMedia() {
-        try {
-            stopCurrentMedia();
-            String mediaPath = getClass().getResource("/assets/lose.mp4").toExternalForm();
-            Media media = new Media(mediaPath);
-            mediaPlayer = new MediaPlayer(media);
-            mediaView.setMediaPlayer(mediaPlayer);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.play();
-        } catch (Exception e) {
-            System.out.println("Lose media not found (this is okay for now): " + e.getMessage());
-        }
-    }
+  
+//    private void playDrawMedia() {
+//        try {
+//            stopCurrentMedia();
+//            String mediaPath = getClass().getResource("/assets/draw.mp4").toExternalForm();
+//            Media media = new Media(mediaPath);
+//            mediaPlayer = new MediaPlayer(media);
+//            mediaView.setMediaPlayer(mediaPlayer);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+//            mediaPlayer.play();
+//        } catch (Exception e) {
+//            System.out.println("Draw media not found (this is okay for now): " + e.getMessage());
+//        }
+//    }
     
-    /**
-     * Play draw animation/video
-     */
-    private void playDrawMedia() {
-        try {
-            stopCurrentMedia();
-            String mediaPath = getClass().getResource("/assets/draw.mp4").toExternalForm();
-            Media media = new Media(mediaPath);
-            mediaPlayer = new MediaPlayer(media);
-            mediaView.setMediaPlayer(mediaPlayer);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.play();
-        } catch (Exception e) {
-            System.out.println("Draw media not found (this is okay for now): " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Stop currently playing media
-     */
-    private void stopCurrentMedia() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-            mediaPlayer = null;
-        }
-    }
+   
+//    private void stopCurrentMedia() {
+//        if (mediaPlayer != null) {
+//            mediaPlayer.stop();
+//            mediaPlayer.dispose();
+//            mediaPlayer = null;
+//        }
+//    }
     
     @FXML
     private void onCloseButtonPressed(ActionEvent event) {
-        stopCurrentMedia();
+//        stopCurrentMedia();
         
         if (stage != null) {
             stage.close();
@@ -189,16 +165,12 @@ public class Win_LoseController implements Initializable {
      
         GameMode mode = GameSession.getGameMode();
         GameSession.clearSession();
-        if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
-            Navigation.goTo(Routes.LEVEL_SELECTION);
-        } else {
-            Navigation.goTo(Routes.MODE_SELECTION);
-        }
+        Navigation.goTo(Routes.MODE_SELECTION);
     }
     
     @FXML
     private void onPlayAgainButtonPressed(ActionEvent event) {
-        stopCurrentMedia();
+//        stopCurrentMedia();
         
         if (stage != null) {
             stage.close();
