@@ -16,22 +16,19 @@ import com.mycompany.client_xo_game.navigation.Routes;
 
 public class Level_SelectionController {
 
-     AIDifficulty level;
     @FXML
     private StackPane rootPane;
-    @FXML
+    @FXML 
     private VBox contentBox;
-    @FXML
+    @FXML 
     private VBox buttonContainer;
-    @FXML
+    @FXML 
     private Label titleLabel;
-
-    @FXML
+    @FXML 
     private Button btnEasy, btnMedium, btnHard, btnBack;
 
     @FXML
     public void initialize() {
-
         /* ===============================
            Entrance fade + slide
            =============================== */
@@ -93,32 +90,24 @@ public class Level_SelectionController {
        =============================== */
     @FXML
     private void easy() {
+        press(btnEasy);
         GameSession.setDifficulty(AIDifficulty.EASY);
-        goToGameboard("EASY", btnEasy);
+        Navigation.goTo(Routes.GAMEBOARD);
     }
 
     @FXML
     private void medium() {
-         GameSession.setDifficulty(AIDifficulty.MEDIUM);
-        goToGameboard("MEDIUM", btnMedium);
+        press(btnMedium);
+        GameSession.setDifficulty(AIDifficulty.MEDIUM);
+        Navigation.goTo(Routes.GAMEBOARD);
     }
 
     @FXML
     private void hard() {
-         GameSession.setDifficulty(AIDifficulty.HARD);
-        goToGameboard("HARD", btnHard);
-    }
-
-       private void goToGameboard(String level, Button btn) {
-        press(btn);
-
-        GameboardController controller
-                = Navigation.loadController(Routes.GAMEBOARD);
-//        controller.setLevel(level);
-
+        press(btnHard);
+        GameSession.setDifficulty(AIDifficulty.HARD);
         Navigation.goTo(Routes.GAMEBOARD);
     }
-
 
     @FXML
     private void goBack() {

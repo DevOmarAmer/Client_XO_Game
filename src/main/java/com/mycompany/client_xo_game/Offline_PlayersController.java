@@ -1,6 +1,9 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.enums.Cell;
 import com.mycompany.client_xo_game.enums.GameMode;
+import com.mycompany.client_xo_game.model.GameSession;
+import com.mycompany.client_xo_game.model.Player_Offline;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -15,14 +18,22 @@ import com.mycompany.client_xo_game.navigation.Routes;
 
 public class Offline_PlayersController {
 
-    @FXML private StackPane rootPane;
-    @FXML private VBox contentBox;
-    @FXML private VBox inputContainer;
-    @FXML private TextField player_one_id;
-    @FXML private TextField Player_two_id;
-    @FXML private Button back_id;
-    @FXML private Button play_id;
-    @FXML private Label titleLabel;
+    @FXML
+    private StackPane rootPane;
+    @FXML
+    private VBox contentBox;
+    @FXML
+    private VBox inputContainer;
+    @FXML
+    private TextField player_one_id;
+    @FXML
+    private TextField player_two_id;
+    @FXML
+    private Button back_id;
+    @FXML
+    private Button play_id;
+    @FXML
+    private Label titleLabel;
 
     @FXML
     public void initialize() {
@@ -39,8 +50,10 @@ public class Offline_PlayersController {
         // 2. Title breathing animation
         // -----------------------------
         ScaleTransition pulse = new ScaleTransition(Duration.millis(2000), titleLabel);
-        pulse.setFromX(1.0); pulse.setFromY(1.0);
-        pulse.setToX(1.06); pulse.setToY(1.06);
+        pulse.setFromX(1.0);
+        pulse.setFromY(1.0);
+        pulse.setToX(1.06);
+        pulse.setToY(1.06);
         pulse.setCycleCount(Animation.INDEFINITE);
         pulse.setAutoReverse(true);
         pulse.play();
@@ -59,11 +72,11 @@ public class Offline_PlayersController {
             double inputFont = Math.max(14, w / 50);
             String inputStyle = "-fx-font-size: " + inputFont + "px;";
             player_one_id.setStyle(inputStyle);
-            Player_two_id.setStyle(inputStyle);
+            player_two_id.setStyle(inputStyle);
 
             double inputHeight = Math.max(45, w / 15);
             player_one_id.setPrefHeight(inputHeight);
-            Player_two_id.setPrefHeight(inputHeight);
+            player_two_id.setPrefHeight(inputHeight);
 
             // Button font scaling
             double btnFont = Math.max(14, w / 50);
@@ -79,7 +92,7 @@ public class Offline_PlayersController {
             // VBox spacing scaling
             contentBox.setSpacing(w * 0.04);
             inputContainer.setSpacing(w * 0.03);
-            
+
             // Check if parent is HBox before casting to avoid ClassCastException
             if (back_id.getParent() instanceof HBox) {
                 ((HBox) back_id.getParent()).setSpacing(w * 0.03);
@@ -108,29 +121,30 @@ public class Offline_PlayersController {
     }
 
     @FXML
+    private void playGame() {//on playGame button pressed
+        String p1Name = player_one_id.getText().trim();
+        String p2Name = player_two_id.getText().trim();
 
-private void playGame() {
+        if (p1Name.isEmpty() || p2Name.isEmpty()) {
+            System.out.println("Both players must enter names");
+            return;
+        }
+        Player_Offline player1 = new Player_Offline(p1Name, Cell.X);
+        Player_Offline player2 = new Player_Offline(p2Name, Cell.O);
 
-    String p1 = player_one_id.getText().trim();
-    String p2 = Player_two_id.getText().trim();
-
-    if (p1.isEmpty() || p2.isEmpty()) return;
-
-    GameboardController controller =
-            Navigation.loadAndGoTo(Routes.GAMEBOARD);
-
-   
-    controller.setPlayerNames(p1, p2);
-}
-
+        GameSession.setPlayers(player1, player2);
+        Navigation.goTo(Routes.GAMEBOARD);
+    }
 
     // -----------------------------
     // Smooth button press animation
     // -----------------------------
     private void animateButton(Button btn) {
         ScaleTransition st = new ScaleTransition(Duration.millis(150), btn);
-        st.setFromX(1.0); st.setFromY(1.0);
-        st.setToX(0.92); st.setToY(0.92);
+        st.setFromX(1.0);
+        st.setFromY(1.0);
+        st.setToX(0.92);
+        st.setToY(0.92);
         st.setAutoReverse(true);
         st.setCycleCount(2);
         st.play();
@@ -142,13 +156,15 @@ private void playGame() {
     private void addHoverAnimation(Button btn) {
         btn.setOnMouseEntered(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
-            st.setToX(1.05); st.setToY(1.05);
+            st.setToX(1.05);
+            st.setToY(1.05);
             st.play();
         });
 
         btn.setOnMouseExited(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
-            st.setToX(1.0); st.setToY(1.0);
+            st.setToX(1.0);
+            st.setToY(1.0);
             st.play();
         });
     }

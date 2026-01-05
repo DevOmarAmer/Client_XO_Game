@@ -45,7 +45,7 @@
                        promptText="Player One Name"
                        styleClass="xo-input"/>
 
-            <TextField fx:id="Player_two_id"
+            <TextField fx:id="player_two_id"
                        promptText="Player Two Name"
                        styleClass="xo-input"/>
         </VBox>
