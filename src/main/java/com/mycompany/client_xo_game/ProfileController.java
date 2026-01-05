@@ -4,7 +4,6 @@ import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
@@ -13,8 +12,6 @@ public class ProfileController {
 
     @FXML
     private StackPane rootPane;
-    @FXML
-    private Circle avatarCircle;
     @FXML
     private Label usernameLabel;
     @FXML
@@ -32,22 +29,19 @@ public class ProfileController {
         fadeIn.setToValue(1);
         fadeIn.play();
 
-        // 2. Load User Data (Mock Data for now)
+        // 2. Load User Data
         loadUserData();
     }
 
     private void loadUserData() {
-        // In a real app, you would fetch this from your UserSession or Database
+        // Mock Data
         usernameLabel.setText("Ahmed Tayseer");
         emailLabel.setText("ahmed.t@example.com");
-        scoreLabel.setText("Total Score: 2500 XP");
+        scoreLabel.setText("2500"); // Just the number, handled styling in CSS
 
         winsLabel.setText("42");
         drawsLabel.setText("15");
         lossesLabel.setText("8");
-
-        // You can set an image to the circle here using:
-        // avatarCircle.setFill(new ImagePattern(new Image("path/to/image.png")));
     }
 
     @FXML
@@ -59,13 +53,11 @@ public class ProfileController {
     @FXML
     private void handleLogout() {
         System.out.println("Logging out...");
-        // Clear session logic here
         playExitTransition(() -> Navigation.goTo(Routes.LOGIN));
     }
 
     @FXML
     private void goBack() {
-        // Return to Online Players list
         playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
     }
 
