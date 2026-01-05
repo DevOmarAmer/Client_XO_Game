@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import org.json.JSONObject;
 
 public class LoginController {
 
@@ -116,7 +117,26 @@ public class LoginController {
             messageLabel.setText("Arena credentials required!");
             return;
         }
-        playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
+
+        // 1. Set the listener to handle the server's response
+        NetworkConnection.getInstance().setListener(this::onServerResponse);
+
+        // 2. Send Login Request
+        JSONObject json = new JSONObject();
+        json.put("type", "login");
+        json.put("username", usernameField.getText().trim());
+        json.put("password", passwordField.getText().trim());
+        NetworkConnection.getInstance().sendMessage(json);
+    }
+
+    private void onServerResponse(JSONObject json) {
+        if ("login_response".equals(json.optString("type"))) {
+            if ("success".equals(json.optString("status"))) {
+                playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
+            } else {
+                messageLabel.setText("Login Failed: " + json.optString("reason", "Unknown error"));
+            }
+        }
     }
 
     @FXML private void goToRegister() { playExitTransition(() -> Navigation.goTo(Routes.REGISTER)); }
