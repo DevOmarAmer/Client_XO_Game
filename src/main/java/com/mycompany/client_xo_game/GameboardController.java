@@ -10,10 +10,14 @@ import com.mycompany.client_xo_game.model.Move;
 import com.mycompany.client_xo_game.model.Player_Offline;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +26,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class GameboardController implements Initializable {
 
@@ -48,11 +55,12 @@ public class GameboardController implements Initializable {
     private Minimax ai;
     private GameMode mode;
     private AIDifficulty difficulty;
-    private boolean Xturn = true; //X starts the game 
+    private boolean Xturn = true;
     private Image xImage;
     private Image oImage;
     private Player_Offline player1;
     private Player_Offline player2;
+    private boolean gameEnded = false;
 
     public void updatePlayersLabels() {
         if (mode == GameMode.LOCAL_MODE) {
@@ -82,8 +90,8 @@ public class GameboardController implements Initializable {
         player2 = GameSession.getPlayer2();
         xImage = new Image(getClass().getResourceAsStream("/assets/X.png"));
         oImage = new Image(getClass().getResourceAsStream("/assets/O.png"));
-        
- 
+        gameEnded = false;
+
         updatePlayersLabels();
     }
 
@@ -98,12 +106,16 @@ public class GameboardController implements Initializable {
 
     @FXML
     private void onCellClicked(MouseEvent event) {
+        if (gameEnded) {
+            return;
+        }
+
         boolean actionTaken = false;
 
         StackPane clickedCell = (StackPane) event.getSource();
         int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);
         int col = GridPane.getColumnIndex(clickedCell) == null ? 0 : GridPane.getColumnIndex(clickedCell);
-        
+
         if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
             if (clickedCell.getChildren().isEmpty()) {
                 if (Xturn) {
@@ -115,19 +127,23 @@ public class GameboardController implements Initializable {
 
                 Cell winnerCell = gameBoard.checkWinner();
                 if (winnerCell != Cell.EMPTY) {
+                    gameEnded = true;
                     if (winnerCell == Cell.X) {
                         turnLabel.setText("You Win!");
+                        showWinLosePopup(true);
                     } else {
                         turnLabel.setText("Computer Wins!");
+                        showWinLosePopup(false);
                     }
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
+                    gameEnded = true;
                     turnLabel.setText("It's a Draw!");
+                    showDrawPopup();
                     actionTaken = true;
                 }
 
                 if (!actionTaken) {
-                    // AI move
                     Move bestMove = ai.getBestMove(gameBoard, difficulty);
                     if (bestMove != null) {
                         int aiRow = bestMove.getRow();
@@ -138,16 +154,20 @@ public class GameboardController implements Initializable {
                             placeMove(aiCell, Cell.O);
                         }
 
-                        // Check if AI move ends game
                         winnerCell = gameBoard.checkWinner();
                         if (winnerCell != Cell.EMPTY) {
+                            gameEnded = true;
                             if (winnerCell == Cell.O) {
                                 turnLabel.setText("Computer Wins!");
+                                showWinLosePopup(false);
                             } else {
                                 turnLabel.setText("You Win!");
+                                showWinLosePopup(true);
                             }
                         } else if (gameBoard.isFull()) {
+                            gameEnded = true;
                             turnLabel.setText("It's a Draw!");
+                            showDrawPopup();
                         } else {
                             Xturn = true;
                             turnLabel.setText("Your Turn");
@@ -155,8 +175,7 @@ public class GameboardController implements Initializable {
                     }
                 }
             }
-        } 
-        else if (mode == GameMode.LOCAL_MODE) {
+        } else if (mode == GameMode.LOCAL_MODE) {
             if (clickedCell.getChildren().isEmpty()) {
                 if (Xturn && gameBoard.checkWinner() == Cell.EMPTY) {
                     placeMove(clickedCell, Cell.X);
@@ -172,14 +191,19 @@ public class GameboardController implements Initializable {
 
                 Cell winnerCell = gameBoard.checkWinner();
                 if (winnerCell != Cell.EMPTY) {
+                    gameEnded = true;
                     if (winnerCell == Cell.X) {
-                        turnLabel.setText( player1.getName() + " Wins!");
+                        turnLabel.setText(player1.getName() + " Wins!");
+                        showLocalModeWinPopup(player1.getName());
                     } else {
                         turnLabel.setText(player2.getName() + " Wins!");
+                        showLocalModeWinPopup(player2.getName());
                     }
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
+                    gameEnded = true;
                     turnLabel.setText("It's a Draw!");
+                    showDrawPopup();
                     actionTaken = true;
                 }
 
@@ -209,4 +233,21 @@ public class GameboardController implements Initializable {
         }
         return null;
     }
+private void showWinLosePopup(boolean won) {
+    Win_LoseController controller =  Navigation.openModalWithController(Routes.WIN_LOSE);
+    controller.setResult(won);
+}
+
+
+  private void showDrawPopup() {
+    Win_LoseController controller =Navigation.openModalWithController(Routes.WIN_LOSE);
+    controller.setResultDraw();
+}
+
+private void showLocalModeWinPopup(String winnerName) {
+    Win_LoseController controller =Navigation.openModalWithController(Routes.WIN_LOSE);
+    controller.setResultLocalMode(winnerName);
+}
+
+
 }
