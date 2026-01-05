@@ -11,5 +11,5 @@ public class Routes {
     public static final String REGISTER = "Register";
     public static final String ONLINE_PLAYERS = "Online_Players";
     public static final String GAMEBOARD = "Gameboard";
-
+    public static final String WIN_LOSE = "Win_Lose";
 }

@@ -7,12 +7,17 @@ import com.mycompany.client_xo_game.game_engine.Board;
 import com.mycompany.client_xo_game.game_engine.Minimax;
 import com.mycompany.client_xo_game.model.GameSession;
 import com.mycompany.client_xo_game.model.Move;
+import com.mycompany.client_xo_game.model.Player_Offline;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,6 +26,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class GameboardController implements Initializable {
 
@@ -31,6 +39,10 @@ public class GameboardController implements Initializable {
     @FXML
     private HBox playersBar;
     @FXML
+    private Label playerNameP1;
+    @FXML
+    private Label playerNameP2;
+    @FXML
     private Label scoreP1;
     @FXML
     private Label scoreP2;
@@ -39,100 +51,99 @@ public class GameboardController implements Initializable {
     @FXML
     private GridPane board;
 
-    private String level;
-    private String player1;
-    private String player2;
     private Board gameBoard;
     private Minimax ai;
     private GameMode mode;
     private AIDifficulty difficulty;
-    private boolean Xturn = true; //X starts the game 
+    private boolean Xturn = true;
     private Image xImage;
     private Image oImage;
+    private Player_Offline player1;
+    private Player_Offline player2;
+    private boolean gameEnded = false;
 
-
-    public void setPlayerNames(String p1, String p2) {
-        this.player1 = p1;
-        this.player2 = p2;
-        updatePlayerLabels();
-    }
-
-//    private void updatePlayerLabels() {
-//        if (scoreP1 != null && scoreP2 != null) {
-//            scoreP1.setText(player1 + " Score: 0");
-//            scoreP2.setText(player2 + " Score: 0");
-//            turnLabel.setText(player1 + " Turn");
-//        }
-//    }
-    private void updatePlayerLabels() {
-        scoreP1.setText(player1 + " Score: 0");
-        scoreP2.setText(player2 + " Score: 0");
-        turnLabel.setText(Xturn ? player1 + " Turn" : player2 + " Turn");
+    public void updatePlayersLabels() {
+        if (mode == GameMode.LOCAL_MODE) {
+            if (player1 != null && player2 != null) {
+                if (playerNameP1 != null && playerNameP2 != null) {
+                    playerNameP1.setText(player1.getName());
+                    playerNameP2.setText(player2.getName());
+                    turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
+                }
+            }
+        } else if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
+            if (playerNameP1 != null && playerNameP2 != null) {
+                playerNameP1.setText("You");
+                playerNameP2.setText("Computer");
+                turnLabel.setText(Xturn ? "Your Turn" : "Computer's Turn");
+            }
+        }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null) {
-                onSceneShown();
-            }
-        });
         gameBoard = new Board();
         ai = new Minimax();
         mode = GameSession.getGameMode();
         difficulty = GameSession.getDifficulty();
+        player1 = GameSession.getPlayer1();
+        player2 = GameSession.getPlayer2();
         xImage = new Image(getClass().getResourceAsStream("/assets/X.png"));
         oImage = new Image(getClass().getResourceAsStream("/assets/O.png"));
-    }
+        gameEnded = false;
 
-
-
-    private void onSceneShown() {
-        if (level != null) {
-            turnLabel.setText(level + " MODE");
-        } else if (player1 != null && player2 != null) {
-            scoreP1.setText(player1 + " Score: 0");
-            scoreP2.setText(player2 + " Score: 0");
-            turnLabel.setText(player1 + "'s Turn");
-        }
+        updatePlayersLabels();
     }
 
     @FXML
     private void goBack() {
-        if(mode == GameMode.HUMAN_VS_COMPUTER_MODE){
+        if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
             Navigation.goTo(Routes.LEVEL_SELECTION);
+        } else {
+            Navigation.goTo(Routes.MODE_SELECTION);
         }
-        else{
-        Navigation.goTo(Routes.MODE_SELECTION);
-        }
-        
     }
 
     @FXML
     private void onCellClicked(MouseEvent event) {
+        if (gameEnded) {
+            return;
+        }
+
         boolean actionTaken = false;
 
         StackPane clickedCell = (StackPane) event.getSource();
-        int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);//getRowIndex might return null
+        int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);
         int col = GridPane.getColumnIndex(clickedCell) == null ? 0 : GridPane.getColumnIndex(clickedCell);
+
         if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
             if (clickedCell.getChildren().isEmpty()) {
                 if (Xturn) {
                     placeMove(clickedCell, Cell.X);
                     gameBoard.getGrid()[row][col] = Cell.X;
                     Xturn = false;
+                    turnLabel.setText("Computer's Turn");
                 }
 
-                Cell winnerCell = gameBoard.checkWinner();//check winning condition
+                Cell winnerCell = gameBoard.checkWinner();
                 if (winnerCell != Cell.EMPTY) {
-                    System.out.println("Winner: " + winnerCell);
+                    gameEnded = true;
+                    if (winnerCell == Cell.X) {
+                        turnLabel.setText("You Win!");
+                        showWinLosePopup(true);
+                    } else {
+                        turnLabel.setText("Computer Wins!");
+                        showWinLosePopup(false);
+                    }
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
-                    System.out.println("Draw!");
+                    gameEnded = true;
+                    turnLabel.setText("It's a Draw!");
+                    showDrawPopup();
                     actionTaken = true;
                 }
 
-                if (!actionTaken) {//ai move
+                if (!actionTaken) {
                     Move bestMove = ai.getBestMove(gameBoard, difficulty);
                     if (bestMove != null) {
                         int aiRow = bestMove.getRow();
@@ -143,54 +154,65 @@ public class GameboardController implements Initializable {
                             placeMove(aiCell, Cell.O);
                         }
 
-                        // check if AI move ends game
                         winnerCell = gameBoard.checkWinner();
                         if (winnerCell != Cell.EMPTY) {
-                            System.out.println("Winner: " + winnerCell);
+                            gameEnded = true;
+                            if (winnerCell == Cell.O) {
+                                turnLabel.setText("Computer Wins!");
+                                showWinLosePopup(false);
+                            } else {
+                                turnLabel.setText("You Win!");
+                                showWinLosePopup(true);
+                            }
                         } else if (gameBoard.isFull()) {
-                            System.out.println("Draw!");
+                            gameEnded = true;
+                            turnLabel.setText("It's a Draw!");
+                            showDrawPopup();
                         } else {
-                            Xturn = true;  // back to human
+                            Xturn = true;
+                            turnLabel.setText("Your Turn");
                         }
                     }
                 }
             }
-        }
-        else if(mode == GameMode.LOCAL_MODE){
-             if (clickedCell.getChildren().isEmpty()) {
-               
+        } else if (mode == GameMode.LOCAL_MODE) {
+            if (clickedCell.getChildren().isEmpty()) {
                 if (Xturn && gameBoard.checkWinner() == Cell.EMPTY) {
                     placeMove(clickedCell, Cell.X);
                     gameBoard.getGrid()[row][col] = Cell.X;
                     Xturn = false;
                 } else {
-                    if(!actionTaken && gameBoard.checkWinner() == Cell.EMPTY){
-                    placeMove(clickedCell, Cell.O);
-                    gameBoard.getGrid()[row][col] = Cell.O;
-                    Xturn = true; 
-                }}
+                    if (!actionTaken && gameBoard.checkWinner() == Cell.EMPTY) {
+                        placeMove(clickedCell, Cell.O);
+                        gameBoard.getGrid()[row][col] = Cell.O;
+                        Xturn = true;
+                    }
+                }
 
-                
                 Cell winnerCell = gameBoard.checkWinner();
                 if (winnerCell != Cell.EMPTY) {
-                    System.out.println("Winner: " + winnerCell);
-                    turnLabel.setText("Winner: " + winnerCell);
+                    gameEnded = true;
+                    if (winnerCell == Cell.X) {
+                        turnLabel.setText(player1.getName() + " Wins!");
+                        showLocalModeWinPopup(player1.getName());
+                    } else {
+                        turnLabel.setText(player2.getName() + " Wins!");
+                        showLocalModeWinPopup(player2.getName());
+                    }
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
-                    System.out.println("Draw!");
-                    turnLabel.setText("Draw!");
+                    gameEnded = true;
+                    turnLabel.setText("It's a Draw!");
+                    showDrawPopup();
                     actionTaken = true;
                 }
-                
-             
+
                 if (!actionTaken) {
-                    turnLabel.setText(Xturn ? player1 + " Turn" : player2 + " Turn");
+                    turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
                 }
             }
         }
-        }
-
-    
+    }
 
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
@@ -211,4 +233,21 @@ public class GameboardController implements Initializable {
         }
         return null;
     }
+private void showWinLosePopup(boolean won) {
+    Win_LoseController controller =  Navigation.openModalWithController(Routes.WIN_LOSE);
+    controller.setResult(won);
+}
+
+
+  private void showDrawPopup() {
+    Win_LoseController controller =Navigation.openModalWithController(Routes.WIN_LOSE);
+    controller.setResultDraw();
+}
+
+private void showLocalModeWinPopup(String winnerName) {
+    Win_LoseController controller =Navigation.openModalWithController(Routes.WIN_LOSE);
+    controller.setResultLocalMode(winnerName);
+}
+
+
 }

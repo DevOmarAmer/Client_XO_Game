@@ -39,20 +39,21 @@ public class Navigation {
             throw new RuntimeException("Failed to load and navigate to: " + route, e);
         }
     }
+public static <T> T openModalWithController(String route) {
+    try {
+        FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
+        Parent root = loader.load();
 
-    public static void openModal(String route, String title) {
-        try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
-            Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+//        stage.setTitle(title == null ? "" : title);
+        stage.setScene(new Scene(root));
+        stage.showAndWait();
 
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle(title == null ? "" : title);
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to open modal: " + route, e);
-        }
+        return loader.getController();
+    } catch (IOException e) {
+        throw new RuntimeException("Failed to open modal: " + route, e);
     }
+}
+
 }
