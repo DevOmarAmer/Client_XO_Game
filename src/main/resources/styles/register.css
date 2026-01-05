@@ -6,36 +6,36 @@
     -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #111a33 0%, #080a12 100%);
 }
 
-.bg-symbol-x { 
-    -fx-font-size: 220px; 
-    -fx-font-family: "Arial Black"; 
-    -fx-text-fill: rgba(0, 210, 255, 0.04); 
+.bg-symbol-x {
+    -fx-font-size: 220px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(0, 210, 255, 0.04);
 }
-.bg-symbol-o { 
-    -fx-font-size: 220px; 
-    -fx-font-family: "Arial Black"; 
-    -fx-text-fill: rgba(255, 0, 127, 0.04); 
+.bg-symbol-o {
+    -fx-font-size: 220px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(255, 0, 127, 0.04);
 }
 
 /* ======================================
    LOGO & TITLE TEXT
    ====================================== */
-.logo-x { 
-    -fx-fill: #00d2ff; 
-    -fx-font-size: 52px; 
-    -fx-font-weight: bold; 
-    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); 
+.logo-x {
+    -fx-fill: #00d2ff;
+    -fx-font-size: 52px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0);
 }
-.logo-o { 
-    -fx-fill: #ff007f; 
-    -fx-font-size: 52px; 
-    -fx-font-weight: bold; 
-    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); 
+.logo-o {
+    -fx-fill: #ff007f;
+    -fx-font-size: 52px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0);
 }
 
 .register-title {
     -fx-text-fill: white;
-    -fx-font-family: "Impact"; 
+    -fx-font-family: "Impact";
     -fx-letter-spacing: 2px;
     -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0);
 }
@@ -120,18 +120,18 @@
 /* ======================================
    LINKS & ERROR LABEL
    ====================================== */
-.neon-link { 
-    -fx-text-fill: #00fff0; 
-    -fx-font-weight: bold; 
+.neon-link {
+    -fx-text-fill: #00fff0;
+    -fx-font-weight: bold;
     -fx-font-size: 14px;
     -fx-cursor: hand;
 }
-.neon-link:hover { 
-    -fx-text-fill: white; 
+.neon-link:hover {
+    -fx-text-fill: white;
     -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.4), 5, 0.3, 0, 0);
 }
 
-.error-label { 
-    -fx-text-fill: #ff004c; 
-    -fx-font-weight: bold; 
+.error-label {
+    -fx-text-fill: #ff004c;
+    -fx-font-weight: bold;
 }

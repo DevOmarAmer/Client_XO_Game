@@ -1,0 +1,92 @@
+/* Inherit base styles */
+.main-root {
+    -fx-background-color: #080a12;
+    -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #1a0b2e 0%, #080a12 100%);
+}
+
+.bg-symbol-x {
+    -fx-font-size: 250px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(191, 0, 255, 0.04);
+}
+.bg-symbol-o {
+    -fx-font-size: 200px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(0, 255, 240, 0.04);
+}
+
+.xo-glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 30;
+    -fx-border-color: rgba(191, 0, 255, 0.2);
+    -fx-border-radius: 30;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 40, 0, 0, 0);
+}
+
+.title-neon-purple {
+    -fx-fill: #d845ff;
+    -fx-font-family: "Impact";
+    -fx-font-size: 42px;
+    -fx-effect: dropshadow(gaussian, #d845ff, 15, 0.4, 0, 0);
+}
+
+.neon-list-view {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(191, 0, 255, 0.2);
+    -fx-border-radius: 15;
+    -fx-padding: 5;
+}
+
+.neon-list-view .list-cell {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 12;
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 0 0 1 0;
+}
+
+.neon-list-view .list-cell:selected {
+    -fx-background-color: rgba(191, 0, 255, 0.2);
+    -fx-text-fill: #d845ff;
+}
+
+.xo-back-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(191, 0, 255, 0.5);
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+    -fx-text-fill: #d845ff;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+.xo-back-btn:hover {
+    -fx-background-color: rgba(191, 0, 255, 0.15);
+    -fx-effect: dropshadow(gaussian, #d845ff, 10, 0.4, 0, 0);
+}
+
+.action-btn {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: #d845ff;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 30;
+    -fx-cursor: hand;
+}
+.action-btn:hover {
+    -fx-background-color: #d845ff;
+    -fx-text-fill: #080a12;
+}
+
+.hint-label {
+    -fx-text-fill: gray;
+    -fx-font-size: 12px;
+}
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(191, 0, 255, 0.3);
+}

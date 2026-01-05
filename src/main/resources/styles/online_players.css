@@ -1,33 +1,125 @@
-
-.root {
-    -fx-background-color: linear-gradient(to bottom right, #141e30, #243b55);
-    -fx-font-family: "Segoe UI";
+/* ======================================
+   THEMATIC BACKGROUND (Matches Register)
+   ====================================== */
+.main-root {
+    -fx-background-color: #080a12;
+    -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #111a33 0%, #080a12 100%);
 }
 
-.title {
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
+.bg-symbol-x {
+    -fx-font-size: 250px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(0, 210, 255, 0.04);
+}
+.bg-symbol-o {
+    -fx-font-size: 250px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(255, 0, 127, 0.04);
 }
 
-.list-view {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-background-color: rgba(255, 255, 255, 0.15);
+/* ======================================
+   TITLES & GLASS PANEL
+   ====================================== */
+.xo-glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 30;
+    -fx-border-color: rgba(0, 255, 240, 0.15);
+    -fx-border-radius: 30;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 40, 0, 0, 0);
 }
 
-.list-cell {
+.title-neon-blue {
+    -fx-fill: #00fff0;
+    -fx-font-family: "Impact";
+    -fx-font-size: 36px;
+    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.4, 0, 0);
+}
+
+.title-neon-pink {
+    -fx-fill: #ff007f;
+    -fx-font-family: "Impact";
+    -fx-font-size: 36px;
+    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.4, 0, 0);
+}
+
+/* ======================================
+   LIST VIEW STYLING
+   ====================================== */
+.neon-list-view {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(0, 255, 240, 0.2);
+    -fx-border-radius: 15;
+    -fx-padding: 5;
+}
+
+.neon-list-view .list-cell {
     -fx-background-color: transparent;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 12;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 15;
+    -fx-alignment: CENTER-LEFT;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
 }
 
-.list-cell:selected {
-    -fx-background-color: #ff9800;
-    -fx-text-fill: white;
+.neon-list-view .list-cell:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.1);
+    -fx-cursor: hand;
 }
 
-.list-cell:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
+.neon-list-view .list-cell:selected {
+    -fx-background-color: rgba(0, 255, 240, 0.2);
+    -fx-text-fill: #00fff0;
+    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.4, 0, 0);
+}
+
+/* Remove default scrollbar styling */
+.list-view .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(0, 255, 240, 0.3);
+    -fx-background-radius: 5;
+}
+
+/* ======================================
+   BUTTONS (Back & Nav)
+   ====================================== */
+.xo-back-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(0, 255, 240, 0.4);
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+    -fx-text-fill: #00fff0;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+.xo-back-btn:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.1);
+    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.4, 0, 0);
+}
+
+.nav-bar {
+    -fx-padding: 10 0 0 0;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: transparent;
+    -fx-transition: 0.2s;
+}
+
+.nav-btn:hover {
+    -fx-text-fill: #00fff0;
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(gaussian, #00fff0, 8, 0.4, 0, 0);
 }
