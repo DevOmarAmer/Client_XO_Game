@@ -1,0 +1,91 @@
+/* Inherit base styles */
+.main-root {
+    -fx-background-color: #080a12;
+    -fx-background-image: radial-gradient(center 50% 0%, radius 80%, #292200 0%, #080a12 100%);
+}
+
+.bg-glow {
+    -fx-fill: transparent;
+    -fx-stroke: rgba(255, 215, 0, 0.05);
+    -fx-stroke-width: 50;
+    -fx-effect: dropshadow(gaussian, #FFD700, 100, 0.1, 0, 0);
+}
+
+.xo-glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 30;
+    -fx-border-color: rgba(255, 215, 0, 0.3);
+    -fx-border-radius: 30;
+    -fx-padding: 30;
+}
+
+.title-gold {
+    -fx-fill: #FFD700;
+    -fx-font-family: "Impact";
+    -fx-font-size: 48px;
+    -fx-effect: dropshadow(gaussian, #FFD700, 20, 0.5, 0, 0);
+}
+
+.subtitle {
+    -fx-fill: white;
+    -fx-font-size: 14px;
+    -fx-letter-spacing: 5px;
+}
+
+/* List Styling */
+.list-header {
+    -fx-padding: 0 15 5 15;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 0 0 1 0;
+}
+.list-header .label {
+    -fx-text-fill: rgba(255, 215, 0, 0.8);
+    -fx-font-weight: bold;
+}
+
+.neon-list-view {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.neon-list-view .list-cell {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 15;
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 0 0 1 0;
+}
+
+/* User Rank Footer */
+.user-rank-box {
+    -fx-background-color: rgba(255, 215, 0, 0.1);
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-border-color: #FFD700;
+    -fx-border-radius: 10;
+}
+.user-rank-text {
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+}
+
+/* Back Button */
+.xo-back-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 215, 0, 0.5);
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+.xo-back-btn:hover {
+    -fx-background-color: rgba(255, 215, 0, 0.2);
+    -fx-effect: dropshadow(gaussian, #FFD700, 10, 0.4, 0, 0);
+}
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(255, 215, 0, 0.3);
+}

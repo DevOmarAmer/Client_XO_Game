@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane fx:id="rootPane"
+           prefWidth="900" prefHeight="700"
+           stylesheets="@/styles/leaderboard.css"
+           styleClass="main-root"
+           xmlns="http://javafx.com/javafx/13"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.client_xo_game.LeaderboardController">
+
+    <Circle radius="200" styleClass="bg-glow" StackPane.alignment="CENTER"/>
+
+    <Button text="← BACK"
+            onAction="#goBack"
+            styleClass="xo-back-btn"
+            StackPane.alignment="TOP_LEFT"
+            translateX="30"
+            translateY="30"/>
+
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="15"
+          maxWidth="550"
+          maxHeight="650"
+          styleClass="xo-glass-panel">
+
+        <VBox alignment="CENTER" spacing="5">
+            <Text text="LEADERBOARD" styleClass="title-gold"/>
+            <Text text="TOP PLAYERS" styleClass="subtitle"/>
+            <Line endX="180" stroke="#FFD700" strokeWidth="3.0" opacity="0.8"/>
+        </VBox>
+
+        <HBox spacing="10" styleClass="list-header">
+            <Label text="RANK" minWidth="60"/>
+            <Label text="PLAYER" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+            <Label text="SCORE" minWidth="80" alignment="CENTER_RIGHT"/>
+        </HBox>
+
+        <ListView fx:id="scoreList" VBox.vgrow="ALWAYS" styleClass="neon-list-view"/>
+        
+        <HBox alignment="CENTER" styleClass="user-rank-box">
+            <Label text="Your Rank: 12th (950 pts)" styleClass="user-rank-text"/>
+        </HBox>
+
+    </VBox>
+</StackPane>
