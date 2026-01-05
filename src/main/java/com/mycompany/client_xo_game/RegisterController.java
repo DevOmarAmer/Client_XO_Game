@@ -117,16 +117,21 @@ public class RegisterController {
         json.put("email", emailField.getText().trim());
         json.put("password", passwordField.getText().trim());
         
+        System.out.println("[Client] Sending Register Request: " + json.toString());
         NetworkConnection.getInstance().sendMessage(json);
     }
 
     private void onServerResponse(JSONObject json) {
+        System.out.println("[Client] Received Response: " + json.toString());
         if ("register_response".equals(json.optString("type"))) {
             if ("success".equals(json.optString("status"))) {
+                System.out.println("[Client] Registration Success. Navigating to Login.");
                 // Only navigate on success
                 playExitTransition(() -> Navigation.goTo(Routes.LOGIN));
             } else {
-                Platform.runLater(() -> messageLabel.setText("Registration Failed"));
+                String reason = json.optString("reason", "Unknown Error");
+                System.out.println("[Client] Registration Failed: " + reason);
+                Platform.runLater(() -> messageLabel.setText("Failed: " + reason));
             }
         }
     }
