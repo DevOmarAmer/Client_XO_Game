@@ -14,4 +14,6 @@ public class Routes {
     public static final String WIN_LOSE = "Win_Lose";
     public static final String GAME_REPLAYS = "Game_Replays";
     public static final String LEADERBOARD = "Leaderboard";
+    public static final String Profile = "Profile";
+
 }

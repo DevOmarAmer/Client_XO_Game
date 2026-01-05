@@ -1,5 +1,5 @@
 /* ======================================
-   THEMATIC BACKGROUND (Matches Register)
+   THEMATIC BACKGROUND
    ====================================== */
 .main-root {
     -fx-background-color: #080a12;
@@ -7,119 +7,152 @@
 }
 
 .bg-symbol-x {
-    -fx-font-size: 250px;
+    -fx-font-size: 300px;
     -fx-font-family: "Arial Black";
     -fx-text-fill: rgba(0, 210, 255, 0.04);
 }
 .bg-symbol-o {
-    -fx-font-size: 250px;
+    -fx-font-size: 300px;
     -fx-font-family: "Arial Black";
     -fx-text-fill: rgba(255, 0, 127, 0.04);
 }
 
 /* ======================================
-   TITLES & GLASS PANEL
+   GLASS PANEL & TITLES
    ====================================== */
 .xo-glass-panel {
     -fx-background-color: rgba(255, 255, 255, 0.03);
-    -fx-background-radius: 30;
+    -fx-background-radius: 40;
     -fx-border-color: rgba(0, 255, 240, 0.15);
-    -fx-border-radius: 30;
-    -fx-padding: 30;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 40, 0, 0, 0);
+    -fx-border-radius: 40;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 50, 0, 0, 0);
 }
 
 .title-neon-blue {
     -fx-fill: #00fff0;
     -fx-font-family: "Impact";
-    -fx-font-size: 36px;
-    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.4, 0, 0);
+    -fx-font-size: 48px; /* Larger Font */
+    -fx-effect: dropshadow(gaussian, #00fff0, 20, 0.4, 0, 0);
 }
 
 .title-neon-pink {
     -fx-fill: #ff007f;
     -fx-font-family: "Impact";
-    -fx-font-size: 36px;
-    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.4, 0, 0);
+    -fx-font-size: 48px; /* Larger Font */
+    -fx-effect: dropshadow(gaussian, #ff007f, 20, 0.4, 0, 0);
 }
 
 /* ======================================
-   LIST VIEW STYLING
+   PROFILE BUTTON (Circular)
+   ====================================== */
+.profile-btn {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: #00fff0;
+    -fx-border-radius: 100; /* Makes it circular */
+    -fx-background-radius: 100;
+    -fx-border-width: 2;
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-min-width: 60px;
+    -fx-min-height: 60px;
+    -fx-max-width: 60px;
+    -fx-max-height: 60px;
+    -fx-cursor: hand;
+    -fx-padding: 0; /* Center icon */
+}
+.profile-btn:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.2);
+    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.6, 0, 0);
+}
+
+/* ======================================
+   LIST VIEW & COLUMNS
    ====================================== */
 .neon-list-view {
     -fx-background-color: rgba(0, 0, 0, 0.2);
-    -fx-background-radius: 15;
+    -fx-background-radius: 20;
     -fx-border-color: rgba(0, 255, 240, 0.2);
-    -fx-border-radius: 15;
-    -fx-padding: 5;
+    -fx-border-radius: 20;
+    -fx-padding: 10;
 }
 
+.list-header {
+    -fx-padding: 0 20 5 20;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 0 1 0;
+}
+.header-label {
+    -fx-text-fill: rgba(255,255,255,0.5);
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Custom Cell Styles */
 .neon-list-view .list-cell {
     -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-padding: 10 15;
-    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 10;
     -fx-border-width: 0 0 1 0;
     -fx-border-color: rgba(255, 255, 255, 0.05);
 }
-
-.neon-list-view .list-cell:hover {
-    -fx-background-color: rgba(0, 255, 240, 0.1);
-    -fx-cursor: hand;
+.neon-list-view .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
 }
 
-.neon-list-view .list-cell:selected {
-    -fx-background-color: rgba(0, 255, 240, 0.2);
+.player-name {
+    -fx-text-fill: white;
+    -fx-font-size: 20px; /* Larger Font */
+    -fx-font-weight: bold;
+}
+
+.status-online {
+    -fx-text-fill: #00ff00;
+    -fx-font-size: 16px;
+    -fx-effect: dropshadow(gaussian, #00ff00, 5, 0.4, 0, 0);
+}
+.status-busy {
+    -fx-text-fill: #ff3333;
+    -fx-font-size: 16px;
+}
+
+/* Invite Button */
+.invite-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #00fff0;
+    -fx-border-radius: 20;
     -fx-text-fill: #00fff0;
-    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.4, 0, 0);
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 5 15;
+}
+.invite-btn:hover {
+    -fx-background-color: #00fff0;
+    -fx-text-fill: #080a12;
+    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.5, 0, 0);
 }
 
-/* Remove default scrollbar styling */
+/* Scrollbar Hidden/Styled */
 .list-view .scroll-bar:vertical .track {
     -fx-background-color: transparent;
 }
 .list-view .scroll-bar:vertical .thumb {
     -fx-background-color: rgba(0, 255, 240, 0.3);
-    -fx-background-radius: 5;
+    -fx-background-radius: 10;
 }
 
 /* ======================================
-   BUTTONS (Back & Nav)
+   BOTTOM NAV
    ====================================== */
-.xo-back-btn {
-    -fx-background-color: transparent;
-    -fx-border-color: rgba(0, 255, 240, 0.4);
-    -fx-border-radius: 40;
-    -fx-background-radius: 40;
-    -fx-text-fill: #00fff0;
-    -fx-font-weight: bold;
-    -fx-padding: 8 20;
-    -fx-cursor: hand;
-}
-.xo-back-btn:hover {
-    -fx-background-color: rgba(0, 255, 240, 0.1);
-    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.4, 0, 0);
-}
-
-.nav-bar {
-    -fx-padding: 10 0 0 0;
-}
-
 .nav-btn {
     -fx-background-color: transparent;
     -fx-text-fill: rgba(255, 255, 255, 0.7);
-    -fx-font-size: 15px;
+    -fx-font-size: 18px; /* Larger Font */
     -fx-font-weight: bold;
     -fx-cursor: hand;
-    -fx-border-width: 0 0 2 0;
-    -fx-border-color: transparent;
-    -fx-transition: 0.2s;
 }
-
 .nav-btn:hover {
     -fx-text-fill: #00fff0;
-    -fx-border-color: #00fff0;
     -fx-effect: dropshadow(gaussian, #00fff0, 8, 0.4, 0, 0);
 }

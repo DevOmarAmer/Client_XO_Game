@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane fx:id="rootPane"
+           prefWidth="900" prefHeight="700"
+           stylesheets="@/styles/profile.css"
+           styleClass="main-root"
+           xmlns="http://javafx.com/javafx/13"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.client_xo_game.ProfileController">
+
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="BOTTOM_RIGHT" translateX="-20" translateY="-20"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="TOP_LEFT" translateX="20" translateY="20"/>
+
+    <Button text="← BACK"
+            onAction="#goBack"
+            styleClass="xo-back-btn"
+            StackPane.alignment="TOP_LEFT"
+            translateX="40"
+            translateY="40"/>
+
+    <VBox fx:id="contentBox"
+          alignment="TOP_CENTER"
+          spacing="20"
+          maxWidth="500"
+          maxHeight="650"
+          styleClass="xo-glass-panel">
+
+        <StackPane>
+            <Circle fx:id="avatarCircle" radius="60" styleClass="avatar-circle"/>
+            <Label text="👤" style="-fx-font-size: 60px; -fx-text-fill: white;"/>
+            <Button text="📷" styleClass="edit-avatar-btn" StackPane.alignment="BOTTOM_RIGHT" translateX="-10"/>
+        </StackPane>
+
+        <VBox alignment="CENTER" spacing="5">
+            <Label fx:id="usernameLabel" text="Ahmed Tayseer" styleClass="profile-name"/>
+            <Label fx:id="emailLabel" text="ahmed@example.com" styleClass="profile-email"/>
+            <Label fx:id="scoreLabel" text="Total Score: 2500" styleClass="profile-score"/>
+        </VBox>
+
+        <Separator opacity="0.3"/>
+
+        <HBox alignment="CENTER" spacing="20">
+            <VBox styleClass="stat-box, stat-win" alignment="CENTER">
+                <Label text="WINS" styleClass="stat-title"/>
+                <Label fx:id="winsLabel" text="42" styleClass="stat-value"/>
+            </VBox>
+            
+            <VBox styleClass="stat-box, stat-draw" alignment="CENTER">
+                <Label text="DRAWS" styleClass="stat-title"/>
+                <Label fx:id="drawsLabel" text="15" styleClass="stat-value"/>
+            </VBox>
+
+            <VBox styleClass="stat-box, stat-loss" alignment="CENTER">
+                <Label text="LOSSES" styleClass="stat-title"/>
+                <Label fx:id="lossesLabel" text="8" styleClass="stat-value"/>
+            </VBox>
+        </HBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <VBox spacing="15" alignment="CENTER" maxWidth="Infinity">
+            <Button text="EDIT PROFILE" onAction="#handleEdit" styleClass="action-btn"/>
+            <Button text="LOGOUT" onAction="#handleLogout" styleClass="logout-btn"/>
+        </VBox>
+
+    </VBox>
+</StackPane>
