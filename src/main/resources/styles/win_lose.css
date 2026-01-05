@@ -1,26 +1,33 @@
 /*
- * Empty Stylesheet file.
+ * Win/Lose/Draw Popup Styles
  */
-
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : Dec 29, 2025, 6:27:07 PM
-    Author     : Alaa
-*/
 
 .winning-root {
     -fx-background-color: #0C1017;
 }
 
+/* Win Text Styling - GREEN */
 .win-text {
     -fx-fill: #22C55E;
     -fx-font-size: 48px;
     -fx-font-weight: bold;
 }
 
+/* Lose Text Styling - RED */
+.lose-text {
+    -fx-fill: #EF4444;
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+}
+
+/* Draw Text Styling - ORANGE/YELLOW */
+.draw-text {
+    -fx-fill: #F59E0B;
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+}
+
+/* Button Base Styling */
 .button.action-button {
     -fx-background-color: linear-gradient(#60A5FA, #2563EB);
     -fx-text-fill: white;
@@ -30,14 +37,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-padding: 12 28;
 }
 
-/*.media {
-    -fx-border-color: red;
-    -fx-border-width: 3;
-    -fx-background-color: rgba(255, 0, 0, 0.15);
-}*/
+/* Close Button - Different color to distinguish it */
+.button.close-button {
+    -fx-background-color: linear-gradient(#F87171, #DC2626);
+    -fx-text-fill: white;
+}
 
+/* Play Again Button - Keep blue */
+.button.play-again-button {
+    -fx-background-color: linear-gradient(#60A5FA, #2563EB);
+    -fx-text-fill: white;
+}
+
+/* Media Container */
 .media-container {
     -fx-border-color: white;
     -fx-border-width: 3;
-    
 }

@@ -80,6 +80,11 @@ public class GameboardController implements Initializable {
         }
     }
 
+    private void updateScoreBoard() {
+        scoreP1.setText(String.valueOf(GameSession.getScoreP1()));
+        scoreP2.setText(String.valueOf(GameSession.getScoreP2()));
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         gameBoard = new Board();
@@ -93,6 +98,7 @@ public class GameboardController implements Initializable {
         gameEnded = false;
 
         updatePlayersLabels();
+        updateScoreBoard();
     }
 
     @FXML
@@ -129,17 +135,27 @@ public class GameboardController implements Initializable {
                 if (winnerCell != Cell.EMPTY) {
                     gameEnded = true;
                     if (winnerCell == Cell.X) {
+                        handleGameEnd(true, false);
                         turnLabel.setText("You Win!");
-                        showWinLosePopup(true);
+                        GameSession.addWinP1();
+                        updateScoreBoard();
+                   
                     } else {
-                        turnLabel.setText("Computer Wins!");
-                        showWinLosePopup(false);
+                        turnLabel.setText("You Lost!");
+                        GameSession.addWinP2();
+                        updateScoreBoard();
+                        
+                   
                     }
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
+                    handleGameEnd(false, true);
                     gameEnded = true;
                     turnLabel.setText("It's a Draw!");
-                    showDrawPopup();
+                    GameSession.addDraw();
+                    updateScoreBoard();
+                    System.out.println("Draw! Showing draw popup"); // Debug
+              
                     actionTaken = true;
                 }
 
@@ -158,15 +174,26 @@ public class GameboardController implements Initializable {
                         if (winnerCell != Cell.EMPTY) {
                             gameEnded = true;
                             if (winnerCell == Cell.O) {
+                                handleGameEnd(false, false);
                                 turnLabel.setText("Computer Wins!");
-                                showWinLosePopup(false);
+                                GameSession.addWinP2();
+                                updateScoreBoard();
+                                System.out.println("Computer wins after AI move! Showing lose popup"); // Debug
+                               
                             } else {
                                 turnLabel.setText("You Win!");
-                                showWinLosePopup(true);
+                                GameSession.addWinP1();
+                                updateScoreBoard();
+                                System.out.println("Player wins! Showing win popup"); // Debug
+                            
                             }
                         } else if (gameBoard.isFull()) {
+                            handleGameEnd(false, true);
                             gameEnded = true;
                             turnLabel.setText("It's a Draw!");
+                            GameSession.addDraw();
+                            updateScoreBoard();
+                            
                             showDrawPopup();
                         } else {
                             Xturn = true;
@@ -191,29 +218,68 @@ public class GameboardController implements Initializable {
 
                 Cell winnerCell = gameBoard.checkWinner();
                 if (winnerCell != Cell.EMPTY) {
-                    gameEnded = true;
+                   
+                    String winnerName = (winnerCell == Cell.X) ? player1.getName() : player2.getName();
                     if (winnerCell == Cell.X) {
-                        turnLabel.setText(player1.getName() + " Wins!");
-                        showLocalModeWinPopup(player1.getName());
+                        
+                        
+                        GameSession.addWinP1();
+                       
+                        System.out.println(winnerName + " wins in local mode!"); // Debug
+                        showLocalModeWinPopup(winnerName);
                     } else {
-                        turnLabel.setText(player2.getName() + " Wins!");
-                        showLocalModeWinPopup(player2.getName());
+                        
+                        turnLabel.setText(winnerName + " Wins!");
+                        GameSession.addWinP2();
+                       
+                        System.out.println(winnerName + " wins in local mode!"); // Debug
+                        showLocalModeWinPopup(winnerName);
                     }
+                    
+                     updateScoreBoard();
+                     turnLabel.setText(winnerName + " Wins!");
+                      gameEnded = true;
                     actionTaken = true;
+                    turnLabel.setText(winnerName + " Wins!");
                 } else if (gameBoard.isFull()) {
                     gameEnded = true;
                     turnLabel.setText("It's a Draw!");
-                    showDrawPopup();
+                    GameSession.addDraw();
+                    updateScoreBoard();
+                    turnLabel.setText("It's a Draw!");
+                    gameEnded = true;
+                    System.out.println("Draw in local mode!"); // Debug
+                  
                     actionTaken = true;
                 }
 
                 if (!actionTaken) {
+                
                     turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
                 }
             }
         }
     }
+    private void handleGameEnd(boolean playerWon, boolean isDraw) {
+        gameEnded = true;
 
+        if (isDraw) {
+            turnLabel.setText("It's a Draw!");
+            GameSession.addDraw();
+            updateScoreBoard();
+            showDrawPopup();
+        } else if (playerWon) {
+            turnLabel.setText("You Win!");
+            GameSession.addWinP1();
+            updateScoreBoard();
+            showWinLosePopup(true);
+        } else {
+            turnLabel.setText("Computer Wins!");
+            GameSession.addWinP2();
+            updateScoreBoard();
+            showWinLosePopup(false);
+        }
+    }
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
         ImageView imageView = new ImageView(img);
@@ -233,21 +299,34 @@ public class GameboardController implements Initializable {
         }
         return null;
     }
-private void showWinLosePopup(boolean won) {
-    Win_LoseController controller =  Navigation.openModalWithController(Routes.WIN_LOSE);
-    controller.setResult(won);
-}
 
+    private void showWinLosePopup(boolean won) {
+        System.out.println("showWinLosePopup called with won: " + won); // Debug
+        Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
+        if (controller != null) {
+            controller.setResult(won);
+        } else {
+            System.err.println("ERROR: Win_LoseController is null!");
+        }
+    }
 
-  private void showDrawPopup() {
-    Win_LoseController controller =Navigation.openModalWithController(Routes.WIN_LOSE);
-    controller.setResultDraw();
-}
+    private void showDrawPopup() {
+        System.out.println("showDrawPopup called"); // Debug
+        Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
+        if (controller != null) {
+            controller.setResultDraw();
+        } else {
+            System.err.println("ERROR: Win_LoseController is null!");
+        }
+    }
 
-private void showLocalModeWinPopup(String winnerName) {
-    Win_LoseController controller =Navigation.openModalWithController(Routes.WIN_LOSE);
-    controller.setResultLocalMode(winnerName);
-}
-
-
+    private void showLocalModeWinPopup(String winnerName) {
+        System.out.println("showLocalModeWinPopup called with winner: " + winnerName); // Debug
+        Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
+        if (controller != null) {
+            controller.setResultLocalMode(winnerName);
+        } else {
+            System.err.println("ERROR: Win_LoseController is null!");
+        }
+    }
 }
