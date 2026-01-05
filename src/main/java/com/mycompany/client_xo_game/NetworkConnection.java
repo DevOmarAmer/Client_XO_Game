@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.function.Consumer;
+import javafx.application.Platform;
 import org.json.JSONObject;
 
 public class NetworkConnection {
@@ -14,6 +16,7 @@ public class NetworkConnection {
     private PrintWriter out;
     private String ip = "127.0.0.1"; // Change to Server IP if on different machine
     private int port = 6666;         // Must match Server.PORT
+    private Consumer<JSONObject> listener;
 
     private NetworkConnection() {
         try {
@@ -31,6 +34,10 @@ public class NetworkConnection {
             instance = new NetworkConnection();
         }
         return instance;
+    }
+
+    public void setListener(Consumer<JSONObject> listener) {
+        this.listener = listener;
     }
 
     public void sendMessage(JSONObject json) {
@@ -55,15 +62,8 @@ public class NetworkConnection {
     }
 
     private void processMessage(JSONObject json) {
-        // Handle server responses here (e.g., update UI)
-        System.out.println("Received from server: " + json.toString());
-        
-        String type = json.optString("type");
-        switch (type) {
-            case "login_response":
-                // Handle login success/fail
-                break;
-            // Add other cases (move, game_start, etc.)
+        if (listener != null) {
+            Platform.runLater(() -> listener.accept(json));
         }
     }
 }
