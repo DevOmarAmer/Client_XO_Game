@@ -16,24 +16,44 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" prefHeight="600.0" prefWidth="700.0" styleClass="gameboard" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.client_xo_game.GameboardController">
+<BorderPane fx:id="rootPane" prefHeight="600.0" prefWidth="700.0" styleClass="gameboard" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.client_xo_game.GameboardController">
 
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="turn-bar">
-            <padding>
-                <Insets bottom="16" left="16" right="16" top="16" />
-            </padding>
+        <VBox spacing="10">
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="turn-bar">
+                <padding>
+                    <Insets bottom="16" left="16" right="16" top="16" />
+                </padding>
 
-            <!-- Back Button -->
-            <Button fx:id="backButton" onAction="#goBack" style="-fx-font-size: 14; -fx-padding: 5 10 5 10;" text="Back" />
+                <!-- Back Button -->
+                <Button fx:id="backButton" onAction="#goBack" style="-fx-font-size: 14; -fx-padding: 5 10 5 10;" text="Back" />
 
-            <!-- Turn Label -->
-            <Label fx:id="turnLabel" styleClass="turn-label" text="Player 1 Turn">
-                <font>
-                    <Font size="32" />
-                </font>
-            </Label>
-        </HBox>
+                <!-- Turn Label -->
+                <Label fx:id="turnLabel" styleClass="turn-label" text="Player 1 Turn">
+                    <font>
+                        <Font size="32" />
+                    </font>
+                </Label>
+            </HBox>
+            
+            <!-- Replay Controls (Hidden by default) -->
+            <HBox fx:id="replayControls" alignment="CENTER" spacing="15.0" visible="false" managed="false">
+                <padding>
+                    <Insets bottom="10" left="10" right="10" top="10" />
+                </padding>
+                <children>
+                    <Button fx:id="playButton" onAction="#handlePlay" 
+                            style="-fx-background-color: #00d4ff; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 30; -fx-background-radius: 10; -fx-cursor: hand;" 
+                            text="▶ Play" />
+                    <Button fx:id="pauseButton" onAction="#handlePause" 
+                            style="-fx-background-color: #ffd93d; -fx-text-fill: #1a1a2e; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 30; -fx-background-radius: 10; -fx-cursor: hand;" 
+                            text="⏸ Pause" />
+                    <Button fx:id="resetButton" onAction="#handleReset" 
+                            style="-fx-background-color: #ff6b6b; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 30; -fx-background-radius: 10; -fx-cursor: hand;" 
+                            text="↻ Reset" />
+                </children>
+            </HBox>
+        </VBox>
     </top>
 
 
