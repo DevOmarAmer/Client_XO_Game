@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
-
+<?import java.lang.String?>
 <StackPane fx:id="rootPane"
            prefWidth="900" prefHeight="700"
            stylesheets="@/styles/mode_selection.css"
@@ -54,6 +54,16 @@
                     onAction="#goToLogin"
                     maxWidth="Infinity"
                     styleClass="xo-btn pink-glow"/>
+            
+            <Button fx:id="btnviewPreviousMatches"
+                    text="View Previous Matches"
+                    onAction="#onViewPreviousMatches"
+                    maxWidth="Infinity"
+                    styleClass = "xo-btn pink-glow">
+    
+    
+    
+            </Button>
         </VBox>
     </VBox>
 </StackPane>

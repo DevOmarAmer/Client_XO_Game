@@ -6,11 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 public class Navigation {
-
+    
     public static void goTo(String route) {
         try {
             App.setRoot(route);
@@ -18,7 +17,7 @@ public class Navigation {
             throw new RuntimeException("Failed to navigate to: " + route, e);
         }
     }
-
+    
     public static <T> T loadController(String route) {
         try {
             FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
@@ -28,7 +27,7 @@ public class Navigation {
             throw new RuntimeException("Failed to load controller for: " + route, e);
         }
     }
-
+    
     public static <T> T loadAndGoTo(String route) {
         try {
             FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
@@ -39,21 +38,31 @@ public class Navigation {
             throw new RuntimeException("Failed to load and navigate to: " + route, e);
         }
     }
-public static <T> T openModalWithController(String route) {
-    try {
-        FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
-        Parent root = loader.load();
 
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-//        stage.setTitle(title == null ? "" : title);
-        stage.setScene(new Scene(root));
-        stage.showAndWait();
-
-        return loader.getController();
-    } catch (IOException e) {
-        throw new RuntimeException("Failed to open modal: " + route, e);
+   
+    public static <T> T openModalWithController(String route) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(route + ".fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            
+      
+            T controller = loader.getController();
+            
+        
+            try {
+                controller.getClass().getMethod("setStage", Stage.class).invoke(controller, stage);
+            } catch (Exception e) {
+             
+                stage.showAndWait();
+            }
+            
+            return controller;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to open modal: " + route, e);
+        }
     }
-}
-
 }

@@ -33,61 +33,152 @@ public class Win_LoseController implements Initializable {
     private MediaView mediaView;
     
     private MediaPlayer mediaPlayer;
-    private boolean isWin;
+    private GameMode currentMode;
+    private Stage stage;
     
-    /**
-     * Initializes the controller class.
-     */
+   
+ 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-       
+        currentMode = GameSession.getGameMode();
     }
     
-    public void setResult(boolean won) {
-        isWin = won;
-        if (won) {
-            stateText.setText("You Won !!!!!");
+   
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+    
 
-        } else {
-            stateText.setText("You Lost :(");
-
+    public void show() {
+        if (stage != null) {
+            stage.showAndWait();
         }
     }
-    
+ 
+    public void setResult(boolean won) {
+        System.out.println("setResult called with won=" + won); 
+        
+        if (won) {
+            stateText.setText("You Won !!!!!");
+            stateText.getStyleClass().clear();
+            stateText.getStyleClass().add("win-text");
+//            playWinMedia();
+        } else {
+            stateText.setText("You Lost :(");
+            stateText.getStyleClass().clear();
+            stateText.getStyleClass().add("lose-text");
+//            playLoseMedia();
+        }
+        
+
+        show();
+    }
+   
+  
     public void setResultDraw() {
+        System.out.println("setResultDraw called"); 
+        
         stateText.setText("It's a Draw!");
-
+        stateText.getStyleClass().clear();
+        stateText.getStyleClass().add("draw-text");
+//        playDrawMedia();
+  
+        show();
     }
     
+   
     public void setResultLocalMode(String winnerName) {
+        System.out.println("setResultLocalMode called with winner=" + winnerName); // Debug
+        
         stateText.setText(winnerName + " Wins!");
-
+        stateText.getStyleClass().clear();
+        stateText.getStyleClass().add("win-text");
+//        playWinMedia();
+        
+   
+        show();
     }
-
+   
+//    private void playWinMedia() {
+//        try {
+//            stopCurrentMedia();
+//            String mediaPath = getClass().getResource("/assets/win.mp4").toExternalForm();
+//            Media media = new Media(mediaPath);
+//            mediaPlayer = new MediaPlayer(media);
+//            mediaView.setMediaPlayer(mediaPlayer);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+//            mediaPlayer.play();
+//        } catch (Exception e) {
+//            System.out.println("Win media not found (this is okay for now): " + e.getMessage());
+//        }
+//    }
+    
+  
+//    private void playLoseMedia() {
+//        try {
+//            stopCurrentMedia();
+//            String mediaPath = getClass().getResource("/assets/lose.mp4").toExternalForm();
+//            Media media = new Media(mediaPath);
+//            mediaPlayer = new MediaPlayer(media);
+//            mediaView.setMediaPlayer(mediaPlayer);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+//            mediaPlayer.play();
+//        } catch (Exception e) {
+//            System.out.println("Lose media not found (this is okay for now): " + e.getMessage());
+//        }
+//    }
+    
+  
+//    private void playDrawMedia() {
+//        try {
+//            stopCurrentMedia();
+//            String mediaPath = getClass().getResource("/assets/draw.mp4").toExternalForm();
+//            Media media = new Media(mediaPath);
+//            mediaPlayer = new MediaPlayer(media);
+//            mediaView.setMediaPlayer(mediaPlayer);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+//            mediaPlayer.play();
+//        } catch (Exception e) {
+//            System.out.println("Draw media not found (this is okay for now): " + e.getMessage());
+//        }
+//    }
+    
+   
+//    private void stopCurrentMedia() {
+//        if (mediaPlayer != null) {
+//            mediaPlayer.stop();
+//            mediaPlayer.dispose();
+//            mediaPlayer = null;
+//        }
+//    }
     
     @FXML
     private void onCloseButtonPressed(ActionEvent event) {
-      
-        Stage stage = (Stage) closeButton.getScene().getWindow();
-        stage.close();
+//        stopCurrentMedia();
+        
+        if (stage != null) {
+            stage.close();
+        } else {
+            Stage stg = (Stage) closeButton.getScene().getWindow();
+            stg.close();
+        }
      
         GameMode mode = GameSession.getGameMode();
-        if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
-            Navigation.goTo(Routes.LEVEL_SELECTION);
-        } else {
-            Navigation.goTo(Routes.MODE_SELECTION);
-        }
+        GameSession.clearSession();
+        Navigation.goTo(Routes.MODE_SELECTION);
     }
     
     @FXML
     private void onPlayAgainButtonPressed(ActionEvent event) {
-
-        Stage stage = (Stage) playAgainButton.getScene().getWindow();
-        stage.close();
+//        stopCurrentMedia();
         
-     
+        if (stage != null) {
+            stage.close();
+        } else {
+            Stage stg = (Stage) playAgainButton.getScene().getWindow();
+            stg.close();
+        }
+        
         Navigation.goTo(Routes.GAMEBOARD);
     }
-    
-
 }
