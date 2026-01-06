@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
@@ -12,34 +11,37 @@
            xmlns="http://javafx.com/javafx/13"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.mycompany.client_xo_game.OfflineRecordController">
-
+    
     <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="CENTER_LEFT" translateX="-50" translateY="100"/>
     <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="TOP_RIGHT" translateX="50" translateY="-50"/>
-
+    
     <Button text="← BACK"
             onAction="#goBack"
             styleClass="xo-back-btn"
             StackPane.alignment="TOP_LEFT"
             translateX="30"
             translateY="30"/>
-
+    
     <VBox fx:id="contentBox"
           alignment="CENTER"
           spacing="20"
           maxWidth="600"
           maxHeight="600"
           styleClass="xo-glass-panel">
-
+        
         <VBox alignment="CENTER" spacing="5">
             <Text text="OFFLINE RECORDS" styleClass="title-neon-purple"/>
             <Line endX="200" stroke="#bf00ff" strokeWidth="2.0" opacity="0.6"/>
         </VBox>
-
+        
         <ListView fx:id="recordsList" VBox.vgrow="ALWAYS" styleClass="neon-list-view"/>
         
-        <Label text="Select a game to view details" styleClass="hint-label"/>
+        <Label text="Select a game to view replay" styleClass="hint-label"/>
         
-        <Button text="▶ VIEW RECORD" onAction="#handleViewRecord" styleClass="action-btn"/>
-
+        <HBox alignment="CENTER" spacing="15">
+            <Button text="▶ VIEW REPLAY" onAction="#handleViewRecord" styleClass="action-btn"/>
+           
+            <Button text="🗑 DELETE" onAction="#handleDelete" styleClass="action-btn"/>
+        </HBox>
     </VBox>
 </StackPane>

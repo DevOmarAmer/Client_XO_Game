@@ -1,52 +1,182 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.util.GameRecorder;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
 public class OfflineRecordController {
-
-    @FXML
-    private StackPane rootPane;
-    @FXML
-    private ListView<String> recordsList;
+    
+    @FXML private StackPane rootPane;
+    @FXML private ListView<String> recordsList;
+    
+    private static final String RECORDS_DIR = "game_records";
+    private File[] gameFiles;
+    private DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
+    private DateTimeFormatter isoFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @FXML
     public void initialize() {
-        // Animation (Same as Replays)
+     
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(800), rootPane);
         fadeIn.setToValue(1);
         fadeIn.play();
-
-        // Mock Data for Offline
-        recordsList.getItems().addAll(
-                "Vs Computer (Easy) - 09:00 AM - WIN 🏆",
-                "Vs Computer (Hard) - 10:15 AM - LOSS ❌",
-                "Vs Player 2 (Local) - Yesterday - DRAW ➖",
-                "Vs Computer (Medium) - Sunday - WIN 🏆"
-        );
+        
+      
+        loadGameRecords();
     }
+    
+    private void loadGameRecords() {
+        recordsList.getItems().clear();
+        
+        gameFiles = GameRecorder.getAllGameRecords();
+        
+        if (gameFiles.length == 0) {
+            recordsList.getItems().add("No game records found");
+            return;
+        }
+        
+
+        Arrays.sort(gameFiles, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
+        
+        for (File file : gameFiles) {
+            JsonObject record = GameRecorder.loadGameRecord(file);
+            
+            if (record == null) {
+                System.err.println("Error: Invalid record in " + file.getName());
+                continue;
+            }
+            
+           
+            if (!record.containsKey("player1Name") || !record.containsKey("result")) {
+                System.err.println("Error: Missing required fields in " + file.getName());
+                continue;
+            }
+            
+          
+            LocalDateTime gameTime = LocalDateTime.parse(
+                record.getString("gameStartTime"), 
+                isoFormatter
+            );
+            String dateStr = gameTime.format(displayFormatter);
+            
+            String displayText = String.format("%s vs %s - %s - %s",
+                record.getString("player1Name"),
+                record.getString("player2Name"),
+                dateStr,
+                record.getString("result")
+           
+            );
+            
+            recordsList.getItems().add(displayText);
+        }
+    }
+    
 
     @FXML
     private void handleViewRecord() {
-        String selected = recordsList.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            System.out.println("Loading offline record for: " + selected);
-            // Logic to load offline game board
+      
+        int selectedIndex = recordsList.getSelectionModel().getSelectedIndex();
+        
+        if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
+            showAlert("Please select a game record to view");
+            return;
         }
+        
+        File selectedFile = gameFiles[selectedIndex];
+        JsonObject record = GameRecorder.loadGameRecord(selectedFile);
+        
+        if (record == null) {
+            showAlert("Error loading game record");
+            return;
+        }
+
+        playExitTransition(() -> {
+            try {
+   
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/com/mycompany/client_xo_game/Gameboard.fxml")
+                );
+                
+              
+                javafx.scene.Parent root = loader.load();
+                
+             
+                GameboardController controller = loader.getController();
+                
+          
+                controller.setReplayMode(record); 
+          
+                if (rootPane.getScene() != null) {
+                    rootPane.getScene().setRoot(root);
+                }
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert("Error loading replay: " + e.getMessage());
+            }
+        });
     }
 
+   
+    @FXML
+    private void handleDelete() {
+        int selectedIndex = recordsList.getSelectionModel().getSelectedIndex();
+        
+        if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
+            showAlert("Please select a game record to delete");
+            return;
+        }
+        
+        File selectedFile = gameFiles[selectedIndex];
+        
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Confirm Delete");
+        confirmAlert.setHeaderText("Delete Game Record");
+        confirmAlert.setContentText("Are you sure you want to delete this game record?");
+        
+        confirmAlert.showAndWait().ifPresent(response -> {
+            if (response.getText().equals("OK")) {
+                if (selectedFile.delete()) {
+                    showAlert("Game record deleted successfully");
+                    loadGameRecords();
+                } else {
+                    showAlert("Failed to delete game record");
+                }
+            }
+        });
+    }
+    
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    
+    @FXML
+    private void handleRefresh() {
+        loadGameRecords();
+    }
+    
     @FXML
     private void goBack() {
-        // IMPORTANT: Change 'Routes.OFFLINE_MENU' to whatever your Offline Mode menu is named
         playExitTransition(() -> Navigation.goTo(Routes.MODE_SELECTION)); 
     }
-
+    
     private void playExitTransition(Runnable onFinished) {
         FadeTransition fadeOut = new FadeTransition(Duration.millis(300), rootPane);
         fadeOut.setToValue(0);

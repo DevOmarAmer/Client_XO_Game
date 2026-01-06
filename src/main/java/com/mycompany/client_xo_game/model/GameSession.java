@@ -6,6 +6,7 @@ package com.mycompany.client_xo_game.model;
 
 import com.mycompany.client_xo_game.enums.AIDifficulty;
 import com.mycompany.client_xo_game.enums.GameMode;
+import com.mycompany.client_xo_game.util.GameRecorder;
 
 /**
  *
@@ -19,6 +20,7 @@ public class GameSession {
     private static Player_Offline player2;
     private static int scoreP1 = 0;
     private static int scoreP2 = 0;
+     private static GameRecorder gameRecorder = new GameRecorder();
 
     public static void setGameMode(GameMode mode) {
         currentMode = mode;
@@ -93,5 +95,41 @@ public class GameSession {
         player2 = null;
         scoreP1 = 0;
         scoreP2 = 0;
+        cancelRecording();
+    }
+    
+    public static void startRecording() {
+        if (player1 == null || player2 == null) {
+            System.err.println("Cannot start recording: Players not set");
+            return;
+        }
+        
+        String p1Name = player1.getName();
+        String p2Name = (player2 != null) ? player2.getName() : "Computer";
+        
+        gameRecorder.startRecording(p1Name, p2Name);
+        System.out.println("Recording started: " + p1Name + " vs " + p2Name);
+    }
+   
+    public static void recordMove(int row, int col, String symbol, String playerName) {
+        gameRecorder.recordMove(row, col, symbol, playerName);
+    }
+    
+    
+    public static String saveGameRecord(String result) {
+        return gameRecorder.saveGame(result);
+    }
+    
+  
+    public static boolean isRecording() {
+        return gameRecorder.isRecording();
+    }
+    
+ 
+    public static void cancelRecording() {
+        if (gameRecorder.isRecording()) {
+            gameRecorder.cancelRecording();
+            System.out.println("Recording cancelled");
+        }
     }
 }
