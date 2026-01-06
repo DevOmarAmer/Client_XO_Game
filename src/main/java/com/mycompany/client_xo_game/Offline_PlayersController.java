@@ -8,6 +8,7 @@ import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -33,22 +34,20 @@ public class Offline_PlayersController {
     @FXML
     private Button play_id;
     @FXML
+    private CheckBox record_game_chk;
+    @FXML
     private Label titleLabel;
 
     @FXML
     public void initialize() {
-        // -----------------------------
-        // 1. Entrance Fade-in
-        // -----------------------------
+    
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1200), rootPane);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
         fadeIn.play();
 
-        // -----------------------------
-        // 2. Title breathing animation
-        // -----------------------------
+        
         ScaleTransition pulse = new ScaleTransition(Duration.millis(2000), titleLabel);
         pulse.setFromX(1.0);
         pulse.setFromY(1.0);
@@ -58,9 +57,7 @@ public class Offline_PlayersController {
         pulse.setAutoReverse(true);
         pulse.play();
 
-        // -----------------------------
-        // 3. Responsive scaling
-        // -----------------------------
+        
         rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
             double w = newVal.doubleValue();
 
@@ -93,7 +90,7 @@ public class Offline_PlayersController {
             contentBox.setSpacing(w * 0.04);
             inputContainer.setSpacing(w * 0.03);
 
-            // Check if parent is HBox before casting to avoid ClassCastException
+     
             if (back_id.getParent() instanceof HBox) {
                 ((HBox) back_id.getParent()).setSpacing(w * 0.03);
             }
@@ -104,16 +101,15 @@ public class Offline_PlayersController {
             contentBox.setMaxHeight(h * 0.85);
         });
 
-        // -----------------------------
-        // 4. Add hover animations to buttons
-        // -----------------------------
+    
         addHoverAnimation(back_id);
         addHoverAnimation(play_id);
+        
+        if (record_game_chk != null) {
+            record_game_chk.setSelected(true);
+        }
     }
 
-    // -----------------------------
-    // Navigation Actions
-    // -----------------------------
     @FXML
     private void goBack() {
         animateButton(back_id);
@@ -121,7 +117,7 @@ public class Offline_PlayersController {
     }
 
     @FXML
-    private void playGame() {//on playGame button pressed
+    private void playGame() {
         String p1Name = player_one_id.getText().trim();
         String p2Name = player_two_id.getText().trim();
 
@@ -133,12 +129,18 @@ public class Offline_PlayersController {
         Player_Offline player2 = new Player_Offline(p2Name, Cell.O);
 
         GameSession.setPlayers(player1, player2);
+        
+        
+        if (record_game_chk != null && record_game_chk.isSelected()) {
+            GameSession.startRecording();
+            System.out.println("Recording enabled for this game");
+        } else {
+            System.out.println("Recording disabled for this game");
+        }
+        
         Navigation.goTo(Routes.GAMEBOARD);
     }
 
-    // -----------------------------
-    // Smooth button press animation
-    // -----------------------------
     private void animateButton(Button btn) {
         ScaleTransition st = new ScaleTransition(Duration.millis(150), btn);
         st.setFromX(1.0);
@@ -150,9 +152,6 @@ public class Offline_PlayersController {
         st.play();
     }
 
-    // -----------------------------
-    // Smooth hover animation
-    // -----------------------------
     private void addHoverAnimation(Button btn) {
         btn.setOnMouseEntered(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
