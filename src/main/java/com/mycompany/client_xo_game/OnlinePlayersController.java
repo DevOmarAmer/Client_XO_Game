@@ -35,9 +35,9 @@ public class OnlinePlayersController implements Runnable{
     private static class Player{
 
         String name;
-        boolean isOnline;
+        PlayerStatus isOnline;
 
-        public Player(String name, boolean isOnline) {
+        public Player(String name, PlayerStatus isOnline) {
             this.name = name;
             this.isOnline = isOnline;
         }
@@ -45,36 +45,46 @@ public class OnlinePlayersController implements Runnable{
     
     public static ObservableList<Player> getAvailablePlayers() {
 
-        ObservableList<Player> players =
-                FXCollections.observableArrayList();
+    ObservableList<Player> players = FXCollections.observableArrayList();
 
-        // 1️⃣ Set listener (overwrite current listener)
-        NetworkConnection.getInstance().setListener(response -> {
+    // Set listener (overwrites current listener)
+    NetworkConnection.getInstance().setListener(response -> {
 
-            if (!"available_players".equals(response.optString("type"))) {
-                return;
-            }
+        if (!"available_players".equals(response.optString("type"))) {
+            return;
+        }
 
-            JSONArray array = response.optJSONArray("players");
-            if (array == null) return;
+        JSONArray array = response.optJSONArray("players");
+        if (array == null) return;
 
-            Platform.runLater(() -> {
-                players.clear();
-                for (int i = 0; i < array.length(); i++) {
-                    String name = array.getString(i);
-                    players.add(new Player(name, true));
+        Platform.runLater(() -> {
+            players.clear();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject playerJson = array.getJSONObject(i); // get object with name + status
+                String name = playerJson.optString("username");
+                String statusStr = playerJson.optString("status");
+
+                // Convert to enum (assume enum matches server strings)
+                PlayerStatus status;
+                try {
+                    status = PlayerStatus.valueOf(statusStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    status = PlayerStatus.IN_GAME; // fallback
                 }
-            });
+
+                players.add(new Player(name, status));
+            }
         });
+    });
 
-        // 2️⃣ Send request
-        JSONObject request = new JSONObject();
-        request.put("type", "get_available_players");
-        NetworkConnection.getInstance().sendMessage(request);
+    // Send request
+    JSONObject request = new JSONObject();
+    request.put("type", "get_available_players");
+    NetworkConnection.getInstance().sendMessage(request);
 
-        // 3️⃣ Return list immediately (async)
-        return players;
-    }
+    return players;
+}
+
     public void run()
     {
         while(true)
@@ -126,11 +136,11 @@ public class OnlinePlayersController implements Runnable{
                     nameLabel.setPrefWidth(250);
 
                     // Col 2: Status
-                    Label statusLabel = new Label(player.isOnline ? "●  Online" : "●  In Game");                    // Note: Emojis provide the color for the circle, CSS provides color for text.
+                    Label statusLabel = new Label(player.isOnline == PlayerStatus.ONLINE ? "●  Online" : "●  In Game");                    // Note: Emojis provide the color for the circle, CSS provides color for text.
                     // Changed In-Game emoji to yellow/orange circle if desired, or keep red.
                     // If you want purely CSS circles, you'd use Shapes, but emojis are simpler here.
 
-                    statusLabel.getStyleClass().add(player.isOnline ? "status-online" : "status-busy");
+                    statusLabel.getStyleClass().add(player.isOnline == PlayerStatus.ONLINE ? "status-online" : "status-busy");
                     statusLabel.setPrefWidth(150);
 
                     // --- ALIGNMENT: Start from beginning of column ---
@@ -144,7 +154,7 @@ public class OnlinePlayersController implements Runnable{
                     Button inviteBtn = new Button("SEND INVITE");
                     inviteBtn.getStyleClass().add("invite-btn");
 
-                    if (!player.isOnline) {
+                    if (player.isOnline == PlayerStatus.IN_GAME ) {
                         inviteBtn.setVisible(false);
                     } else {
                         inviteBtn.setOnAction(e -> handleInvite(player.name));
