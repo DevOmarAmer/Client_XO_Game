@@ -11,8 +11,13 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-public class OnlinePlayersController {
+public class OnlinePlayersController implements Runnable{
 
     @FXML
     private StackPane rootPane;
@@ -22,9 +27,12 @@ public class OnlinePlayersController {
     private ListView<Player> playersList;
     @FXML
     private Button profileBtn;
-
+    
+    boolean running = true;
+    private Thread refreshThread;
+    
     // Simple Player Model
-    private static class Player {
+    private static class Player{
 
         String name;
         boolean isOnline;
@@ -34,6 +42,58 @@ public class OnlinePlayersController {
             this.isOnline = isOnline;
         }
     }
+    
+    public static ObservableList<Player> getAvailablePlayers() {
+
+        ObservableList<Player> players =
+                FXCollections.observableArrayList();
+
+        // 1️⃣ Set listener (overwrite current listener)
+        NetworkConnection.getInstance().setListener(response -> {
+
+            if (!"available_players".equals(response.optString("type"))) {
+                return;
+            }
+
+            JSONArray array = response.optJSONArray("players");
+            if (array == null) return;
+
+            Platform.runLater(() -> {
+                players.clear();
+                for (int i = 0; i < array.length(); i++) {
+                    String name = array.getString(i);
+                    players.add(new Player(name, true));
+                }
+            });
+        });
+
+        // 2️⃣ Send request
+        JSONObject request = new JSONObject();
+        request.put("type", "get_available_players");
+        NetworkConnection.getInstance().sendMessage(request);
+
+        // 3️⃣ Return list immediately (async)
+        return players;
+    }
+    public void run()
+    {
+        while(true)
+        {
+            try {
+                Thread.sleep(5000); // 5 seconds
+                playersList.setItems(getAvailablePlayers());
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+    }
+    public void stop() {
+        running = false;
+        if (refreshThread != null) {
+            refreshThread.interrupt();
+        }
+    }
+    
 
     @FXML
     public void initialize() {
@@ -42,18 +102,11 @@ public class OnlinePlayersController {
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1000), rootPane);
         fadeIn.setToValue(1);
         fadeIn.play();
-
-        // 2. Setup List Data
-        ObservableList<Player> data = FXCollections.observableArrayList(
-                new Player("Ahmed", true),
-                new Player("Omar", false),
-                new Player("Sara", true),
-                new Player("Mona", false),
-                new Player("Youssef", true),
-                new Player("Laila", true),
-                new Player("Hassan", false)
-        );
-        playersList.setItems(data);
+        
+        refreshThread = new Thread(this);
+        refreshThread.setDaemon(true);
+        refreshThread.start();
+        playersList.setItems(getAvailablePlayers());
 
         // 3. Custom Cell Factory for 3-Column Layout
         playersList.setCellFactory(listView -> new ListCell<Player>() {
