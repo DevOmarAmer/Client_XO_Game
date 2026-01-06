@@ -1,4 +1,4 @@
-package com.mycompany.client_xo_game;
+    package com.mycompany.client_xo_game;
 
 import com.mycompany.client_xo_game.enums.AIDifficulty;
 import com.mycompany.client_xo_game.enums.Cell;
@@ -28,8 +28,41 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+=======
+    import com.mycompany.client_xo_game.enums.AIDifficulty;
+    import com.mycompany.client_xo_game.enums.Cell;
+    import com.mycompany.client_xo_game.enums.GameMode;
+    import com.mycompany.client_xo_game.game_engine.Board;
+    import com.mycompany.client_xo_game.game_engine.Minimax;
+    import com.mycompany.client_xo_game.model.GameSession;
+    import com.mycompany.client_xo_game.model.Move;
+    import com.mycompany.client_xo_game.model.Player_Offline;
+    import com.mycompany.client_xo_game.navigation.Navigation;
+    import com.mycompany.client_xo_game.navigation.Routes;
+    import java.io.IOException;
+    import java.net.URL;
+    import java.util.ResourceBundle;
+import javafx.application.Platform;
+    import javafx.fxml.FXML;
+    import javafx.fxml.FXMLLoader;
+    import javafx.fxml.Initializable;
+    import javafx.scene.Parent;
+    import javafx.scene.Scene;
+    import javafx.scene.control.Label;
+    import javafx.scene.image.Image;
+    import javafx.scene.image.ImageView;
+    import javafx.scene.input.MouseEvent;
+    import javafx.scene.layout.BorderPane;
+    import javafx.scene.layout.GridPane;
+    import javafx.scene.layout.HBox;
+    import javafx.scene.layout.StackPane;
+    import javafx.stage.Modality;
+    import javafx.stage.Stage;
+    import javafx.stage.StageStyle;
+import org.json.JSONObject;
 
-public class GameboardController implements Initializable {
+
+    public class GameboardController implements Initializable {
 
     @FXML
     private BorderPane rootPane;
@@ -86,20 +119,55 @@ public class GameboardController implements Initializable {
         
         if (mode == GameMode.LOCAL_MODE) {
             if (player1 != null && player2 != null) {
+
+        @FXML
+        private BorderPane rootPane;
+        @FXML
+        private Label turnLabel;
+        @FXML
+        private HBox playersBar;
+        @FXML
+        private Label playerNameP1;
+        @FXML
+        private Label playerNameP2;
+        @FXML
+        private Label scoreP1;
+        @FXML
+        private Label scoreP2;
+        @FXML
+        private StackPane boardContainer;
+        @FXML
+        private GridPane board;
+
+        private Board gameBoard;
+        private Minimax ai;
+        private GameMode mode;
+        private AIDifficulty difficulty;
+        private boolean Xturn = true;
+        private Image xImage;
+        private Image oImage;
+        private Player_Offline player1;
+        private Player_Offline player2;
+        private boolean gameEnded = false;
+
+        public void updatePlayersLabels() {
+            if (mode == GameMode.LOCAL_MODE) {
+                if (player1 != null && player2 != null) {
+                    if (playerNameP1 != null && playerNameP2 != null) {
+                        playerNameP1.setText(player1.getName());
+                        playerNameP2.setText(player2.getName());
+                        turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
+                    }
+                }
+            } else if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
+
                 if (playerNameP1 != null && playerNameP2 != null) {
-                    playerNameP1.setText(player1.getName());
-                    playerNameP2.setText(player2.getName());
-                    turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
+                    playerNameP1.setText("You");
+                    playerNameP2.setText("Computer");
+                    turnLabel.setText(Xturn ? "Your Turn" : "Computer's Turn");
                 }
             }
-        } else if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
-            if (playerNameP1 != null && playerNameP2 != null) {
-                playerNameP1.setText("You");
-                playerNameP2.setText("Computer");
-                turnLabel.setText(Xturn ? "Your Turn" : "Computer's Turn");
-            }
         }
-    }
 
     private void updateScoreBoard() {
         if (isReplayMode) {
@@ -125,6 +193,15 @@ public class GameboardController implements Initializable {
         // Only initialize game components if NOT in replay mode
         // Replay mode will be set after initialization via setReplayMode()
         if (!isReplayMode) {
+
+        private void updateScoreBoard() {
+            scoreP1.setText(String.valueOf(GameSession.getScoreP1()));
+            scoreP2.setText(String.valueOf(GameSession.getScoreP2()));
+        }
+
+        @Override
+        public void initialize(URL url, ResourceBundle rb) {
+
             gameBoard = new Board();
             ai = new Minimax();
             mode = GameSession.getGameMode();
@@ -228,15 +305,45 @@ public class GameboardController implements Initializable {
         int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);
         int col = GridPane.getColumnIndex(clickedCell) == null ? 0 : GridPane.getColumnIndex(clickedCell);
 
+            xImage = new Image(getClass().getResourceAsStream("/assets/X.png"));
+            oImage = new Image(getClass().getResourceAsStream("/assets/O.png"));
+            gameEnded = false;
+
+            updatePlayersLabels();
+            updateScoreBoard();
+            
+
+        }
+
+        @FXML
+        private void goBack() {
+                Navigation.goTo(Routes.MODE_SELECTION);
+
+        }
+
+        @FXML
+
+    private void onCellClicked(MouseEvent event) {
+        if (gameEnded) {
+            return;
+        }
+
+        boolean actionTaken = false;
+
+        StackPane clickedCell = (StackPane) event.getSource();
+        int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);
+        int col = GridPane.getColumnIndex(clickedCell) == null ? 0 : GridPane.getColumnIndex(clickedCell);
+
         if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
             if (clickedCell.getChildren().isEmpty()) {
                 if (Xturn) {
                     placeMove(clickedCell, Cell.X);
                     gameBoard.getGrid()[row][col] = Cell.X;
+
                     
                 
                     GameSession.recordMove(row, col, "X", "You");
-                    
+
                     Xturn = false;
                     turnLabel.setText("Computer's Turn");
                 }
@@ -265,10 +372,12 @@ public class GameboardController implements Initializable {
                         int aiRow = bestMove.getRow();
                         int aiCol = bestMove.getCol();
                         gameBoard.getGrid()[aiRow][aiCol] = Cell.O;
+
                         
                  
                         GameSession.recordMove(aiRow, aiCol, "O", "Computer");
                         
+
                         StackPane aiCell = getCell(aiRow, aiCol);
                         if (aiCell != null) {
                             placeMove(aiCell, Cell.O);
@@ -300,18 +409,22 @@ public class GameboardController implements Initializable {
                 if (Xturn && gameBoard.checkWinner() == Cell.EMPTY) {
                     placeMove(clickedCell, Cell.X);
                     gameBoard.getGrid()[row][col] = Cell.X;
+
              
                     GameSession.recordMove(row, col, "X", player1.getName());
                     
+
                     Xturn = false;
                 } else {
                     if (!actionTaken && gameBoard.checkWinner() == Cell.EMPTY) {
                         placeMove(clickedCell, Cell.O);
                         gameBoard.getGrid()[row][col] = Cell.O;
+
                         
                   
                         GameSession.recordMove(row, col, "O", player2.getName());
                         
+
                         Xturn = true;
                     }
                 }
@@ -320,12 +433,16 @@ public class GameboardController implements Initializable {
                 if (winnerCell != Cell.EMPTY) {
                     gameEnded = true;
                     String winnerName = (winnerCell == Cell.X) ? player1.getName() : player2.getName();
+
                     
+
+
                     if (winnerCell == Cell.X) {
                         GameSession.addWinP1();
                     } else {
                         GameSession.addWinP2();
                     }
+
                     
                     updateScoreBoard();
                     turnLabel.setText(winnerName + " Wins!");
@@ -339,6 +456,11 @@ public class GameboardController implements Initializable {
                         }
                     }
                     
+
+
+                    updateScoreBoard();
+                    turnLabel.setText(winnerName + " Wins!");
+
                     showLocalModeWinPopup(winnerName);
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
@@ -346,6 +468,7 @@ public class GameboardController implements Initializable {
                     GameSession.addDraw();
                     updateScoreBoard();
                     turnLabel.setText("It's a Draw!");
+
            
                     if (GameSession.isRecording()) {
                         String filePath = GameSession.saveGameRecord("Draw");
@@ -511,6 +634,14 @@ public class GameboardController implements Initializable {
             for (var node : board.getChildren()) {
                 if (node instanceof StackPane) {
                     ((StackPane) node).getChildren().clear();
+
+                    showDrawPopup();
+                    actionTaken = true;
+                }
+
+                if (!actionTaken) {
+                    turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
+
                 }
             }
             System.out.println("Board cleared");
@@ -528,6 +659,7 @@ public class GameboardController implements Initializable {
         
         System.out.println("Replay reset complete");
     }
+
     
     private void handleGameEnd(boolean playerWon, boolean isDraw) {
         gameEnded = true;
@@ -597,8 +729,48 @@ public class GameboardController implements Initializable {
             
             if (rowIndex == row && colIndex == col) {
                 return (StackPane) node;
+
+        private void handleGameEnd(boolean playerWon, boolean isDraw) {
+            gameEnded = true;
+
+            if (isDraw) {
+                turnLabel.setText("It's a Draw!");
+                GameSession.addDraw();
+                updateScoreBoard();
+                showDrawPopup();
+            } else if (playerWon) {
+                turnLabel.setText("You Win!");
+                GameSession.addWinP1();
+                updateScoreBoard();
+                showWinLosePopup(true);
+            } else {
+                turnLabel.setText("Computer Wins!");
+                GameSession.addWinP2();
+                updateScoreBoard();
+                showWinLosePopup(false);
             }
         }
+        private void placeMove(StackPane cell, Cell symbol) {
+            Image img = symbol == Cell.X ? xImage : oImage;
+            ImageView imageView = new ImageView(img);
+            imageView.setFitWidth(80);
+            imageView.setFitHeight(80);
+            imageView.setPreserveRatio(true);
+            cell.getChildren().add(imageView);
+        }
+
+        private StackPane getCell(int row, int col) {
+            for (var node : board.getChildren()) {
+                int r = GridPane.getRowIndex(node) == null ? 0 : GridPane.getRowIndex(node);
+                int c = GridPane.getColumnIndex(node) == null ? 0 : GridPane.getColumnIndex(node);
+                if (r == row && c == col) {
+                    return (StackPane) node;
+                }
+
+            }
+            return null;
+        }
+
         System.err.println("WARNING: Cell not found at [" + row + "," + col + "]");
         return null;
     }
@@ -610,8 +782,19 @@ public class GameboardController implements Initializable {
             controller.setResult(won);
         } else {
             System.err.println("ERROR: Win_LoseController is null!");
+
+
+        private void showWinLosePopup(boolean won) {
+            System.out.println("showWinLosePopup called with won: " + won); // Debug
+            Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
+            if (controller != null) {
+                controller.setResult(won);
+            } else {
+                System.err.println("ERROR: Win_LoseController is null!");
+            }
+
         }
-    }
+
 
     private void showDrawPopup() {
         System.out.println("showDrawPopup called");
@@ -620,8 +803,18 @@ public class GameboardController implements Initializable {
             controller.setResultDraw();
         } else {
             System.err.println("ERROR: Win_LoseController is null!");
+
+        private void showDrawPopup() {
+            System.out.println("showDrawPopup called"); // Debug
+            Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
+            if (controller != null) {
+                controller.setResultDraw();
+            } else {
+                System.err.println("ERROR: Win_LoseController is null!");
+            }
+
         }
-    }
+
 
     private void showLocalModeWinPopup(String winnerName) {
         System.out.println("showLocalModeWinPopup called with winner: " + winnerName);
@@ -630,6 +823,15 @@ public class GameboardController implements Initializable {
             controller.setResultLocalMode(winnerName);
         } else {
             System.err.println("ERROR: Win_LoseController is null!");
+
+        private void showLocalModeWinPopup(String winnerName) {
+            System.out.println("showLocalModeWinPopup called with winner: " + winnerName); // Debug
+            Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
+            if (controller != null) {
+                controller.setResultLocalMode(winnerName);
+            } else {
+                System.err.println("ERROR: Win_LoseController is null!");
+            }
+
         }
     }
-}

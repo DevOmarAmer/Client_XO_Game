@@ -1,5 +1,8 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.enums.GameMode;
+import com.mycompany.client_xo_game.model.GameSession;
+import com.mycompany.client_xo_game.model.Player_Offline;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,8 +14,13 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-public class OnlinePlayersController {
+public class OnlinePlayersController implements Runnable{
 
     @FXML
     private StackPane rootPane;
@@ -22,18 +30,138 @@ public class OnlinePlayersController {
     private ListView<Player> playersList;
     @FXML
     private Button profileBtn;
-
+    Button inviteBtn;
+    
+    boolean running = true;
+    private Thread refreshThread;
+    
     // Simple Player Model
-    private static class Player {
+    private static class Player{
 
         String name;
-        boolean isOnline;
+        PlayerStatus isOnline;
 
-        public Player(String name, boolean isOnline) {
+        public Player(String name, PlayerStatus isOnline) {
             this.name = name;
             this.isOnline = isOnline;
         }
     }
+    
+    public ObservableList<Player> getAvailablePlayers() {
+
+    ObservableList<Player> players = FXCollections.observableArrayList();
+
+    // Set listener (overwrites current listener)
+    NetworkConnection.getInstance().setListener(response -> {
+        
+        if ("invitation".equals(response.optString("type"))) {
+            showInvitePopup(response.optString("from"));
+        }
+        if ("invite_response".equals(response.optString("type"))) {
+            String fromUser = response.optString("from");
+            if(response.optBoolean("accepted")){
+                Player_Offline p2 = new Player_Offline(fromUser,com.mycompany.client_xo_game.enums.Cell.X);
+                GameSession.setPlayer1(p2);
+                playExitTransition(() -> Navigation.goTo(Routes.GAMEBOARD));
+            }
+            else
+            {
+                Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Invitation Declined");
+                alert.setHeaderText(null);
+                alert.setContentText(fromUser + " declined your invitation.");
+                alert.show();
+            });
+            }
+        }
+
+        if (!"available_players".equals(response.optString("type"))) {
+            return;
+        }
+
+        JSONArray array = response.optJSONArray("players");
+        if (array == null) return;
+
+        Platform.runLater(() -> {
+            players.clear();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject playerJson = array.getJSONObject(i); // get object with name + status
+                String name = playerJson.optString("username");
+                String statusStr = playerJson.optString("status");
+
+                // Convert to enum (assume enum matches server strings)
+                PlayerStatus status;
+                try {
+                    status = PlayerStatus.valueOf(statusStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    status = PlayerStatus.IN_GAME; // fallback
+                }
+
+                players.add(new Player(name, status));
+            }
+        });
+    });
+
+    // Send request
+    JSONObject request = new JSONObject();
+    request.put("type", "get_available_players");
+    NetworkConnection.getInstance().sendMessage(request);
+
+    return players;
+}
+
+    public void run()
+    {
+        while(true)
+        {
+            try {
+                Thread.sleep(5000); // 5 seconds
+                playersList.setItems(getAvailablePlayers());
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+    }
+    public void stop() {
+        running = false;
+        if (refreshThread != null) {
+            refreshThread.interrupt();
+        }
+    }
+    
+    private void showInvitePopup(String fromUser) {
+    Platform.runLater(() -> {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Game Invitation");
+        alert.setHeaderText("You have been invited by " + fromUser);
+        alert.setContentText("Do you want to accept the invitation?");
+
+        ButtonType accept = new ButtonType("Accept");
+        ButtonType decline = new ButtonType("Decline");
+        alert.getButtonTypes().setAll(accept, decline);
+
+        alert.showAndWait().ifPresent(response -> {
+            boolean accepted = response == accept;
+
+            // Send response in the format server expects
+            JSONObject reply = new JSONObject();
+            reply.put("type", "invite_response");
+            reply.put("from", fromUser);  // inviter username
+            reply.put("accepted", accepted); // boolean, true or false
+            
+            NetworkConnection.getInstance().sendMessage(reply);
+            if(accepted){
+                
+            Player_Offline p1 = new Player_Offline(fromUser,com.mycompany.client_xo_game.enums.Cell.X);
+            GameSession.setPlayer1(p1);
+            playExitTransition(() -> Navigation.goTo(Routes.GAMEBOARD));
+            }
+        });
+    });
+}
+
 
     @FXML
     public void initialize() {
@@ -42,18 +170,11 @@ public class OnlinePlayersController {
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1000), rootPane);
         fadeIn.setToValue(1);
         fadeIn.play();
-
-        // 2. Setup List Data
-        ObservableList<Player> data = FXCollections.observableArrayList(
-                new Player("Ahmed", true),
-                new Player("Omar", false),
-                new Player("Sara", true),
-                new Player("Mona", false),
-                new Player("Youssef", true),
-                new Player("Laila", true),
-                new Player("Hassan", false)
-        );
-        playersList.setItems(data);
+        
+        refreshThread = new Thread(this);
+        refreshThread.setDaemon(true);
+        refreshThread.start();
+        playersList.setItems(getAvailablePlayers());
 
         // 3. Custom Cell Factory for 3-Column Layout
         playersList.setCellFactory(listView -> new ListCell<Player>() {
@@ -73,11 +194,11 @@ public class OnlinePlayersController {
                     nameLabel.setPrefWidth(250);
 
                     // Col 2: Status
-                    Label statusLabel = new Label(player.isOnline ? "●  Online" : "●  In Game");                    // Note: Emojis provide the color for the circle, CSS provides color for text.
+                    Label statusLabel = new Label(player.isOnline == PlayerStatus.ONLINE ? "●  Online" : "●  In Game");                    // Note: Emojis provide the color for the circle, CSS provides color for text.
                     // Changed In-Game emoji to yellow/orange circle if desired, or keep red.
                     // If you want purely CSS circles, you'd use Shapes, but emojis are simpler here.
 
-                    statusLabel.getStyleClass().add(player.isOnline ? "status-online" : "status-busy");
+                    statusLabel.getStyleClass().add(player.isOnline == PlayerStatus.ONLINE ? "status-online" : "status-busy");
                     statusLabel.setPrefWidth(150);
 
                     // --- ALIGNMENT: Start from beginning of column ---
@@ -88,10 +209,10 @@ public class OnlinePlayersController {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                    Button inviteBtn = new Button("SEND INVITE");
+                    inviteBtn = new Button("SEND INVITE");
                     inviteBtn.getStyleClass().add("invite-btn");
 
-                    if (!player.isOnline) {
+                    if (player.isOnline == PlayerStatus.IN_GAME ) {
                         inviteBtn.setVisible(false);
                     } else {
                         inviteBtn.setOnAction(e -> handleInvite(player.name));
@@ -114,9 +235,13 @@ public class OnlinePlayersController {
         });
     }
 
-    private void handleInvite(String playerName) {
-        System.out.println("Sending invitation to: " + playerName);
-    }
+    private void handleInvite(String toUser) {
+    JSONObject reply = new JSONObject();
+    reply.put("type", "invite");
+    reply.put("to", toUser);
+        System.out.println("---------\nInviting  : "+toUser+"\n-------------");
+    NetworkConnection.getInstance().sendMessage(reply);
+}
 
     private void playExitTransition(Runnable onFinished) {
         FadeTransition fadeOut = new FadeTransition(Duration.millis(300), rootPane);
