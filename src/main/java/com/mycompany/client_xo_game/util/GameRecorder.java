@@ -70,7 +70,98 @@ public class GameRecorder {
         );
         moves.add(move);
     }
-
+    
+    public String saveGame(String result) {
+        if (!isRecording || moves.isEmpty()) {
+            return null;
+        }
+        
+        try {
+            String fileName = generateFileName();
+            File file = new File(RECORDS_DIR, fileName);
+       
+            JsonArrayBuilder movesArrayBuilder = Json.createArrayBuilder();
+            for (MoveData move : moves) {
+                JsonObject moveObj = Json.createObjectBuilder()
+                    .add("moveNumber", move.moveNumber)
+                    .add("row", move.row)
+                    .add("col", move.col)
+                    .add("symbol", move.symbol)
+                    .add("playerName", move.playerName)
+                    .add("timestamp", move.timestamp.format(ISO_FORMATTER))
+                    .build();
+                movesArrayBuilder.add(moveObj);
+            }
+        
+            JsonObject gameRecord = Json.createObjectBuilder()
+                .add("player1Name", player1Name)
+                .add("player2Name", player2Name)
+                .add("gameStartTime", gameStartTime.format(ISO_FORMATTER))
+                .add("gameEndTime", LocalDateTime.now().format(ISO_FORMATTER))
+                .add("result", result)
+                .add("totalMoves", moves.size())
+                .add("moves", movesArrayBuilder)
+                .build();
+            
+            Map<String, Object> config = new HashMap<>();
+            config.put(JsonGenerator.PRETTY_PRINTING, true);
+            JsonWriterFactory writerFactory = Json.createWriterFactory(config);
+            
+            try (JsonWriter writer = writerFactory.createWriter(new FileWriter(file))) {
+                writer.writeObject(gameRecord);
+            }
+            
+            isRecording = false;
+            System.out.println("Game recorded successfully: " + fileName);
+            return file.getAbsolutePath();
+            
+        } catch (IOException e) {
+            System.err.println("Error saving game record: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static JsonObject loadGameRecord(File file) {
+        try (FileReader fileReader = new FileReader(file);
+             JsonReader jsonReader = Json.createReader(fileReader)) {
+            return jsonReader.readObject();
+        } catch (Exception e) {
+            System.err.println("Error loading game record: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static File[] getAllGameRecords() {
+        File recordsDir = new File(RECORDS_DIR);
+        if (!recordsDir.exists() || !recordsDir.isDirectory()) {
+            return new File[0];
+        }
+        
+        File[] files = recordsDir.listFiles((dir, name) -> name.endsWith(".json"));
+        return files != null ? files : new File[0];
+    }
+    
+    private String generateFileName() {
+        String date = gameStartTime.format(DATE_FORMATTER);
+        String safeName1 = sanitizeFileName(player1Name);
+        String safeName2 = sanitizeFileName(player2Name);
+        return safeName1 + "_VS_" + safeName2 + "_" + date + ".json";
+    }
+    
+    private String sanitizeFileName(String name) {
+        return name.replaceAll("[^a-zA-Z0-9-_]", "_");
+    }
+    
+    public boolean isRecording() {
+        return isRecording;
+    }
+    
+    public void cancelRecording() {
+        this.isRecording = false;
+        this.moves.clear();
+    }
     private static class MoveData {
         int moveNumber;
         int row;
