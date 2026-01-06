@@ -98,7 +98,27 @@ public class GameSession {
         cancelRecording();
     }
     
-
+    public static void startRecording() {
+        if (player1 == null || player2 == null) {
+            System.err.println("Cannot start recording: Players not set");
+            return;
+        }
+        
+        String p1Name = player1.getName();
+        String p2Name = (player2 != null) ? player2.getName() : "Computer";
+        
+        gameRecorder.startRecording(p1Name, p2Name);
+        System.out.println("Recording started: " + p1Name + " vs " + p2Name);
+    }
+   
+    public static void recordMove(int row, int col, String symbol, String playerName) {
+        gameRecorder.recordMove(row, col, symbol, playerName);
+    }
+    
+    
+    public static String saveGameRecord(String result) {
+        return gameRecorder.saveGame(result);
+    }
     
   
     public static boolean isRecording() {
