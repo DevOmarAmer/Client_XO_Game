@@ -102,7 +102,7 @@ public class GameRecorder {
                 .add("totalMoves", moves.size())
                 .add("moves", movesArrayBuilder)
                 .build();
-            
+              
             Map<String, Object> config = new HashMap<>();
             config.put(JsonGenerator.PRETTY_PRINTING, true);
             JsonWriterFactory writerFactory = Json.createWriterFactory(config);

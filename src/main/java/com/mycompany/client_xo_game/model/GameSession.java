@@ -6,6 +6,7 @@ package com.mycompany.client_xo_game.model;
 
 import com.mycompany.client_xo_game.enums.AIDifficulty;
 import com.mycompany.client_xo_game.enums.GameMode;
+import com.mycompany.client_xo_game.util.GameRecorder;
 
 /**
  *
@@ -19,6 +20,7 @@ public class GameSession {
     private static Player_Offline player2;
     private static int scoreP1 = 0;
     private static int scoreP2 = 0;
+     private static GameRecorder gameRecorder = new GameRecorder();
 
     public static void setGameMode(GameMode mode) {
         currentMode = mode;
@@ -93,5 +95,21 @@ public class GameSession {
         player2 = null;
         scoreP1 = 0;
         scoreP2 = 0;
+        cancelRecording();
+    }
+    
+
+    
+  
+    public static boolean isRecording() {
+        return gameRecorder.isRecording();
+    }
+    
+ 
+    public static void cancelRecording() {
+        if (gameRecorder.isRecording()) {
+            gameRecorder.cancelRecording();
+            System.out.println("Recording cancelled");
+        }
     }
 }
