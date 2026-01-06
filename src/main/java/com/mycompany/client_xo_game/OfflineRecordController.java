@@ -59,7 +59,7 @@ public class OfflineRecordController {
                 continue;
             }
             
-            // Validate required fields
+           
             if (!record.containsKey("player1Name") || !record.containsKey("result")) {
                 System.err.println("Error: Missing required fields in " + file.getName());
                 continue;
@@ -88,50 +88,49 @@ public class OfflineRecordController {
     @FXML
     private void handleViewRecord() {
       
-      
+        int selectedIndex = recordsList.getSelectionModel().getSelectedIndex();
+        
+        if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
+            showAlert("Please select a game record to view");
+            return;
+        }
+        
+        File selectedFile = gameFiles[selectedIndex];
+        JsonObject record = GameRecorder.loadGameRecord(selectedFile);
+        
+        if (record == null) {
+            showAlert("Error loading game record");
+            return;
+        }
+
+        playExitTransition(() -> {
+            try {
+   
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/com/mycompany/client_xo_game/Gameboard.fxml")
+                );
+                
+              
+                javafx.scene.Parent root = loader.load();
+                
+             
+                GameboardController controller = loader.getController();
+                
+          
+                controller.setReplayMode(record); 
+          
+                if (rootPane.getScene() != null) {
+                    rootPane.getScene().setRoot(root);
+                }
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert("Error loading replay: " + e.getMessage());
+            }
+        });
     }
-//    @FXML
-//    private void handleViewRecord() {
-//        int selectedIndex = recordsList.getSelectionModel().getSelectedIndex();
-//        
-//        if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
-//            showAlert("Please select a game record to view");
-//            return;
-//        }
-//        
-//        File selectedFile = gameFiles[selectedIndex];
-//        JsonObject record = GameRecorder.loadGameRecord(selectedFile);
-//        
-//        if (record == null) {
-//            showAlert("Error loading game record");
-//            return;
-//        }
-//        
-//        System.out.println("Loading replay for: " + record.getString("player1Name") + " vs " + record.getString("player2Name"));
-//        System.out.println("Total moves: " + record.getInt("totalMoves"));
-//        
-//        // Navigate to gameboard in replay mode
-//        playExitTransition(() -> {
-//            try {
-//                GameboardController controller = Navigation.loadAndGoTo(Routes.GAMEBOARD);
-//                if (controller != null) {
-//                    System.out.println("Controller loaded, setting replay mode...");
-//                    controller.setReplayMode(record);
-//                    System.out.println("Replay mode set successfully!");
-//                } else {
-//                    System.err.println("ERROR: GameboardController is null!");
-//                    showAlert("Failed to load game board");
-//                }
-//            } catch (Exception e) {
-//                System.err.println("Error setting replay mode: " + e.getMessage());
-//                e.printStackTrace();
-//                showAlert("Error loading replay: " + e.getMessage());
-//            }
-//        });
-//    }
-    
- 
-    
+
+   
     @FXML
     private void handleDelete() {
         int selectedIndex = recordsList.getSelectionModel().getSelectedIndex();
