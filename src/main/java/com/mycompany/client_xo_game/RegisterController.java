@@ -9,6 +9,8 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import org.json.JSONObject;
+import javafx.application.Platform;
 
 public class RegisterController {
 
@@ -105,8 +107,33 @@ public class RegisterController {
             return;
         }
 
-        // Add registration logic here
-        playExitTransition(() -> Navigation.goTo(Routes.LOGIN));
+        // 1. Set Listener for Server Response
+        NetworkConnection.getInstance().setListener(this::onServerResponse);
+
+        // 2. Send Register Request
+        JSONObject json = new JSONObject();
+        json.put("type", "register");
+        json.put("username", usernameField.getText().trim());
+        json.put("email", emailField.getText().trim());
+        json.put("password", passwordField.getText().trim());
+        
+        System.out.println("[Client] Sending Register Request: " + json.toString());
+        NetworkConnection.getInstance().sendMessage(json);
+    }
+
+    private void onServerResponse(JSONObject json) {
+        System.out.println("[Client] Received Response: " + json.toString());
+        if ("register_response".equals(json.optString("type"))) {
+            if ("success".equals(json.optString("status"))) {
+                System.out.println("[Client] Registration Success. Navigating to Login.");
+                // Only navigate on success
+                playExitTransition(() -> Navigation.goTo(Routes.LOGIN));
+            } else {
+                String reason = json.optString("reason", "Unknown Error");
+                System.out.println("[Client] Registration Failed: " + reason);
+                Platform.runLater(() -> messageLabel.setText("Failed: " + reason));
+            }
+        }
     }
 
     @FXML

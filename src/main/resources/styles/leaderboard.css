@@ -1,0 +1,139 @@
+/* ======================================
+   THEMATIC BACKGROUND
+   ====================================== */
+.main-root {
+    -fx-background-color: #080a12;
+    -fx-background-image: radial-gradient(center 50% 0%, radius 80%, #292200 0%, #080a12 100%);
+}
+
+.bg-glow {
+    -fx-fill: transparent;
+    -fx-stroke: rgba(255, 215, 0, 0.05);
+    -fx-stroke-width: 50;
+    -fx-effect: dropshadow(gaussian, #FFD700, 100, 0.1, 0, 0);
+}
+
+/* ======================================
+   GLASS PANEL & TITLES
+   ====================================== */
+.xo-glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.02);
+    -fx-background-radius: 40;
+    -fx-border-color: rgba(255, 215, 0, 0.3);
+    -fx-border-radius: 40;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 50, 0, 0, 0);
+}
+
+.title-gold {
+    -fx-fill: #FFD700;
+    -fx-font-family: "Impact";
+    -fx-font-size: 48px;
+    -fx-effect: dropshadow(gaussian, #FFD700,  10, 0.1, 0, 0);
+}
+
+.subtitle {
+    -fx-fill: white;
+    -fx-font-size: 14px;
+    -fx-letter-spacing: 5px;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.7;
+}
+
+/* ======================================
+   LIST HEADERS & VIEW
+   ====================================== */
+.list-header {
+    -fx-padding: 0 15 10 15;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 0 1 0;
+}
+.header-label {
+    -fx-text-fill: rgba(255, 215, 0, 0.6);
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.neon-list-view {
+    -fx-background-color: rgba(0,0,0,0.2);
+    -fx-background-radius: 15;
+    -fx-border-width: 0;
+    -fx-padding: 5;
+}
+
+/* Scrollbar Styling */
+.list-view .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(255, 215, 0, 0.3);
+    -fx-background-radius: 10;
+}
+
+/* ======================================
+   LIST CELLS (Custom Layout)
+   ====================================== */
+.neon-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-width: 0 0 1 0;
+}
+.neon-list-view .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.rank-text {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+.player-text {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+.score-text {
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.4), 8, 0, 0, 0);
+}
+
+/* ======================================
+   USER RANK FOOTER
+   ====================================== */
+.user-rank-box {
+    -fx-background-color: rgba(255, 215, 0, 0.1);
+    -fx-background-radius: 20;
+    -fx-padding: 15;
+    -fx-border-color: #FFD700;
+    -fx-border-radius: 20;
+    -fx-effect: innershadow(gaussian, #FFD700, 10, 0, 0, 0);
+}
+.user-rank-text {
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+/* ======================================
+   BACK BUTTON (Matches Global Cyan Style)
+   ====================================== */
+.xo-back-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(0, 255, 240, 0.4);
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+    -fx-background-insets: 0;
+    -fx-text-fill: #00fff0;
+    -fx-font-weight: bold;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+}
+
+.xo-back-btn:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.12);
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 15, 0.4, 0, 0);
+}

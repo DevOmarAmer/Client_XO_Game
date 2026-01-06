@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane fx:id="rootPane"
+           prefWidth="900" prefHeight="700"
+           stylesheets="@/styles/game_replays.css"
+           styleClass="main-root"
+           xmlns="http://javafx.com/javafx/13"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.client_xo_game.Game_replaysController">
+
+    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="CENTER_LEFT" translateX="-50" translateY="100"/>
+    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="TOP_RIGHT" translateX="50" translateY="-50"/>
+
+    <Button text="← BACK"
+            onAction="#goBack"
+            styleClass="xo-back-btn"
+            StackPane.alignment="TOP_LEFT"
+            translateX="40"
+            translateY="40"/>
+
+    <VBox fx:id="contentBox"
+          alignment="CENTER"
+          spacing="20"
+          maxWidth="600"
+          maxHeight="650"
+          styleClass="xo-glass-panel">
+
+        <VBox alignment="CENTER" spacing="5">
+            <Text text="GAME REPLAYS" styleClass="title-neon-purple"/>
+            <Line endX="200" stroke="#bf00ff" strokeWidth="2.0" opacity="0.6"/>
+        </VBox>
+
+        <ListView fx:id="replaysList" VBox.vgrow="ALWAYS" styleClass="neon-list-view"/>
+        
+        <Label text="Select a game to watch" styleClass="hint-label"/>
+        
+        <Button text="▶ WATCH REPLAY" onAction="#handleWatch" styleClass="action-btn"/>
+
+    </VBox>
+</StackPane>
