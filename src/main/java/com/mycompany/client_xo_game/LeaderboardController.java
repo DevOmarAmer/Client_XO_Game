@@ -1,6 +1,7 @@
 package com.mycompany.client_xo_game;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +11,8 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class LeaderboardController {
 
@@ -19,8 +22,9 @@ public class LeaderboardController {
     private VBox contentBox;
     @FXML
     private ListView<PlayerScore> scoreList;
+    @FXML
+    private ProgressIndicator loadingSpinner;
 
-    // Data Model
     private static class PlayerScore {
 
         int rank;
@@ -36,25 +40,61 @@ public class LeaderboardController {
 
     @FXML
     public void initialize() {
-        // 1. Entrance Animation
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(800), rootPane);
         fadeIn.setToValue(1);
         fadeIn.play();
 
-        // 2. Mock Data
-        ObservableList<PlayerScore> data = FXCollections.observableArrayList(
-                new PlayerScore(1, "MasterYoda", 2500),
-                new PlayerScore(2, "Skywalker", 2350),
-                new PlayerScore(3, "ObiWan", 2100),
-                new PlayerScore(4, "DarthV", 1900),
-                new PlayerScore(5, "R2D2", 1800),
-                new PlayerScore(6, "C3PO", 1500),
-                new PlayerScore(7, "Chewie", 1200)
-        );
-        scoreList.setItems(data);
+        if (loadingSpinner == null) {
+            loadingSpinner = new ProgressIndicator();
+            loadingSpinner.setMaxSize(50, 50);
+            rootPane.getChildren().add(loadingSpinner);
+        }
+        loadingSpinner.setVisible(true);
+        scoreList.setVisible(false);
 
-        // 3. Custom Cell Factory (Columns)
+        NetworkConnection.getInstance().setListener(this::onServerResponse);
+
+        JSONObject req = new JSONObject();
+        req.put("type", "get_leaderboard");
+        NetworkConnection.getInstance().sendMessage(req);
+
+        setupCellFactory();
+
+        rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+            contentBox.setMaxWidth(Math.max(550, newVal.doubleValue() * 0.65));
+        });
+    }
+
+    private void onServerResponse(JSONObject json) {
+        String type = json.optString("type");
+        if ("leaderboard_response".equals(type)) {
+            Platform.runLater(() -> {
+                if ("success".equals(json.optString("status"))) {
+                    updateList(json.getJSONArray("leaderboard"));
+                } else {
+                    System.out.println("Failed to fetch leaderboard");
+                }
+                loadingSpinner.setVisible(false);
+                scoreList.setVisible(true);
+            });
+        }
+    }
+
+    private void updateList(JSONArray jsonList) {
+        ObservableList<PlayerScore> data = FXCollections.observableArrayList();
+
+        for (int i = 0; i < jsonList.length(); i++) {
+            JSONObject player = jsonList.getJSONObject(i);
+            String name = player.getString("username");
+            int score = player.getInt("score");
+            data.add(new PlayerScore(i + 1, name, score));
+        }
+
+        scoreList.setItems(data);
+    }
+
+    private void setupCellFactory() {
         scoreList.setCellFactory(listView -> new ListCell<PlayerScore>() {
             @Override
             protected void updateItem(PlayerScore player, boolean empty) {
@@ -63,28 +103,33 @@ public class LeaderboardController {
                 if (empty || player == null) {
                     setGraphic(null);
                     setText(null);
+                    setStyle("-fx-background-color: transparent;");
                 } else {
-                    // Rank (Icon/Text)
+                    // Rank Logic
                     String rankText = String.valueOf(player.rank);
+                    String rankColor = "#bdc3c7"; // Default gray
+
                     if (player.rank == 1) {
-                        rankText = "🥇 " + player.rank;
+                        rankText = "🥇";
+                        rankColor = "#f1c40f";
                     } else if (player.rank == 2) {
-                        rankText = "🥈 " + player.rank;
+                        rankText = "🥈";
+                        rankColor = "#95a5a6";
                     } else if (player.rank == 3) {
-                        rankText = "🥉 " + player.rank;
+                        rankText = "🥉";
+                        rankColor = "#d35400";
                     } else {
-                        rankText = "   " + player.rank;
+                        rankText = "#" + player.rank;
                     }
 
                     Label rankLbl = new Label(rankText);
-                    rankLbl.getStyleClass().add("rank-text");
-                    rankLbl.setPrefWidth(80);
+                    rankLbl.setStyle("-fx-text-fill: " + rankColor + "; -fx-font-size: 18px; -fx-font-weight: bold;");
+                    rankLbl.setPrefWidth(60);
                     rankLbl.setAlignment(Pos.CENTER);
 
                     // Name
                     Label nameLbl = new Label(player.name);
-                    nameLbl.getStyleClass().add("player-text");
-                    nameLbl.setMaxWidth(Double.MAX_VALUE);
+                    nameLbl.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
 
                     // Spacer
                     Region spacer = new Region();
@@ -92,22 +137,17 @@ public class LeaderboardController {
 
                     // Score
                     Label scoreLbl = new Label(player.score + " pts");
-                    scoreLbl.getStyleClass().add("score-text");
-                    scoreLbl.setPrefWidth(100);
-                    scoreLbl.setAlignment(Pos.CENTER_RIGHT);
+                    scoreLbl.setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold; -fx-font-size: 14px;");
 
-                    // Layout
-                    HBox container = new HBox(10, rankLbl, nameLbl, spacer, scoreLbl);
+                    HBox container = new HBox(15, rankLbl, nameLbl, spacer, scoreLbl);
                     container.setAlignment(Pos.CENTER_LEFT);
+                    container.setPadding(new javafx.geometry.Insets(10));
+
+                    // Highlight current user? (Optional logic if you store current username)
+                    // if (player.name.equals(CurrentUser.name)) setStyle("-fx-background-color: #34495e;");
                     setGraphic(container);
                 }
             }
-        });
-
-        // 4. Responsive Scaling
-        rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
-            double w = newVal.doubleValue();
-            contentBox.setMaxWidth(Math.max(550, w * 0.65));
         });
     }
 

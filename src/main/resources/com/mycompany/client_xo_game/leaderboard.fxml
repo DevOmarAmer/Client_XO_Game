@@ -41,11 +41,11 @@
             <Label text="SCORE" styleClass="header-label" prefWidth="100" alignment="CENTER_RIGHT"/>
         </HBox>
 
-        <ListView fx:id="scoreList" VBox.vgrow="ALWAYS" styleClass="neon-list-view"/>
-        
-        <HBox alignment="CENTER" styleClass="user-rank-box">
-            <Label text="Your Rank: 12th (950 pts)" styleClass="user-rank-text"/>
-        </HBox>
+        <StackPane VBox.vgrow="ALWAYS">
+            <ListView fx:id="scoreList" styleClass="neon-list-view"/>
+            
+            <ProgressIndicator fx:id="loadingSpinner" maxWidth="50" maxHeight="50" visible="false"/>
+        </StackPane>
 
     </VBox>
 </StackPane>
