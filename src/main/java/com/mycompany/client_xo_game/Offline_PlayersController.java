@@ -102,7 +102,6 @@ public class Offline_PlayersController {
         });
 
     
-        addHoverAnimation(back_id);
         addHoverAnimation(play_id);
         
         if (record_game_chk != null) {

@@ -7,31 +7,31 @@
 }
 
 /* Background faded symbols */
-.bg-symbol-x { 
-    -fx-font-size: 220px; 
-    -fx-font-family: "Arial Black"; 
-    -fx-text-fill: rgba(0, 210, 255, 0.04); 
+.bg-symbol-x {
+    -fx-font-size: 220px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(0, 210, 255, 0.04);
 }
-.bg-symbol-o { 
-    -fx-font-size: 220px; 
-    -fx-font-family: "Arial Black"; 
-    -fx-text-fill: rgba(255, 0, 127, 0.04); 
+.bg-symbol-o {
+    -fx-font-size: 220px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: rgba(255, 0, 127, 0.04);
 }
 
 /* ======================================
    LOGO TEXT
    ====================================== */
-.logo-x { 
-    -fx-fill: #00d2ff; 
-    -fx-font-size: 52px; 
-    -fx-font-weight: bold; 
-    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); 
+.logo-x {
+    -fx-fill: #00d2ff;
+    -fx-font-size: 90px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, #00d2ff, 8, 0.5, 0, 0);
 }
-.logo-o { 
-    -fx-fill: #ff007f; 
-    -fx-font-size: 52px; 
-    -fx-font-weight: bold; 
-    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); 
+.logo-o {
+    -fx-fill: #ff007f;
+    -fx-font-size: 90px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, #ff007f, 8, 0.5, 0, 0);
 }
 
 /* ======================================
@@ -99,34 +99,26 @@
 }
 
 /* ======================================
-   BACK BUTTON (Glow + Press Effect)
+   BACK BUTTON (Matches Style of Offline/Replays)
    ====================================== */
 .xo-back-btn {
     -fx-background-color: transparent;
-    -fx-border-color: rgba(0, 255, 240, 0.4);
+    -fx-border-color: rgba(0, 255, 240, 0.5); /* Matched opacity */
     -fx-border-radius: 40;
     -fx-background-radius: 40;
-    -fx-background-insets: 0;
     -fx-text-fill: #00fff0;
     -fx-font-weight: bold;
-    -fx-padding: 10 25;
+    -fx-padding: 8 20; /* Tighter padding */
     -fx-cursor: hand;
-    -fx-transition: 0.3s;
 }
 
 .xo-back-btn:hover {
-    -fx-background-color: rgba(0, 255, 240, 0.12);
-    -fx-border-color: #00fff0;
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 15, 0.4, 0, 0);
-}
-
-.xo-back-btn:pressed {
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
+    -fx-background-color: rgba(0, 255, 240, 0.15); /* Matched hover opacity */
+    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.4, 0, 0); /* Tighter shadow */
 }
 
 /* ======================================
-   OPTIONAL: Neon Input Fields (Match Offline)
+   OPTIONAL: Neon Input Fields
    ====================================== */
 .xo-input {
     -fx-background-color: rgba(255, 255, 255, 0.05);

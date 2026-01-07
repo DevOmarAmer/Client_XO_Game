@@ -16,13 +16,13 @@
     <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-50" translateY="50"/>
     <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="50" translateY="-50"/>
 
-<Button fx:id="btnBack"
-        text="← BACK"
-        onAction="#goBack"
-        styleClass="xo-back-btn"
-        StackPane.alignment="TOP_LEFT"
-        translateX="25"
-        translateY="25"/>
+    <Button fx:id="btnBack"
+            text="← BACK"
+            onAction="#goBack"
+            styleClass="xo-back-btn"
+            StackPane.alignment="TOP_LEFT"
+            translateX="30"
+            translateY="30"/>
 
     <VBox fx:id="contentBox"
           alignment="CENTER"

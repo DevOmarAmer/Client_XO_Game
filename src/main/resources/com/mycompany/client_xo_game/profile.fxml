@@ -1,69 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 
-<StackPane fx:id="rootPane"
-           prefWidth="900" prefHeight="700"
-           stylesheets="@/styles/profile.css"
-           styleClass="main-root"
-           xmlns="http://javafx.com/javafx/13"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.mycompany.client_xo_game.ProfileController">
+<StackPane fx:id="rootPane" prefHeight="700" prefWidth="900" styleClass="main-root" stylesheets="@/styles/profile.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.client_xo_game.ProfileController">
 
-    <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="BOTTOM_LEFT" translateX="30" translateY="-30"/>
-    <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="TOP_RIGHT" translateX="-30" translateY="50"/>
+    <Label styleClass="bg-symbol-x" text="X" translateX="30" translateY="-30" StackPane.alignment="BOTTOM_LEFT" />
+    <Label styleClass="bg-symbol-o" text="O" translateX="-30" translateY="50" StackPane.alignment="TOP_RIGHT" />
 
-    <Button text="← BACK"
-            onAction="#goBack"
-            styleClass="xo-back-btn"
-            StackPane.alignment="TOP_LEFT"
-            translateX="40"
-            translateY="40"/>
+    <Button onAction="#goBack" styleClass="xo-back-btn" text="← BACK" translateX="40" translateY="40" StackPane.alignment="TOP_LEFT" />
 
-    <VBox fx:id="contentBox"
-          alignment="CENTER"
-          spacing="30"
-          maxWidth="550"
-          maxHeight="600"
-          styleClass="xo-glass-panel">
+    <VBox fx:id="contentBox" alignment="CENTER" maxHeight="600" maxWidth="550" spacing="30" styleClass="xo-glass-panel">
 
         <VBox alignment="CENTER" spacing="5">
-            <Label text="PLAYER PROFILE" styleClass="header-label"/>
-            <Line endX="100" stroke="#00fff0" strokeWidth="2" opacity="0.5"/>
+            <Label styleClass="header-label" text="PLAYER PROFILE" />
+            <Line endX="100" opacity="0.5" stroke="#00fff0" strokeWidth="2" />
         </VBox>
 
         <VBox alignment="CENTER" spacing="10" styleClass="user-info-box">
-            <Label fx:id="usernameLabel" text="Ahmed Tayseer" styleClass="username-text"/>
-            <Label fx:id="emailLabel" text="ahmed@example.com" styleClass="email-text"/>
+            <Label fx:id="usernameLabel" styleClass="username-text" text="Ahmed Tayseer" />
+            <Label fx:id="emailLabel" styleClass="email-text" text="ahmed@example.com" />
             <HBox alignment="CENTER" spacing="10">
-                <Label text="🏆 Total Score:" styleClass="score-label-static"/>
-                <Label fx:id="scoreLabel" text="2500" styleClass="score-value"/>
+                <Label styleClass="score-label-static" text="🏆 Total Score:" />
+                <Label fx:id="scoreLabel" styleClass="score-value" text="2500" />
             </HBox>
         </VBox>
 
         <HBox alignment="CENTER" spacing="25">
-            <VBox styleClass="stat-card, glow-green" alignment="CENTER">
-                <Label text="WINS" styleClass="stat-title"/>
-                <Label fx:id="winsLabel" text="42" styleClass="stat-value"/>
+            <VBox alignment="CENTER" styleClass="stat-card, glow-green">
+                <Label styleClass="stat-title" text="WINS" />
+                <Label fx:id="winsLabel" styleClass="stat-value" text="42" />
             </VBox>
             
-            <VBox styleClass="stat-card, glow-yellow" alignment="CENTER">
-                <Label text="DRAWS" styleClass="stat-title"/>
-                <Label fx:id="drawsLabel" text="15" styleClass="stat-value"/>
+            <VBox alignment="CENTER" styleClass="stat-card, glow-yellow">
+                <Label styleClass="stat-title" text="DRAWS" />
+                <Label fx:id="drawsLabel" styleClass="stat-value" text="15" />
             </VBox>
 
-            <VBox styleClass="stat-card, glow-red" alignment="CENTER">
-                <Label text="LOSSES" styleClass="stat-title"/>
-                <Label fx:id="lossesLabel" text="8" styleClass="stat-value"/>
+            <VBox alignment="CENTER" styleClass="stat-card, glow-red">
+                <Label styleClass="stat-title" text="LOSSES" />
+                <Label fx:id="lossesLabel" styleClass="stat-value" text="8" />
             </VBox>
         </HBox>
 
-        <VBox spacing="15" alignment="CENTER" maxWidth="Infinity">
-            <Button text="EDIT DETAILS" onAction="#handleEdit" styleClass="action-btn"/>
-            <Button text="LOGOUT" onAction="#handleLogout" styleClass="logout-btn"/>
+        <VBox alignment="CENTER" maxWidth="Infinity" spacing="15">
+            <Button onAction="#handleEdit" styleClass="action-btn" text="EDIT DETAILS" />
+            <Button onAction="#handleLogout" styleClass="logout-btn" text="LOGOUT" />
+            <Button fx:id="deleteAccountBtn" onAction="#handleDeleteAccount" styleClass="delete-btn" text="DELETE ACCOUNT" />
         </VBox>
 
     </VBox>

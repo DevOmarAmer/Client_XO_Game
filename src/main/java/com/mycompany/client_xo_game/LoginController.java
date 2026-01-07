@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import com.mycompany.client_xo_game.model.CurrentUser;
 import org.json.JSONObject;
 
 public class LoginController {
@@ -39,7 +40,10 @@ public class LoginController {
         rootPane.widthProperty().addListener((obs, oldVal, newVal) -> scaleComponents(newVal.doubleValue()));
         rootPane.heightProperty().addListener((obs, oldVal, newVal) -> contentBox.setMaxHeight(newVal.doubleValue() * 0.85));
 
-        addHoverAnimation(back_id);
+      
+        // -----------------------------
+        // 4. Add hover animations
+        // -----------------------------
         addHoverAnimation(loginBtn);
     }
 
@@ -111,6 +115,7 @@ public class LoginController {
                 
                 System.out.println("Login successful for user: " + username);
                 
+                CurrentUser.setUsername(usernameField.getText().trim());
                 playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
             } else {
                 messageLabel.setText("Login Failed: " + json.optString("reason", "Unknown error"));
