@@ -20,7 +20,7 @@ public class RegisterController {
     @FXML private TextField usernameField, emailField;
     @FXML private PasswordField passwordField, confirmPasswordField;
     @FXML private Label messageLabel;
-    @FXML private Button registerBtn, back_id;
+    @FXML private Button registerBtn;
     @FXML private Label titleLabel;
     @FXML private Hyperlink loginLink;
 
@@ -47,7 +47,6 @@ public class RegisterController {
 
         // Hover animations
         addHoverAnimation(registerBtn);
-        addHoverAnimation(back_id);
     }
 
     private void scaleComponents(double w) {

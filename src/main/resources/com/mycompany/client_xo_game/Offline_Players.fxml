@@ -11,7 +11,7 @@
            styleClass="offline-root"
            xmlns="http://javafx.com/javafx/25"
            xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="com.mycompany.client_xo_game.Offline_PlayersController">
+           fx:controller="com.mycompany.client_xo_game.Offline_PlayersController">
 
     <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-50" translateY="50"/>
     <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="50" translateY="-50"/>
@@ -21,8 +21,9 @@
             onAction="#goBack"
             styleClass="xo-back-btn"
             StackPane.alignment="TOP_LEFT"
-            translateX="25"
-            translateY="25"/>
+            translateX="30"
+            translateY="30"/>
+
 
     <VBox fx:id="contentBox"
           alignment="CENTER"

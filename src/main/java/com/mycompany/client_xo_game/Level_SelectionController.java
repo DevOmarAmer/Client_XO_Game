@@ -82,7 +82,6 @@ public class Level_SelectionController {
         addHover(btnEasy);
         addHover(btnMedium);
         addHover(btnHard);
-        addHover(btnBack);
     }
 
     /* ===============================
