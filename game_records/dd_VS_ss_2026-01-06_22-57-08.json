@@ -1,0 +1,50 @@
+{
+    "player1Name": "dd",
+    "player2Name": "ss",
+    "gameStartTime": "2026-01-06T22:57:08.597194",
+    "gameEndTime": "2026-01-06T22:57:10.9578779",
+    "result": "dd Wins",
+    "totalMoves": 5,
+    "moves": [
+        {
+            "moveNumber": 1,
+            "row": 2,
+            "col": 0,
+            "symbol": "X",
+            "playerName": "dd",
+            "timestamp": "2026-01-06T22:57:09.2582974"
+        },
+        {
+            "moveNumber": 2,
+            "row": 2,
+            "col": 2,
+            "symbol": "O",
+            "playerName": "ss",
+            "timestamp": "2026-01-06T22:57:09.7751494"
+        },
+        {
+            "moveNumber": 3,
+            "row": 0,
+            "col": 0,
+            "symbol": "X",
+            "playerName": "dd",
+            "timestamp": "2026-01-06T22:57:10.2124297"
+        },
+        {
+            "moveNumber": 4,
+            "row": 0,
+            "col": 2,
+            "symbol": "O",
+            "playerName": "ss",
+            "timestamp": "2026-01-06T22:57:10.5642714"
+        },
+        {
+            "moveNumber": 5,
+            "row": 1,
+            "col": 0,
+            "symbol": "X",
+            "playerName": "dd",
+            "timestamp": "2026-01-06T22:57:10.9493527"
+        }
+    ]
+}
