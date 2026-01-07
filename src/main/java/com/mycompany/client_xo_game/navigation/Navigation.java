@@ -1,6 +1,7 @@
 package com.mycompany.client_xo_game.navigation;
 
 import com.mycompany.client_xo_game.App;
+import com.mycompany.client_xo_game.GameboardController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -38,7 +39,6 @@ public class Navigation {
             throw new RuntimeException("Failed to load and navigate to: " + route, e);
         }
     }
-
    
     public static <T> T openModalWithController(String route) {
         try {
@@ -49,20 +49,33 @@ public class Navigation {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
             
-      
             T controller = loader.getController();
             
-        
             try {
                 controller.getClass().getMethod("setStage", Stage.class).invoke(controller, stage);
             } catch (Exception e) {
-             
                 stage.showAndWait();
             }
             
             return controller;
         } catch (IOException e) {
             throw new RuntimeException("Failed to open modal: " + route, e);
+        }
+    }
+    
+    
+    public static void goToOnlineGame(String opponent, String symbol, boolean myTurn) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(Routes.GAMEBOARD + ".fxml"));
+            Parent root = loader.load();
+            
+            GameboardController controller = loader.getController();
+            controller.setOnlineMode(opponent, symbol, myTurn);
+            
+           
+            App.getScene().setRoot(root);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to navigate to online game", e);
         }
     }
 }
