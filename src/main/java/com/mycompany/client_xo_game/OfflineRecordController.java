@@ -12,8 +12,9 @@ import com.mycompany.client_xo_game.navigation.Routes;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
-import jakarta.json.JsonArray;
+import java.util.List;
 import jakarta.json.JsonObject;
 
 public class OfflineRecordController {
@@ -21,36 +22,48 @@ public class OfflineRecordController {
     @FXML private StackPane rootPane;
     @FXML private ListView<String> recordsList;
     
-    private static final String RECORDS_DIR = "game_records";
     private File[] gameFiles;
     private DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
     private DateTimeFormatter isoFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @FXML
     public void initialize() {
-     
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(800), rootPane);
         fadeIn.setToValue(1);
         fadeIn.play();
         
-      
         loadGameRecords();
     }
     
     private void loadGameRecords() {
         recordsList.getItems().clear();
         
-        gameFiles = GameRecorder.getAllGameRecords();
+        // 1. Get all raw files
+        File[] allFiles = GameRecorder.getAllGameRecords();
+        
+        // 2. Filter: Exclude any file that starts with "ONLINE"
+        List<File> offlineFiles = new ArrayList<>();
+        if (allFiles != null) {
+            for (File file : allFiles) {
+                if (!file.getName().startsWith("ONLINE")) {
+                    offlineFiles.add(file);
+                }
+            }
+        }
+
+        // 3. Assign filtered list to class variable
+        gameFiles = offlineFiles.toArray(new File[0]);
         
         if (gameFiles.length == 0) {
-            recordsList.getItems().add("No game records found");
+            recordsList.getItems().add("No offline game records found");
             return;
         }
         
-
+        // 4. Sort by date (Newest first)
         Arrays.sort(gameFiles, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
         
+        // 5. Display
         for (File file : gameFiles) {
             JsonObject record = GameRecorder.loadGameRecord(file);
             
@@ -59,13 +72,11 @@ public class OfflineRecordController {
                 continue;
             }
             
-           
             if (!record.containsKey("player1Name") || !record.containsKey("result")) {
                 System.err.println("Error: Missing required fields in " + file.getName());
                 continue;
             }
             
-          
             LocalDateTime gameTime = LocalDateTime.parse(
                 record.getString("gameStartTime"), 
                 isoFormatter
@@ -77,17 +88,14 @@ public class OfflineRecordController {
                 record.getString("player2Name"),
                 dateStr,
                 record.getString("result")
-           
             );
             
             recordsList.getItems().add(displayText);
         }
     }
     
-
     @FXML
     private void handleViewRecord() {
-      
         int selectedIndex = recordsList.getSelectionModel().getSelectedIndex();
         
         if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
@@ -105,20 +113,16 @@ public class OfflineRecordController {
 
         playExitTransition(() -> {
             try {
-   
                 javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
                     getClass().getResource("/com/mycompany/client_xo_game/Gameboard.fxml")
                 );
                 
-              
                 javafx.scene.Parent root = loader.load();
                 
-             
                 GameboardController controller = loader.getController();
                 
-          
                 controller.setReplayMode(record); 
-          
+                
                 if (rootPane.getScene() != null) {
                     rootPane.getScene().setRoot(root);
                 }
@@ -130,7 +134,6 @@ public class OfflineRecordController {
         });
     }
 
-   
     @FXML
     private void handleDelete() {
         int selectedIndex = recordsList.getSelectionModel().getSelectedIndex();

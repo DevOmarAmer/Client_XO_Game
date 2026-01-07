@@ -24,18 +24,12 @@ public class LoginController {
 
     @FXML
     public void initialize() {
-        // -----------------------------
-        // 1. Entrance Fade-in
-        // -----------------------------
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1200), rootPane);
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);
         fadeIn.play();
 
-        // -----------------------------
-        // 2. Title breathing animation
-        // -----------------------------
         ScaleTransition pulse = new ScaleTransition(Duration.millis(2000), titleLabel);
         pulse.setFromX(1.0); pulse.setFromY(1.0);
         pulse.setToX(1.06); pulse.setToY(1.06);
@@ -43,12 +37,10 @@ public class LoginController {
         pulse.setAutoReverse(true);
         pulse.play();
 
-        // -----------------------------
-        // 3. Responsive scaling
-        // -----------------------------
         rootPane.widthProperty().addListener((obs, oldVal, newVal) -> scaleComponents(newVal.doubleValue()));
         rootPane.heightProperty().addListener((obs, oldVal, newVal) -> contentBox.setMaxHeight(newVal.doubleValue() * 0.85));
 
+      
         // -----------------------------
         // 4. Add hover animations
         // -----------------------------
@@ -56,14 +48,11 @@ public class LoginController {
     }
 
     private void scaleComponents(double w) {
-        // Panel width
         if (w > 1000) contentBox.setMaxWidth(w * 0.4);
         else contentBox.setMaxWidth(Math.max(400, w * 0.8));
 
-        // Title font
         titleLabel.setStyle("-fx-font-size: " + Math.min(48, Math.max(22, w / 25)) + "px;");
 
-        // Input fields
         double inputHeight = Math.max(45, w / 18);
         usernameField.setPrefHeight(inputHeight);
         passwordField.setPrefHeight(inputHeight);
@@ -72,7 +61,6 @@ public class LoginController {
         usernameField.setStyle("-fx-font-size:" + inputFont + "px;");
         passwordField.setStyle("-fx-font-size:" + inputFont + "px;");
 
-        // Buttons
         double btnHeight = inputHeight + 5;
         loginBtn.setPrefHeight(btnHeight);
         back_id.setPrefHeight(btnHeight);
@@ -82,9 +70,6 @@ public class LoginController {
         back_id.setStyle("-fx-font-size:" + btnFont + "px;");
     }
 
-    // -----------------------------
-    // Button hover animation
-    // -----------------------------
     private void addHoverAnimation(Button btn) {
         btn.setOnMouseEntered(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
@@ -98,9 +83,6 @@ public class LoginController {
         });
     }
 
-    // -----------------------------
-    // Exit transition
-    // -----------------------------
     private void playExitTransition(Runnable onFinished) {
         FadeTransition fadeOut = new FadeTransition(Duration.millis(300), rootPane);
         fadeOut.setToValue(0);
@@ -108,9 +90,6 @@ public class LoginController {
         fadeOut.play();
     }
 
-    // -----------------------------
-    // Actions
-    // -----------------------------
     @FXML
     private void handleLogin() {
         if (usernameField.getText().trim().isEmpty() || passwordField.getText().trim().isEmpty()) {
@@ -118,10 +97,8 @@ public class LoginController {
             return;
         }
 
-        // 1. Set the listener to handle the server's response
         NetworkConnection.getInstance().setListener(this::onServerResponse);
 
-        // 2. Send Login Request
         JSONObject json = new JSONObject();
         json.put("type", "login");
         json.put("username", usernameField.getText().trim());
@@ -132,6 +109,12 @@ public class LoginController {
     private void onServerResponse(JSONObject json) {
         if ("login_response".equals(json.optString("type"))) {
             if ("success".equals(json.optString("status"))) {
+           
+                String username = usernameField.getText().trim();
+                NetworkConnection.getInstance().setCurrentUsername(username);
+                
+                System.out.println("Login successful for user: " + username);
+                
                 CurrentUser.setUsername(usernameField.getText().trim());
                 playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
             } else {
