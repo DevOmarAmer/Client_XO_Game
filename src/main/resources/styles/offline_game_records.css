@@ -30,8 +30,8 @@
 .title-neon-purple {
     -fx-fill: #d845ff;
     -fx-font-family: "Impact";
-    -fx-font-size: 42px;
-    -fx-effect: dropshadow(gaussian, #d845ff, 15, 0.4, 0, 0);
+    -fx-font-size: 48px;
+    -fx-effect: dropshadow(gaussian, #d845ff, 10, 0.1, 0, 0);
 }
 
 .neon-list-view {
@@ -56,21 +56,31 @@
     -fx-text-fill: #d845ff;
 }
 
+/* ======================================
+   UNIFIED BUTTON STYLES
+   ====================================== */
+
+/* 1. The Back Button (Now matches Action) */
 .xo-back-btn {
-    -fx-background-color: transparent;
-    -fx-border-color: rgba(191, 0, 255, 0.5);
-    -fx-border-radius: 40;
-    -fx-background-radius: 40;
-    -fx-text-fill: #d845ff;
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: #d845ff;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-padding: 8 20;
+    -fx-padding: 10 30;
     -fx-cursor: hand;
-}
-.xo-back-btn:hover {
-    -fx-background-color: rgba(191, 0, 255, 0.15);
-    -fx-effect: dropshadow(gaussian, #d845ff, 10, 0.4, 0, 0);
+    -fx-transition: 0.3s; /* Smooth animation */
 }
 
+.xo-back-btn:hover {
+    -fx-background-color: #d845ff;
+    -fx-text-fill: #080a12;
+    /* Purple glow instead of Cyan */
+    -fx-effect: dropshadow(gaussian, #d845ff, 20, 0.4, 0, 0);
+}
+
+/* 2. The Action Button */
 .action-btn {
     -fx-background-color: rgba(255, 255, 255, 0.05);
     -fx-border-color: #d845ff;
@@ -80,10 +90,14 @@
     -fx-font-weight: bold;
     -fx-padding: 10 30;
     -fx-cursor: hand;
+    -fx-transition: 0.3s;
 }
+
 .action-btn:hover {
     -fx-background-color: #d845ff;
     -fx-text-fill: #080a12;
+    /* Added matching glow */
+    -fx-effect: dropshadow(gaussian, #d845ff, 20, 0.4, 0, 0);
 }
 
 .hint-label {
