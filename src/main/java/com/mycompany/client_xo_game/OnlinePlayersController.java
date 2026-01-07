@@ -113,6 +113,11 @@ public class OnlinePlayersController implements Runnable {
                      from + " declined your invitation.");
         }
     }
+    /*JSONObject penalty = new JSONObject(); 
+        penalty.put("type", "penalty");
+        penalty.put("to", quitter);
+        NetworkConnection.getInstance().sendMessage(penalty);
+        System.out.println("----------BAD Player---------");*/
     
     private void handleGameStart(JSONObject response) {
         stop(); // Stop refresh thread

@@ -30,6 +30,8 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 //import java.lang.foreign.SymbolLookup;
 import org.json.JSONObject;
 
@@ -199,12 +201,7 @@ public class GameboardController implements Initializable {
         alert.setTitle("Game Over");
         alert.setHeaderText("Opponent Disconnected");
         alert.setContentText(quitter + " has left the game.");
-        JSONObject penalty = new JSONObject();
-        penalty.put("type", "penalty");
-        penalty.put("to", quitter);
-        NetworkConnection.getInstance().sendMessage(penalty);
         alert.showAndWait();
-        
         goBack();
     }
     
@@ -224,6 +221,10 @@ public class GameboardController implements Initializable {
                 
                 //resetBoardForRematch();
             } else {
+                JSONObject quit = new JSONObject();
+               quit.put("type", "quit_game");
+               NetworkConnection.getInstance().sendMessage(quit);
+               System.out.println("----------No Penalty--------------");
                 goBack();
             }
         });
@@ -248,28 +249,42 @@ public class GameboardController implements Initializable {
     }
     
     private void showOnlineGameOverDialog(boolean won, boolean draw) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        
-        if (draw) {
-            alert.setHeaderText("It's a Draw!");
-        } else if (won) {
-            alert.setHeaderText("You Win!");
-        } else {
-            alert.setHeaderText("You Lost!");
-        }
-        
-        alert.setContentText("Would you like to play again?");
-        alert.showAndWait().ifPresent(button -> {
-            if (button.getButtonData().isDefaultButton()) {
-                JSONObject playAgain = new JSONObject();
-                playAgain.put("type", "play_again");
-                NetworkConnection.getInstance().sendMessage(playAgain);
-            } else {
-                goBack();
-            }
-        });
+
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    alert.setTitle("Game Over");
+
+    if (draw) {
+        alert.setHeaderText("It's a Draw!");
+    } else if (won) {
+        alert.setHeaderText("You Win!");
+    } else {
+        alert.setHeaderText("You Lost!");
     }
+
+    alert.setContentText("Would you like to play again?");
+
+    ButtonType playAgainBtn = new ButtonType("Play Again");
+    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+    alert.getButtonTypes().setAll(playAgainBtn, closeBtn);
+
+    alert.showAndWait().ifPresent(button -> {
+
+        if (button == playAgainBtn) {
+            JSONObject playAgain = new JSONObject();
+            playAgain.put("type", "play_again");
+            NetworkConnection.getInstance().sendMessage(playAgain);
+
+        } else {
+            JSONObject quit = new JSONObject();
+            quit.put("type", "quit_game");
+            NetworkConnection.getInstance().sendMessage(quit);
+            System.out.println("----------No Penalty--------------");
+            goBack();
+        }
+    });
+}
+
     
     private void updateOnlinePlayersLabels() {
         if (playerNameP1 != null && playerNameP2 != null) {
@@ -568,6 +583,11 @@ public class GameboardController implements Initializable {
         if (isOnlineMode && !gameEnded) {
             JSONObject quit = new JSONObject();
             quit.put("type", "quit_game");
+            JSONObject penalty = new JSONObject(); 
+            penalty.put("type", "penalty");
+            penalty.put("to",opponentName);
+            NetworkConnection.getInstance().sendMessage(penalty);
+            System.out.println("----------BAD Player---------");
             NetworkConnection.getInstance().sendMessage(quit);
         }
         
