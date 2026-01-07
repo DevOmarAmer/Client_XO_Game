@@ -76,9 +76,21 @@
 .neon-list-view .list-cell {
     -fx-background-color: transparent;
     -fx-padding: 10;
-    -fx-border-color: rgba(255, 255, 255, 0.05);
-    -fx-border-width: 0 0 1 0;
+    -fx-border-color: rgba(255, 215, 0, 0.1); /* Faint Gold */
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
+
+/* Style for the current user's cell in the leaderboard */
+.neon-list-view .list-cell.current-user-cell {
+    -fx-border-color: #FFD700; /* Gold */
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-color: rgba(255, 215, 0, 0.05);
+    -fx-effect: dropshadow(gaussian, #FFD700, 20, 0.2, 0, 0);
+}
+
 .neon-list-view .list-cell:empty {
     -fx-background-color: transparent;
     -fx-border-width: 0;

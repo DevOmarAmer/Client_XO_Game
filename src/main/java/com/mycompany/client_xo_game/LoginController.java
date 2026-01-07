@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import com.mycompany.client_xo_game.model.CurrentUser;
 import org.json.JSONObject;
 
 public class LoginController {
@@ -132,6 +133,7 @@ public class LoginController {
     private void onServerResponse(JSONObject json) {
         if ("login_response".equals(json.optString("type"))) {
             if ("success".equals(json.optString("status"))) {
+                CurrentUser.setUsername(usernameField.getText().trim());
                 playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
             } else {
                 messageLabel.setText("Login Failed: " + json.optString("reason", "Unknown error"));
