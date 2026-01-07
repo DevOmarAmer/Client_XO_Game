@@ -198,9 +198,9 @@ public class GameboardController implements Initializable {
         String quitter = response.getString("quitter");
         
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText("Opponent Disconnected");
-        alert.setContentText(quitter + " has left the game.");
+        alert.setTitle("Victory!");
+        alert.setHeaderText("You Won!");
+        alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
         alert.showAndWait();
         goBack();
     }
@@ -583,11 +583,6 @@ public class GameboardController implements Initializable {
         if (isOnlineMode && !gameEnded) {
             JSONObject quit = new JSONObject();
             quit.put("type", "quit_game");
-            JSONObject penalty = new JSONObject(); 
-            penalty.put("type", "penalty");
-            penalty.put("to",opponentName);
-            NetworkConnection.getInstance().sendMessage(penalty);
-            System.out.println("----------BAD Player---------");
             NetworkConnection.getInstance().sendMessage(quit);
         }
         
