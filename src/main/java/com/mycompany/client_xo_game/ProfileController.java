@@ -11,6 +11,8 @@ import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
 import java.util.Optional;
+import javafx.event.ActionEvent;
+import javafx.scene.layout.VBox;
 import org.json.JSONObject;
 
 public class ProfileController {
@@ -20,9 +22,11 @@ public class ProfileController {
     @FXML private Label emailLabel;
     @FXML private Label scoreLabel;
     @FXML private Label winsLabel, drawsLabel, lossesLabel;
-    @FXML private Button editBtn, deleteBtn, backBtn, logoutBtn;
-
     @FXML
+    private VBox contentBox;
+    @FXML
+    private Button deleteAccountBtn;
+
     public void initialize() {
         // 1. Entrance Animation
         rootPane.setOpacity(0);
@@ -178,7 +182,6 @@ public class ProfileController {
     // ==========================================
     //  DELETE ACCOUNT LOGIC
     // ==========================================
-    @FXML
     private void handleDelete() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Account");
@@ -220,5 +223,10 @@ public class ProfileController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void handleDeleteAccount(ActionEvent event) {
+        handleDelete();
     }
 }
