@@ -106,13 +106,18 @@ public class OnlinePlayersController implements Runnable {
         String from = response.optString("from", "Player");
         
         if (accepted) {
-            showAlert(Alert.AlertType.INFORMATION, "Invitation Accepted", 
-                     from + " accepted your invitation! Starting game...");
+//            showAlert(Alert.AlertType.INFORMATION, "Invitation Accepted", 
+//                     from + " accepted your invitation! Starting game...");
         } else {
             showAlert(Alert.AlertType.WARNING, "Invitation Declined", 
                      from + " declined your invitation.");
         }
     }
+    /*JSONObject penalty = new JSONObject(); 
+        penalty.put("type", "penalty");
+        penalty.put("to", quitter);
+        NetworkConnection.getInstance().sendMessage(penalty);
+        System.out.println("----------BAD Player---------");*/
     
     private void handleGameStart(JSONObject response) {
         stop(); // Stop refresh thread
