@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import com.mycompany.client_xo_game.model.CurrentUser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -100,26 +101,34 @@ public class LeaderboardController {
             protected void updateItem(PlayerScore player, boolean empty) {
                 super.updateItem(player, empty);
 
+                // Always clear styles first
+                getStyleClass().remove("current-user-cell");
+                setGraphic(null);
+                setText(null);
+
                 if (empty || player == null) {
-                    setGraphic(null);
-                    setText(null);
-                    setStyle("-fx-background-color: transparent;");
+                    // No content in empty cells
                 } else {
                     // Rank Logic
-                    String rankText = String.valueOf(player.rank);
+                    String rankText;
                     String rankColor = "#bdc3c7"; // Default gray
 
-                    if (player.rank == 1) {
-                        rankText = "🥇";
-                        rankColor = "#f1c40f";
-                    } else if (player.rank == 2) {
-                        rankText = "🥈";
-                        rankColor = "#95a5a6";
-                    } else if (player.rank == 3) {
-                        rankText = "🥉";
-                        rankColor = "#d35400";
-                    } else {
-                        rankText = "#" + player.rank;
+                    switch (player.rank) {
+                        case 1:
+                            rankText = "🥇";
+                            rankColor = "#f1c40f";
+                            break;
+                        case 2:
+                            rankText = "🥈";
+                            rankColor = "#95a5a6";
+                            break;
+                        case 3:
+                            rankText = "🥉";
+                            rankColor = "#d35400";
+                            break;
+                        default:
+                            rankText = "#" + player.rank;
+                            break;
                     }
 
                     Label rankLbl = new Label(rankText);
@@ -143,9 +152,12 @@ public class LeaderboardController {
                     container.setAlignment(Pos.CENTER_LEFT);
                     container.setPadding(new javafx.geometry.Insets(10));
 
-                    // Highlight current user? (Optional logic if you store current username)
-                    // if (player.name.equals(CurrentUser.name)) setStyle("-fx-background-color: #34495e;");
                     setGraphic(container);
+
+                    // Highlight current user
+                    if (player.name.equals(CurrentUser.getUsername())) {
+                        getStyleClass().add("current-user-cell");
+                    }
                 }
             }
         });

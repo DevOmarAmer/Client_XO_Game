@@ -21,8 +21,8 @@
 /* ======================================
    LOGO TEXT
    ====================================== */
-.logo-x { -fx-fill: #00d2ff; -fx-font-size: 48px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); }
-.logo-o { -fx-fill: #ff007f; -fx-font-size: 48px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); }
+.logo-x { -fx-fill: #00d2ff; -fx-font-size: 48px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #00d2ff, 8, 0.5, 0, 0); }
+.logo-o { -fx-fill: #ff007f; -fx-font-size: 48px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #ff007f, 8, 0.5, 0, 0); }
 
 /* ======================================
    GLASS PANEL (XO STYLE)
