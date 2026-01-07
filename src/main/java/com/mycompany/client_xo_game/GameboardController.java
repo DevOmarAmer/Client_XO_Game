@@ -32,7 +32,6 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-//import java.lang.foreign.SymbolLookup;
 import org.json.JSONObject;
 
 public class GameboardController implements Initializable {
@@ -89,21 +88,33 @@ public class GameboardController implements Initializable {
     private String opponentName;
     private String mySymbol;
     private boolean isMyTurn;
+    private String myUsername; // Track current player's username
 
     // ==================== ONLINE MODE SETUP ====================
     
-    public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
-        this.isOnlineMode = true;
-        this.opponentName = opponent;
-        this.mySymbol = symbol;
-        this.isMyTurn = myTurn;
-        this.mode = GameMode.ONLINE_MODE;
-        
-        Platform.runLater(() -> {
-            updateOnlinePlayersLabels();
-            setupOnlineNetworkListener();
-        });
+// In setOnlineMode - get username from NetworkConnection:
+public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
+    this.isOnlineMode = true;
+    this.opponentName = opponent;
+    this.mySymbol = symbol;
+    this.isMyTurn = myTurn;
+    this.mode = GameMode.ONLINE_MODE;
+    
+    // Get current player username from NetworkConnection
+    this.myUsername = NetworkConnection.getInstance().getCurrentUsername();
+    
+    if (this.myUsername == null || this.myUsername.isEmpty()) {
+        System.err.println("ERROR: Username not found!");
+        this.myUsername = "Player";
     }
+    
+    System.out.println("Online mode set for: " + myUsername + " vs " + opponent);
+    
+    Platform.runLater(() -> {
+        updateOnlinePlayersLabels();
+        setupOnlineNetworkListener();
+    });
+}
     
     private void setupOnlineNetworkListener() {
         NetworkConnection.getInstance().setListener(response -> {
@@ -127,7 +138,7 @@ public class GameboardController implements Initializable {
                         handleRematchStart(response);
                         break;
                     case "play_again":
-                        setOnlineMode(opponentName,mySymbol,isMyTurn);
+                        setOnlineMode(opponentName, mySymbol, isMyTurn);
                         break;
                     case "error":
                         handleError(response);
@@ -136,19 +147,19 @@ public class GameboardController implements Initializable {
             });
         });
     }
+    
     private void handleRematchStart(JSONObject response) {
-    gameEnded = false;
+        gameEnded = false;
+        gameBoard = new Board();
 
-    gameBoard = new Board();
-
-    for (var node : board.getChildren()) {
-        if (node instanceof StackPane) {
-            ((StackPane) node).getChildren().clear();
+        for (var node : board.getChildren()) {
+            if (node instanceof StackPane) {
+                ((StackPane) node).getChildren().clear();
+            }
         }
-    }
 
-    isMyTurn = response.getBoolean("yourTurn");
-    updateOnlinePlayersLabels();
+        isMyTurn = response.getBoolean("yourTurn");
+        updateOnlinePlayersLabels();
     }
 
     private void handleOpponentMove(JSONObject response) {
@@ -161,6 +172,11 @@ public class GameboardController implements Initializable {
             Cell cellSymbol = "X".equals(symbol) ? Cell.X : Cell.O;
             placeMove(cell, cellSymbol);
             gameBoard.getGrid()[row][col] = cellSymbol;
+            
+            // Record move if recording is active
+            if (GameSession.isRecording()) {
+                GameSession.recordMove(row, col, symbol, opponentName);
+            }
         }
     }
     
@@ -169,41 +185,65 @@ public class GameboardController implements Initializable {
         updateOnlinePlayersLabels();
     }
     
-    private void handleGameOver(JSONObject response) {
-        gameEnded = true;
-        String result = response.getString("result");
-        
-        switch (result) {
-            case "win":
-                turnLabel.setText("You Win!");
-                GameSession.addWinP1();
-                showOnlineGameOverDialog(true, false);
-                break;
-            case "lose":
-                turnLabel.setText("You Lost!");
-                GameSession.addWinP2();
-                showOnlineGameOverDialog(false, false);
-                break;
-            case "draw":
-                turnLabel.setText("It's a Draw!");
-                GameSession.addDraw();
-                showOnlineGameOverDialog(false, true);
-                break;
-        }
-        
-        updateScoreBoard();
+ 
+// In handleGameOver method - update to check if current user is recording:
+private void handleGameOver(JSONObject response) {
+    gameEnded = true;
+    String result = response.getString("result");
+    String finalResult = "";
+    
+    switch (result) {
+        case "win":
+            turnLabel.setText("You Win!");
+            finalResult = myUsername + " Wins";
+            GameSession.addWinP1();
+            showOnlineGameOverDialog(true, false);
+            break;
+        case "lose":
+            turnLabel.setText("You Lost!");
+            finalResult = opponentName + " Wins";
+            GameSession.addWinP2();
+            showOnlineGameOverDialog(false, false);
+            break;
+        case "draw":
+            turnLabel.setText("It's a Draw!");
+            finalResult = "Draw";
+            GameSession.addDraw();
+            showOnlineGameOverDialog(false, true);
+            break;
     }
     
-    private void handleOpponentQuit(JSONObject response) {
-        String quitter = response.getString("quitter");
-        
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Victory!");
-        alert.setHeaderText("You Won!");
-        alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
-        alert.showAndWait();
-        goBack();
+    // CRITICAL: Only save if THIS user initiated the recording
+    if (GameSession.isRecording() && GameSession.isRecordingInitiator(myUsername)) {
+        String filePath = GameSession.saveGameRecord(finalResult);
+        if (filePath != null) {
+            System.out.println("Online game saved to: " + filePath);
+        }
     }
+    
+    updateScoreBoard();
+}
+
+
+    
+  // In handleOpponentQuit - update to check recording initiator:
+private void handleOpponentQuit(JSONObject response) {
+    String quitter = response.getString("quitter");
+    
+    // CRITICAL: Only save if THIS user initiated recording
+    if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
+        String result = myUsername + " Wins (Opponent Quit)";
+        GameSession.saveGameRecord(result);
+    }
+    
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Victory!");
+    alert.setHeaderText("You Won!");
+    alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
+    alert.showAndWait();
+    goBack();
+}
+
     
     private void handleRematchRequest(JSONObject response) {
         String from = response.getString("from");
@@ -218,13 +258,11 @@ public class GameboardController implements Initializable {
                 JSONObject playAgain = new JSONObject();
                 playAgain.put("type", "play_again");
                 NetworkConnection.getInstance().sendMessage(playAgain);
-                
-                //resetBoardForRematch();
             } else {
                 JSONObject quit = new JSONObject();
-               quit.put("type", "quit_game");
-               NetworkConnection.getInstance().sendMessage(quit);
-               System.out.println("----------No Penalty--------------");
+                quit.put("type", "quit_game");
+                NetworkConnection.getInstance().sendMessage(quit);
+                System.out.println("----------No Penalty--------------");
                 goBack();
             }
         });
@@ -249,42 +287,38 @@ public class GameboardController implements Initializable {
     }
     
     private void showOnlineGameOverDialog(boolean won, boolean draw) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Game Over");
 
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle("Game Over");
-
-    if (draw) {
-        alert.setHeaderText("It's a Draw!");
-    } else if (won) {
-        alert.setHeaderText("You Win!");
-    } else {
-        alert.setHeaderText("You Lost!");
-    }
-
-    alert.setContentText("Would you like to play again?");
-
-    ButtonType playAgainBtn = new ButtonType("Play Again");
-    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-    alert.getButtonTypes().setAll(playAgainBtn, closeBtn);
-
-    alert.showAndWait().ifPresent(button -> {
-
-        if (button == playAgainBtn) {
-            JSONObject playAgain = new JSONObject();
-            playAgain.put("type", "play_again");
-            NetworkConnection.getInstance().sendMessage(playAgain);
-
+        if (draw) {
+            alert.setHeaderText("It's a Draw!");
+        } else if (won) {
+            alert.setHeaderText("You Win!");
         } else {
-            JSONObject quit = new JSONObject();
-            quit.put("type", "quit_game");
-            NetworkConnection.getInstance().sendMessage(quit);
-            System.out.println("----------No Penalty--------------");
-            goBack();
+            alert.setHeaderText("You Lost!");
         }
-    });
-}
 
+        alert.setContentText("Would you like to play again?");
+
+        ButtonType playAgainBtn = new ButtonType("Play Again");
+        ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(playAgainBtn, closeBtn);
+
+        alert.showAndWait().ifPresent(button -> {
+            if (button == playAgainBtn) {
+                JSONObject playAgain = new JSONObject();
+                playAgain.put("type", "play_again");
+                NetworkConnection.getInstance().sendMessage(playAgain);
+            } else {
+                JSONObject quit = new JSONObject();
+                quit.put("type", "quit_game");
+                NetworkConnection.getInstance().sendMessage(quit);
+                System.out.println("----------No Penalty--------------");
+                goBack();
+            }
+        });
+    }
     
     private void updateOnlinePlayersLabels() {
         if (playerNameP1 != null && playerNameP2 != null) {
@@ -294,7 +328,7 @@ public class GameboardController implements Initializable {
         }
     }
 
-    // ==================== PLAYER LABELS UPDATE ====================
+ 
 
     public void updatePlayersLabels() {
         if (isOnlineMode) {
@@ -627,6 +661,11 @@ public class GameboardController implements Initializable {
         placeMove(clickedCell, cellSymbol);
         gameBoard.getGrid()[row][col] = cellSymbol;
         
+        // Record move if recording is active
+        if (GameSession.isRecording()) {
+            GameSession.recordMove(row, col, mySymbol, myUsername);
+        }
+        
         JSONObject moveMsg = new JSONObject();
         moveMsg.put("type", "move");
         moveMsg.put("row", row);
@@ -806,8 +845,7 @@ public class GameboardController implements Initializable {
                     System.out.println("Game saved to: " + filePath);
                 }
             }
-            
-            showWinLosePopup(true);
+                showWinLosePopup(true);
         } else {
             turnLabel.setText("Computer Wins!");
             GameSession.addWinP2();
@@ -870,6 +908,7 @@ public class GameboardController implements Initializable {
             System.err.println("ERROR: Win_LoseController is null!");
         }
     }
+    
     private void showLocalModeWinPopup(String winnerName) {
         System.out.println("showLocalModeWinPopup called with winner: " + winnerName);
         Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);

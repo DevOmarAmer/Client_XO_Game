@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.client_xo_game.util;
 
 import jakarta.json.Json;
@@ -22,12 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author Alaa
- */
 public class GameRecorder {
-     private static final String RECORDS_DIR = "game_records";
+    private static final String RECORDS_DIR = "game_records";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     
@@ -36,18 +28,25 @@ public class GameRecorder {
     private String player2Name;
     private LocalDateTime gameStartTime;
     private boolean isRecording;
+    private boolean isOnlineGame;
     
     public GameRecorder() {
         this.moves = new ArrayList<>();
         this.isRecording = false;
+        this.isOnlineGame = false;
     }
     
     public void startRecording(String player1Name, String player2Name) {
+        startRecording(player1Name, player2Name, false);
+    }
+    
+    public void startRecording(String player1Name, String player2Name, boolean isOnline) {
         this.player1Name = player1Name;
         this.player2Name = player2Name;
         this.gameStartTime = LocalDateTime.now();
         this.moves = new ArrayList<>();
         this.isRecording = true;
+        this.isOnlineGame = isOnline;
         
         File dir = new File(RECORDS_DIR);
         if (!dir.exists()) {
@@ -92,14 +91,18 @@ public class GameRecorder {
                     .build();
                 movesArrayBuilder.add(moveObj);
             }
+            
+            // Add [ONLINE] prefix to player2Name if it's an online game
+            String displayPlayer2Name = isOnlineGame ? "[ONLINE] " + player2Name : player2Name;
         
             JsonObject gameRecord = Json.createObjectBuilder()
                 .add("player1Name", player1Name)
-                .add("player2Name", player2Name)
+                .add("player2Name", displayPlayer2Name)
                 .add("gameStartTime", gameStartTime.format(ISO_FORMATTER))
                 .add("gameEndTime", LocalDateTime.now().format(ISO_FORMATTER))
                 .add("result", result)
                 .add("totalMoves", moves.size())
+                .add("isOnlineGame", isOnlineGame)
                 .add("moves", movesArrayBuilder)
                 .build();
               
@@ -147,7 +150,8 @@ public class GameRecorder {
         String date = gameStartTime.format(DATE_FORMATTER);
         String safeName1 = sanitizeFileName(player1Name);
         String safeName2 = sanitizeFileName(player2Name);
-        return safeName1 + "_VS_" + safeName2 + "_" + date + ".json";
+        String onlinePrefix = isOnlineGame ? "ONLINE_" : "";
+        return onlinePrefix + safeName1 + "_VS_" + safeName2 + "_" + date + ".json";
     }
     
     private String sanitizeFileName(String name) {
@@ -162,6 +166,7 @@ public class GameRecorder {
         this.isRecording = false;
         this.moves.clear();
     }
+    
     private static class MoveData {
         int moveNumber;
         int row;

@@ -39,7 +39,10 @@
         
         <Label text="Select a game to watch" styleClass="hint-label"/>
         
-        <Button text="▶ WATCH REPLAY" onAction="#handleWatch" styleClass="action-btn"/>
+        <HBox alignment="CENTER" spacing="20">
+            <Button text="▶ WATCH REPLAY" onAction="#handleWatch" styleClass="action-btn"/>
+            <Button text="🗑 DELETE" onAction="#handleDelete" styleClass="action-btn" style="-fx-border-color: #ff4444;"/>
+        </HBox>
 
     </VBox>
 </StackPane>

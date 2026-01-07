@@ -17,7 +17,8 @@ public class NetworkConnection {
     private String ip = "127.0.0.1"; // Change to Server IP if on different machine
     private int port = 8888;         // Must match Server.PORT
     private Consumer<JSONObject> listener;
-
+    private String currentUsername; // Store logged-in username
+    
     private NetworkConnection() {
         try {
             socket = new Socket(ip, port);
@@ -28,24 +29,32 @@ public class NetworkConnection {
             e.printStackTrace();
         }
     }
-
+    
     public static NetworkConnection getInstance() {
         if (instance == null) {
             instance = new NetworkConnection();
         }
         return instance;
     }
-
+    
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
+    }
+    
+    public String getCurrentUsername() {
+        return currentUsername;
+    }
+    
     public void setListener(Consumer<JSONObject> listener) {
         this.listener = listener;
     }
-
+    
     public void sendMessage(JSONObject json) {
         if (out != null) {
             out.println(json.toString());
         }
     }
-
+    
     private void startListening() {
         new Thread(() -> {
             try {
@@ -60,10 +69,12 @@ public class NetworkConnection {
             }
         }).start();
     }
-
-    private void processMessage(JSONObject json) {
+    
+     private void processMessage(JSONObject json) {
         if (listener != null) {
             Platform.runLater(() -> listener.accept(json));
         }
     }
+    
+
 }
