@@ -106,8 +106,8 @@ public class OnlinePlayersController implements Runnable {
         String from = response.optString("from", "Player");
         
         if (accepted) {
-            showAlert(Alert.AlertType.INFORMATION, "Invitation Accepted", 
-                     from + " accepted your invitation! Starting game...");
+//            showAlert(Alert.AlertType.INFORMATION, "Invitation Accepted", 
+//                     from + " accepted your invitation! Starting game...");
         } else {
             showAlert(Alert.AlertType.WARNING, "Invitation Declined", 
                      from + " declined your invitation.");

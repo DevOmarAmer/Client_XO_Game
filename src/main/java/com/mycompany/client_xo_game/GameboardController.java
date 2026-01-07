@@ -30,6 +30,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+//import java.lang.foreign.SymbolLookup;
 import org.json.JSONObject;
 
 public class GameboardController implements Initializable {
@@ -120,8 +121,11 @@ public class GameboardController implements Initializable {
                     case "opponent_quit":
                         handleOpponentQuit(response);
                         break;
-                    case "rematch_requested":
-                        handleRematchRequest(response);
+                    case "rematch_start":
+                        handleRematchStart(response);
+                        break;
+                    case "play_again":
+                        setOnlineMode(opponentName,mySymbol,isMyTurn);
                         break;
                     case "error":
                         handleError(response);
@@ -130,7 +134,21 @@ public class GameboardController implements Initializable {
             });
         });
     }
-    
+    private void handleRematchStart(JSONObject response) {
+    gameEnded = false;
+
+    gameBoard = new Board();
+
+    for (var node : board.getChildren()) {
+        if (node instanceof StackPane) {
+            ((StackPane) node).getChildren().clear();
+        }
+    }
+
+    isMyTurn = response.getBoolean("yourTurn");
+    updateOnlinePlayersLabels();
+    }
+
     private void handleOpponentMove(JSONObject response) {
         int row = response.getInt("row");
         int col = response.getInt("col");
@@ -181,6 +199,10 @@ public class GameboardController implements Initializable {
         alert.setTitle("Game Over");
         alert.setHeaderText("Opponent Disconnected");
         alert.setContentText(quitter + " has left the game.");
+        JSONObject penalty = new JSONObject();
+        penalty.put("type", "penalty");
+        penalty.put("to", quitter);
+        NetworkConnection.getInstance().sendMessage(penalty);
         alert.showAndWait();
         
         goBack();
@@ -200,7 +222,7 @@ public class GameboardController implements Initializable {
                 playAgain.put("type", "play_again");
                 NetworkConnection.getInstance().sendMessage(playAgain);
                 
-                resetBoardForRematch();
+                //resetBoardForRematch();
             } else {
                 goBack();
             }
