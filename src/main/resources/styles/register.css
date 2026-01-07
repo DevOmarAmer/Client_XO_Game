@@ -22,15 +22,15 @@
    ====================================== */
 .logo-x {
     -fx-fill: #00d2ff;
-    -fx-font-size: 52px;
+    -fx-font-size: 90px;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00d2ff, 8, 0.5, 0, 0);
 }
 .logo-o {
     -fx-fill: #ff007f;
-    -fx-font-size: 52px;
+    -fx-font-size: 90px;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #ff007f, 8, 0.5, 0, 0);
 }
 
 .register-title {
@@ -94,27 +94,6 @@
     -fx-background-color: #00fff0;
     -fx-text-fill: #080a12;
     -fx-effect: dropshadow(gaussian, #00fff0, 25, 0.5, 0, 0);
-}
-
-/* ======================================
-   BACK BUTTON
-   ====================================== */
-.xo-back-btn {
-    -fx-background-color: transparent;
-    -fx-border-color: rgba(0, 255, 240, 0.4);
-    -fx-border-radius: 40;
-    -fx-background-radius: 40;
-    -fx-background-insets: 0;
-    -fx-text-fill: #00fff0;
-    -fx-font-weight: bold;
-    -fx-padding: 10 25;
-    -fx-cursor: hand;
-}
-
-.xo-back-btn:hover {
-    -fx-background-color: rgba(0, 255, 240, 0.12);
-    -fx-border-color: #00fff0;
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 15, 0.4, 0, 0);
 }
 
 /* ======================================

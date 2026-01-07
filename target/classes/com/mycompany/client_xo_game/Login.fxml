@@ -21,8 +21,8 @@
             onAction="#goBack"
             styleClass="xo-back-btn"
             StackPane.alignment="TOP_LEFT"
-            translateX="25"
-            translateY="25"/>
+            translateX="40"
+            translateY="40"/>
 
     <VBox fx:id="contentBox"
           alignment="CENTER"

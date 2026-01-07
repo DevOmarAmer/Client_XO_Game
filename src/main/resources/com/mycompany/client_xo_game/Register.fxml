@@ -15,14 +15,6 @@
     <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="TOP_RIGHT" translateX="-50" translateY="50"/>
     <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="BOTTOM_LEFT" translateX="50" translateY="-50"/>
 
-    <Button fx:id="back_id"
-            text="← BACK"
-            onAction="#goBack"
-            styleClass="xo-back-btn"
-            StackPane.alignment="TOP_LEFT"
-            translateX="25"
-            translateY="25"/>
-
     <VBox fx:id="contentBox"
           alignment="CENTER"
           spacing="35"

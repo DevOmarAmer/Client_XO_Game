@@ -52,7 +52,6 @@ public class LoginController {
         // -----------------------------
         // 4. Add hover animations
         // -----------------------------
-        addHoverAnimation(back_id);
         addHoverAnimation(loginBtn);
     }
 
