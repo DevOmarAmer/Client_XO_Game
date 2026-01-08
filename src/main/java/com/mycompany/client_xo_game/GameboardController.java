@@ -238,6 +238,49 @@ public class GameboardController implements Initializable {
     private void handleOpponentQuit(JSONObject response) {
         String quitter = response.getString("quitter");
 
+    
+  // In handleOpponentQuit - update to check recording initiator:
+private void handleOpponentQuit(JSONObject response) {
+    String quitter = response.getString("quitter");
+    
+    // CRITICAL: Only save if THIS user initiated recording
+    if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
+        String result = myUsername + " Wins (Opponent Quit)";
+        GameSession.saveGameRecord(result);
+    }
+    
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    styleAlert(alert);
+    alert.setTitle("Victory!");
+    alert.setHeaderText("You Won!");
+    alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
+    alert.showAndWait();
+    goBack();
+}
+
+    
+    private void handleRematchRequest(JSONObject response) {
+        String from = response.getString("from");
+        
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        styleAlert(alert);
+        alert.setTitle("Rematch Request");
+        alert.setHeaderText(from + " wants a rematch!");
+        alert.setContentText("Do you want to play again?");
+        
+        alert.showAndWait().ifPresent(button -> {
+            if (button.getButtonData().isDefaultButton()) {
+                JSONObject playAgain = new JSONObject();
+                playAgain.put("type", "play_again");
+                NetworkConnection.getInstance().sendMessage(playAgain);
+            } else {
+                JSONObject quit = new JSONObject();
+                quit.put("type", "quit_game");
+                NetworkConnection.getInstance().sendMessage(quit);
+                System.out.println("----------No Penalty--------------");
+                goBack();
+            }
+        });
         if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
             String result = myUsername + " Wins (Opponent Quit)";
             GameSession.saveGameRecord(result);
@@ -273,6 +316,7 @@ public class GameboardController implements Initializable {
 
     private void showOnlineGameOverDialog(boolean won, boolean draw) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        styleAlert(alert);
         alert.setTitle("Game Over");
 
         if (draw) {
@@ -960,6 +1004,17 @@ public class GameboardController implements Initializable {
             System.err.println("ERROR: Win_LoseController is null!");
         }
     }
+    private void styleAlert(Alert alert) {
+    var dialogPane = alert.getDialogPane();
+
+    dialogPane.setId("xo-alert");
+
+    dialogPane.getStylesheets().add(
+        getClass().getResource("/styles/AlertStyle.css").toExternalForm()
+    );
+}
+
+    
 
     private void highlightWinningCells(Cell winner) {
         Cell[][] grid = gameBoard.getGrid();
