@@ -79,7 +79,8 @@ public class GameboardController implements Initializable {
     private Player_Offline player1;
     private Player_Offline player2;
     private boolean gameEnded = false;
-
+    private int mySessionScore = 0;
+    private int opponentSessionScore = 0;
     // Replay mode fields
     private boolean isReplayMode = false;
     private JsonObject replayRecord;
@@ -96,7 +97,7 @@ public class GameboardController implements Initializable {
     private boolean isMyTurn;
     private String myUsername;
 
-    // ==================== ONLINE MODE SETUP ====================
+
     public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
         this.isOnlineMode = true;
         this.opponentName = opponent;
@@ -104,7 +105,6 @@ public class GameboardController implements Initializable {
         this.isMyTurn = myTurn;
         this.mode = GameMode.ONLINE_MODE;
 
-        // Get current player username from NetworkConnection
         this.myUsername = NetworkConnection.getInstance().getCurrentUsername();
 
         if (this.myUsername == null || this.myUsername.isEmpty()) {
@@ -117,8 +117,11 @@ public class GameboardController implements Initializable {
         Platform.runLater(() -> {
             updateOnlinePlayersLabels();
             setupOnlineNetworkListener();
+            // Initialize session scores to 0
+            updateOnlineScoreBoard();
         });
     }
+
 
     private void setupOnlineNetworkListener() {
         NetworkConnection.getInstance().setListener(response -> {
@@ -152,21 +155,167 @@ public class GameboardController implements Initializable {
         });
     }
 
-    private void handleRematchStart(JSONObject response) {
-        gameEnded = false;
-        gameBoard = new Board();
+    private void updateOnlineScoreBoard() {
+        if (scoreP1 != null && scoreP2 != null) {
+            // Display session scores that accumulate during play
+            scoreP1.setText(String.valueOf(mySessionScore));
+            scoreP2.setText(String.valueOf(opponentSessionScore));
+        }
+    }
 
-        clearHighlights(); // Clear any winning animations
+private void handleGameOver(JSONObject response) {
+    gameEnded = true;
+    String result = response.getString("result");
+    boolean opponentForfeited = response.optBoolean("opponent_forfeited", false);
+    String forfeiter = response.optString("forfeiter", "");
+    String finalResult = "";
+    int scoreToAdd = 0;
 
-        for (var node : board.getChildren()) {
-            if (node instanceof StackPane) {
-                ((StackPane) node).getChildren().clear();
+    // Calculate score for THIS game (for display purposes only)
+    switch (result) {
+        case "win":
+            if (opponentForfeited) {
+                // Opponent quit - show forfeit message
+                turnLabel.setText(opponentName + " Forfeited - You Win!");
+                finalResult = myUsername + " Wins (Opponent Forfeited)";
+            } else {
+                // Normal win
+                turnLabel.setText("You Win!");
+                finalResult = myUsername + " Wins";
+                highlightWinningCells("X".equals(mySymbol) ? Cell.X : Cell.O);
             }
+            scoreToAdd = 10; // Win = +10 points (for display)
+            mySessionScore += scoreToAdd;
+            break;
+            
+        case "lose":
+            turnLabel.setText("You Lost!");
+            finalResult = opponentName + " Wins";
+            scoreToAdd = -5; // Loss = -5 points (for display)
+            mySessionScore += scoreToAdd;
+            opponentSessionScore += 10; // Opponent wins
+            highlightWinningCells("X".equals(mySymbol) ? Cell.O : Cell.X);
+            break;
+            
+        case "draw":
+            turnLabel.setText("It's a Draw!");
+            finalResult = "Draw";
+            scoreToAdd = 2; // Draw = +2 points (for display)
+            mySessionScore += scoreToAdd;
+            opponentSessionScore += 2; // Both get draw points
+            break;
+    }
+
+    // Prevent negative scores in display
+    if (mySessionScore < 0) {
+        mySessionScore = 0;
+    }
+    if (opponentSessionScore < 0) {
+        opponentSessionScore = 0;
+    }
+
+    if (GameSession.isRecording() && GameSession.isRecordingInitiator(myUsername)) {
+        String filePath = GameSession.saveGameRecord(finalResult);
+        if (filePath != null) {
+            System.out.println("Online game saved to: " + filePath);
+        }
+    }
+
+    // Update UI with new session scores (for display only)
+    updateOnlineScoreBoard();
+    
+    // Show dialog with forfeit information
+    boolean won = result.equals("win");
+    boolean draw = result.equals("draw");
+    showOnlineGameOverDialog(won, draw, opponentForfeited, forfeiter);
+}
+
+// Also remove or comment out the saveScoreToDatabase method since it's no longer needed:
+/*
+private void saveScoreToDatabase(int scoreForThisGame) {
+    JSONObject req = new JSONObject();
+    req.put("type", "add_session_score");
+    req.put("username", myUsername);
+    req.put("sessionScore", scoreForThisGame);
+    NetworkConnection.getInstance().sendMessage(req);
+    System.out.println("Saved score for this game: " + scoreForThisGame + " for " + myUsername);
+}
+*/
+
+
+
+private void handleRematchStart(JSONObject response) {
+    gameEnded = false;
+    gameBoard = new Board();
+
+    clearHighlights();
+
+    for (var node : board.getChildren()) {
+        if (node instanceof StackPane) {
+            ((StackPane) node).getChildren().clear();
+        }
+    }
+
+    isMyTurn = response.getBoolean("yourTurn");
+    updateOnlinePlayersLabels();
+
+    // Session scores persist across rematches for display
+    updateOnlineScoreBoard();
+}
+
+@FXML
+private void goBack() {
+    if (isReplaying && currentTransition != null) {
+        currentTransition.stop();
+        isReplaying = false;
+    }
+
+    if (GameSession.isRecording() && !gameEnded) {
+        GameSession.cancelRecording();
+    }
+
+    // IMPORTANT: Only send quit_game if the game is still ongoing
+    // If game ended naturally, don't send quit (no forfeit penalty)
+    if (isOnlineMode && !gameEnded) {
+        JSONObject quit = new JSONObject();
+        quit.put("type", "quit_game");
+        NetworkConnection.getInstance().sendMessage(quit);
+        System.out.println("Sending quit_game (forfeit) - game was in progress");
+    } else if (isOnlineMode && gameEnded) {
+        // Game already ended, just clean disconnect
+        JSONObject disconnect = new JSONObject();
+        disconnect.put("type", "end_session");
+        NetworkConnection.getInstance().sendMessage(disconnect);
+        System.out.println("Sending end_session - game already ended, no penalty");
+    }
+
+    if (isReplayMode) {
+        Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
+    } else if (isOnlineMode) {
+        Navigation.goTo(Routes.ONLINE_PLAYERS);
+    } else {
+        Navigation.goTo(Routes.MODE_SELECTION);
+    }
+}
+
+
+    private void updateScoreBoard() {
+        if (isReplayMode) {
+            return;
         }
 
-        isMyTurn = response.getBoolean("yourTurn");
-        updateOnlinePlayersLabels();
+        if (isOnlineMode) {
+            updateOnlineScoreBoard();
+        } else {
+            // Offline mode uses GameSession
+            scoreP1.setText(String.valueOf(GameSession.getScoreP1()));
+            scoreP2.setText(String.valueOf(GameSession.getScoreP2()));
+        }
     }
+
+
+
+   
 
     private void handleOpponentMove(JSONObject response) {
         int row = response.getInt("row");
@@ -190,6 +339,7 @@ public class GameboardController implements Initializable {
         isMyTurn = response.getBoolean("yourTurn");
         updateOnlinePlayersLabels();
     }
+
 
     private void handleGameOver(JSONObject response) {
         gameEnded = true;
@@ -262,6 +412,7 @@ public class GameboardController implements Initializable {
 
 
 
+
     
     private void handleRematchRequest(JSONObject response) {
         String from = response.getString("from");
@@ -307,6 +458,10 @@ public class GameboardController implements Initializable {
         updateOnlinePlayersLabels();
     }
 
+
+
+
+
     private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeitedOpponentName) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         styleAlert(alert);
@@ -335,28 +490,42 @@ public class GameboardController implements Initializable {
             alert.setContentText("Would you like to play again?");
         } else {
             alert.setHeaderText("You Lost!");
+
             alert.setContentText("Would you like to play again?");
         }
-
-        ButtonType playAgainBtn = new ButtonType("Play Again");
-        ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        alert.getButtonTypes().setAll(playAgainBtn, closeBtn);
-
-        alert.showAndWait().ifPresent(button -> {
-            if (button == playAgainBtn) {
-                JSONObject playAgain = new JSONObject();
-                playAgain.put("type", "play_again");
-                NetworkConnection.getInstance().sendMessage(playAgain);
-            } else {
-                JSONObject quit = new JSONObject();
-                quit.put("type", "quit_game");
-                NetworkConnection.getInstance().sendMessage(quit);
-                System.out.println("----------No Penalty--------------");
-                goBack();
-            }
-        });
+    } else {
+        alert.setHeaderText("You Lost!");
+        alert.setContentText("Would you like to play again?");
     }
+
+
+    if (!opponentForfeited && draw) {
+        alert.setContentText("Would you like to play again?");
+    }
+
+    ButtonType playAgainBtn = new ButtonType("Play Again");
+    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+
+
+    alert.getButtonTypes().setAll(playAgainBtn, closeBtn);
+
+    alert.showAndWait().ifPresent(button -> {
+        if (button == playAgainBtn) {
+            JSONObject playAgain = new JSONObject();
+            playAgain.put("type", "play_again");
+            NetworkConnection.getInstance().sendMessage(playAgain);
+        } else {
+            // Game is already over, just send a clean disconnect
+            JSONObject disconnect = new JSONObject();
+            disconnect.put("type", "end_session");
+            NetworkConnection.getInstance().sendMessage(disconnect);
+            
+            System.out.println("----------No Penalty (Game Already Ended)--------------");
+            goBack();
+        }
+    });
+}
 
     private void updateOnlinePlayersLabels() {
         if (playerNameP1 != null && playerNameP2 != null) {
@@ -393,15 +562,8 @@ public class GameboardController implements Initializable {
         }
     }
 
-    private void updateScoreBoard() {
-        if (isReplayMode) {
-            return;
-        }
-        scoreP1.setText(String.valueOf(GameSession.getScoreP1()));
-        scoreP2.setText(String.valueOf(GameSession.getScoreP2()));
-    }
-
     // ==================== INITIALIZATION ====================
+    // ==================== MODIFIED: Initialize ====================
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("GameboardController initialize() called");
@@ -428,8 +590,10 @@ public class GameboardController implements Initializable {
         } else if (!isReplayMode && isOnlineMode) {
             gameBoard = new Board();
             gameEnded = false;
+            mySessionScore = 0; // Start fresh session
+            opponentSessionScore = 0;
             updatePlayersLabels();
-            updateScoreBoard();
+            updateOnlineScoreBoard();
         }
 
         System.out.println("GameboardController initialize() complete");
@@ -692,6 +856,7 @@ public class GameboardController implements Initializable {
     }
 
     // ==================== NAVIGATION ====================
+
     @FXML
     private void goBack() {
         if (isReplaying && currentTransition != null) {
@@ -737,6 +902,7 @@ public class GameboardController implements Initializable {
             Navigation.goTo(Routes.MODE_SELECTION);
         }
     }
+
 
     // ==================== CELL CLICK HANDLING ====================
     @FXML

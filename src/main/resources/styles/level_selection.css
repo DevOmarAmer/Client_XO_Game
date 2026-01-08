@@ -7,31 +7,33 @@
 }
 
 /* Background faded symbols */
-.bg-symbol-x {
-    -fx-font-size: 220px;
-    -fx-font-family: "Arial Black";
-    -fx-text-fill: rgba(0, 210, 255, 0.04);
+.bg-symbol-x { 
+    -fx-font-size: 220px; 
+    -fx-font-family: "Arial Black"; 
+    -fx-text-fill: rgba(0, 210, 255, 0.04); 
 }
-.bg-symbol-o {
-    -fx-font-size: 220px;
-    -fx-font-family: "Arial Black";
-    -fx-text-fill: rgba(255, 0, 127, 0.04);
+
+.bg-symbol-o { 
+    -fx-font-size: 220px; 
+    -fx-font-family: "Arial Black"; 
+    -fx-text-fill: rgba(255, 0, 127, 0.04); 
 }
 
 /* ======================================
    LOGO TEXT
    ====================================== */
-.logo-x {
-    -fx-fill: #00d2ff;
-    -fx-font-size: 90px;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, #00d2ff, 8, 0.5, 0, 0);
+.logo-x { 
+    -fx-fill: #00d2ff; 
+    -fx-font-size: 52px; 
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #00d2ff, 15, 0.5, 0, 0); 
 }
-.logo-o {
-    -fx-fill: #ff007f;
-    -fx-font-size: 90px;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, #ff007f, 8, 0.5, 0, 0);
+
+.logo-o { 
+    -fx-fill: #ff007f; 
+    -fx-font-size: 52px; 
+    -fx-font-weight: bold; 
+    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0); 
 }
 
 /* ======================================
@@ -72,6 +74,7 @@
 .green-glow {
     -fx-border-color: #00fff0;
 }
+
 .green-glow:hover {
     -fx-background-color: #00fff0;
     -fx-text-fill: #080a12;
@@ -82,6 +85,7 @@
 .yellow-glow {
     -fx-border-color: #ffd700;
 }
+
 .yellow-glow:hover {
     -fx-background-color: #ffd700;
     -fx-text-fill: #080a12;
@@ -92,6 +96,7 @@
 .red-glow {
     -fx-border-color: #ff004c;
 }
+
 .red-glow:hover {
     -fx-background-color: #ff004c;
     -fx-text-fill: white;
@@ -99,26 +104,34 @@
 }
 
 /* ======================================
-   BACK BUTTON (Matches Style of Offline/Replays)
+   BACK BUTTON (Glow + Press Effect)
    ====================================== */
 .xo-back-btn {
     -fx-background-color: transparent;
-    -fx-border-color: rgba(0, 255, 240, 0.5); /* Matched opacity */
+    -fx-border-color: rgba(0, 255, 240, 0.4);
     -fx-border-radius: 40;
     -fx-background-radius: 40;
+    -fx-background-insets: 0;
     -fx-text-fill: #00fff0;
     -fx-font-weight: bold;
-    -fx-padding: 8 20; /* Tighter padding */
+    -fx-padding: 10 25;
     -fx-cursor: hand;
+    -fx-transition: 0.3s;
 }
 
 .xo-back-btn:hover {
-    -fx-background-color: rgba(0, 255, 240, 0.15); /* Matched hover opacity */
-    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.4, 0, 0); /* Tighter shadow */
+    -fx-background-color: rgba(0, 255, 240, 0.12);
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 15, 0.4, 0, 0);
+}
+
+.xo-back-btn:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
 }
 
 /* ======================================
-   OPTIONAL: Neon Input Fields
+   NEON INPUT FIELDS
    ====================================== */
 .xo-input {
     -fx-background-color: rgba(255, 255, 255, 0.05);
@@ -137,4 +150,70 @@
     -fx-border-color: #00fff0;
     -fx-background-color: rgba(255, 255, 255, 0.08);
     -fx-effect: dropshadow(gaussian, #00fff0, 12, 0.3, 0, 0);
+}
+/* Checkbox container */
+.xo-record-checkbox {
+    -fx-text-fill: #00fff0;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+    -fx-padding: 10px;
+}
+
+/* Box (LOCKED SIZE) */
+.xo-record-checkbox .box {
+    -fx-background-color: rgba(0, 255, 240, 0.1);
+    -fx-border-color: #00fff0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+
+    -fx-min-width: 20px;
+    -fx-max-width: 20px;
+    -fx-min-height: 20px;
+    -fx-max-height: 20px;
+
+    /* 🔒 Prevent shrinking */
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+
+/* Selected */
+.xo-record-checkbox:selected .box {
+    -fx-background-color: #00fff0;
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 255, 240, 0.8), 15, 0, 0, 0);
+}
+
+/* ALL STATES — keep size identical */
+.xo-record-checkbox:selected .box,
+.xo-record-checkbox:armed .box,
+.xo-record-checkbox:pressed .box,
+.xo-record-checkbox:hover .box {
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+/* Force mark to always take space */
+.xo-record-checkbox .mark {
+    -fx-background-color: transparent;
+    -fx-shape: "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+
+    -fx-padding: 0;
+}
+
+/* Checkmark */
+.xo-record-checkbox:selected .mark {
+    -fx-background-color: #080a12;
+    -fx-shape: "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+  
+}
+
+/* Hover */
+.xo-record-checkbox:hover .box {
+    -fx-border-color: white;
 }

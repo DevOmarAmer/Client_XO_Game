@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import javafx.scene.shape.Circle;
 
 public class Offline_PlayersController {
 
@@ -37,10 +38,26 @@ public class Offline_PlayersController {
     private CheckBox record_game_chk;
     @FXML
     private Label titleLabel;
-
+       @FXML
+  private Circle recordDot; // Add this field
     @FXML
     public void initialize() {
-    
+           /* ===============================
+       Recording Dot Animation
+       =============================== */
+    Timeline recordBlink = new Timeline(
+        new KeyFrame(Duration.seconds(0.6), new KeyValue(recordDot.opacityProperty(), 1.0)),
+        new KeyFrame(Duration.seconds(1.2), new KeyValue(recordDot.opacityProperty(), 0.1))
+    );
+    recordBlink.setAutoReverse(true);
+    recordBlink.setCycleCount(Animation.INDEFINITE);
+    recordBlink.play();
+
+    // Toggle dot visibility based on checkbox
+    record_game_chk.selectedProperty().addListener((obs, oldVal, newVal) -> {
+        recordDot.setVisible(newVal);
+        if(newVal) recordBlink.play(); else recordBlink.stop();
+    });
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1200), rootPane);
         fadeIn.setFromValue(0.0);
