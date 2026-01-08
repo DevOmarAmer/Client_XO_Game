@@ -13,17 +13,19 @@ import com.mycompany.client_xo_game.navigation.Routes;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -33,9 +35,6 @@ import jakarta.json.JsonObject;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import org.json.JSONObject;
-import javafx.animation.ScaleTransition;
-import javafx.animation.Animation;
-import javafx.scene.Node;
 
 public class GameboardController implements Initializable {
 
@@ -65,6 +64,10 @@ public class GameboardController implements Initializable {
     private Button pauseButton;
     @FXML
     private Button resetButton;
+    @FXML
+    private HBox cardP1;
+    @FXML
+    private HBox cardP2;
 
     private Board gameBoard;
     private Minimax ai;
@@ -91,10 +94,9 @@ public class GameboardController implements Initializable {
     private String opponentName;
     private String mySymbol;
     private boolean isMyTurn;
-    private String myUsername; // Track current player's username
+    private String myUsername;
 
     // ==================== ONLINE MODE SETUP ====================
-// In setOnlineMode - get username from NetworkConnection:
     public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
         this.isOnlineMode = true;
         this.opponentName = opponent;
@@ -154,6 +156,8 @@ public class GameboardController implements Initializable {
         gameEnded = false;
         gameBoard = new Board();
 
+        clearHighlights(); // Clear any winning animations
+
         for (var node : board.getChildren()) {
             if (node instanceof StackPane) {
                 ((StackPane) node).getChildren().clear();
@@ -187,7 +191,6 @@ public class GameboardController implements Initializable {
         updateOnlinePlayersLabels();
     }
 
-// In handleGameOver method - update to check if current user is recording:
     private void handleGameOver(JSONObject response) {
         gameEnded = true;
         String result = response.getString("result");
@@ -198,12 +201,20 @@ public class GameboardController implements Initializable {
                 turnLabel.setText("You Win!");
                 finalResult = myUsername + " Wins";
                 GameSession.addWinP1();
+
+                // Highlight winning cells for ME (My Symbol)
+                highlightWinningCells("X".equals(mySymbol) ? Cell.X : Cell.O);
+
                 showOnlineGameOverDialog(true, false);
                 break;
             case "lose":
                 turnLabel.setText("You Lost!");
                 finalResult = opponentName + " Wins";
                 GameSession.addWinP2();
+
+                // Highlight winning cells for OPPONENT
+                highlightWinningCells("X".equals(mySymbol) ? Cell.O : Cell.X);
+
                 showOnlineGameOverDialog(false, false);
                 break;
             case "draw":
@@ -214,7 +225,6 @@ public class GameboardController implements Initializable {
                 break;
         }
 
-        // CRITICAL: Only save if THIS user initiated the recording
         if (GameSession.isRecording() && GameSession.isRecordingInitiator(myUsername)) {
             String filePath = GameSession.saveGameRecord(finalResult);
             if (filePath != null) {
@@ -225,11 +235,9 @@ public class GameboardController implements Initializable {
         updateScoreBoard();
     }
 
-    // In handleOpponentQuit - update to check recording initiator:
     private void handleOpponentQuit(JSONObject response) {
         String quitter = response.getString("quitter");
 
-        // CRITICAL: Only save if THIS user initiated recording
         if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
             String result = myUsername + " Wins (Opponent Quit)";
             GameSession.saveGameRecord(result);
@@ -243,29 +251,6 @@ public class GameboardController implements Initializable {
         goBack();
     }
 
-    private void handleRematchRequest(JSONObject response) {
-        String from = response.getString("from");
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Rematch Request");
-        alert.setHeaderText(from + " wants a rematch!");
-        alert.setContentText("Do you want to play again?");
-
-        alert.showAndWait().ifPresent(button -> {
-            if (button.getButtonData().isDefaultButton()) {
-                JSONObject playAgain = new JSONObject();
-                playAgain.put("type", "play_again");
-                NetworkConnection.getInstance().sendMessage(playAgain);
-            } else {
-                JSONObject quit = new JSONObject();
-                quit.put("type", "quit_game");
-                NetworkConnection.getInstance().sendMessage(quit);
-                System.out.println("----------No Penalty--------------");
-                goBack();
-            }
-        });
-    }
-
     private void handleError(JSONObject response) {
         String message = response.optString("message", "An error occurred");
         System.err.println("Game error: " + message);
@@ -274,6 +259,8 @@ public class GameboardController implements Initializable {
     private void resetBoardForRematch() {
         gameEnded = false;
         gameBoard = new Board();
+
+        clearHighlights(); // Remove winning effects
 
         for (var node : board.getChildren()) {
             if (node instanceof StackPane) {
@@ -473,6 +460,11 @@ public class GameboardController implements Initializable {
             return;
         }
 
+        // Safety: Ensure highlights are gone if starting fresh
+        if (currentReplayIndex == 0) {
+            clearHighlights();
+        }
+
         JsonArray moves = replayRecord.getJsonArray("moves");
 
         if (currentReplayIndex >= moves.size()) {
@@ -618,6 +610,7 @@ public class GameboardController implements Initializable {
         }
 
         currentReplayIndex = 0;
+        clearHighlights(); // Clear animations
 
         if (board != null) {
             for (var node : board.getChildren()) {
@@ -832,6 +825,9 @@ public class GameboardController implements Initializable {
                         }
                     }
 
+                    // HIGHLIGHT WINNER CELLS
+                    highlightWinningCells(winnerCell);
+
                     showLocalModeWinPopup(winnerName);
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
@@ -880,6 +876,9 @@ public class GameboardController implements Initializable {
             GameSession.addWinP1();
             updateScoreBoard();
 
+            // Highlight Winning Cells (Player uses X locally vs Computer)
+            highlightWinningCells(Cell.X);
+
             if (GameSession.isRecording()) {
                 String filePath = GameSession.saveGameRecord("You Win");
                 if (filePath != null) {
@@ -891,6 +890,9 @@ public class GameboardController implements Initializable {
             turnLabel.setText("Computer Wins!");
             GameSession.addWinP2();
             updateScoreBoard();
+
+            // Highlight Winning Cells (Computer uses O)
+            highlightWinningCells(Cell.O);
 
             if (GameSession.isRecording()) {
                 String filePath = GameSession.saveGameRecord("Computer Wins");
@@ -959,4 +961,70 @@ public class GameboardController implements Initializable {
         }
     }
 
+    private void highlightWinningCells(Cell winner) {
+        Cell[][] grid = gameBoard.getGrid();
+
+        for (int i = 0; i < 3; i++) {
+            if (grid[i][0] == winner && grid[i][1] == winner && grid[i][2] == winner) {
+                animateWin(i, 0);
+                animateWin(i, 1);
+                animateWin(i, 2);
+                return;
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (grid[0][i] == winner && grid[1][i] == winner && grid[2][i] == winner) {
+                animateWin(0, i);
+                animateWin(1, i);
+                animateWin(2, i);
+                return;
+            }
+        }
+
+        if (grid[0][0] == winner && grid[1][1] == winner && grid[2][2] == winner) {
+            animateWin(0, 0);
+            animateWin(1, 1);
+            animateWin(2, 2);
+            return;
+        }
+        if (grid[0][2] == winner && grid[1][1] == winner && grid[2][0] == winner) {
+            animateWin(0, 2);
+            animateWin(1, 1);
+            animateWin(2, 0);
+            return;
+        }
+    }
+
+    private void animateWin(int row, int col) {
+        StackPane cell = getCell(row, col);
+        if (cell == null) {
+            return;
+        }
+
+        if (!cell.getStyleClass().contains("cell-winning")) {
+            cell.getStyleClass().add("cell-winning");
+        }
+
+        if (!cell.getChildren().isEmpty()) {
+            Node symbol = cell.getChildren().get(0);
+
+            ScaleTransition st = new ScaleTransition(Duration.millis(600), symbol);
+            st.setFromX(1.0);
+            st.setFromY(1.0);
+            st.setToX(1.25);
+            st.setToY(1.25);
+            st.setCycleCount(Animation.INDEFINITE); // Loop forever
+            st.setAutoReverse(true); // Go up and down
+            st.play();
+        }
+    }
+
+    private void clearHighlights() {
+        for (var node : board.getChildren()) {
+            if (node instanceof StackPane) {
+                node.getStyleClass().remove("cell-winning");
+            }
+        }
+    }
 }
