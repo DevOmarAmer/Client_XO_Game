@@ -315,7 +315,14 @@ public class GameboardController implements Initializable {
         if (isForfeit) {
             if (won) {
                 alert.setHeaderText("You Won by Forfeit!");
-                alert.setContentText(forfeitedOpponentName + " has forfeited. You have been awarded the victory! Would you like to play again?");
+                alert.setContentText(forfeitedOpponentName + " has forfeited. You have been awarded the victory!"); // Removed "Would you like to play again?"
+                ButtonType okBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                alert.getButtonTypes().setAll(okBtn);
+
+                alert.showAndWait().ifPresent(button -> {
+                    goBack(); // Simply go back to online players list
+                });
+                return; // Exit method after showing custom dialog
             } else { // lost by forfeit
                 alert.setHeaderText("You Lost by Forfeit!");
                 alert.setContentText("You have forfeited the game. Would you like to play again?");
@@ -701,7 +708,7 @@ public class GameboardController implements Initializable {
             styleAlert(alert);
             alert.setTitle("Quit Game");
             alert.setHeaderText("Are you sure you want to quit?");
-            alert.setContentText("Quitting this online game will result in a forfeit and a loss for you. Your opponent will be awarded the victory. Do you wish to continue?");
+            alert.setContentText("Quitting this game means you forfeit and lose. Your opponent wins. Continue?");
 
             ButtonType quitBtn = new ButtonType("Quit (Forfeit)", ButtonBar.ButtonData.OK_DONE);
             ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
