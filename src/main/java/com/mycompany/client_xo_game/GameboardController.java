@@ -235,28 +235,25 @@ public class GameboardController implements Initializable {
         updateScoreBoard();
     }
 
+
+
     private void handleOpponentQuit(JSONObject response) {
         String quitter = response.getString("quitter");
-
-    
-  // In handleOpponentQuit - update to check recording initiator:
-private void handleOpponentQuit(JSONObject response) {
-    String quitter = response.getString("quitter");
-    
-    // CRITICAL: Only save if THIS user initiated recording
-    if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
-        String result = myUsername + " Wins (Opponent Quit)";
-        GameSession.saveGameRecord(result);
+        
+        // CRITICAL: Only save if THIS user initiated recording
+        if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
+            String result = myUsername + " Wins (Opponent Quit)";
+            GameSession.saveGameRecord(result);
+        }
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        styleAlert(alert);
+        alert.setTitle("Victory!");
+        alert.setHeaderText("You Won!");
+        alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
+        alert.showAndWait();
+        goBack();
     }
-    
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    styleAlert(alert);
-    alert.setTitle("Victory!");
-    alert.setHeaderText("You Won!");
-    alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
-    alert.showAndWait();
-    goBack();
-}
 
     
     private void handleRematchRequest(JSONObject response) {
@@ -281,17 +278,6 @@ private void handleOpponentQuit(JSONObject response) {
                 goBack();
             }
         });
-        if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
-            String result = myUsername + " Wins (Opponent Quit)";
-            GameSession.saveGameRecord(result);
-        }
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Victory!");
-        alert.setHeaderText("You Won!");
-        alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
-        alert.showAndWait();
-        goBack();
     }
 
     private void handleError(JSONObject response) {
