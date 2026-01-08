@@ -33,11 +33,14 @@ import jakarta.json.JsonObject;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import org.json.JSONObject;
+import javafx.animation.ScaleTransition;
+import javafx.animation.Animation;
+import javafx.scene.Node;
 
 public class GameboardController implements Initializable {
 
     @FXML
-    private BorderPane rootPane;
+    private StackPane rootPane;
     @FXML
     private Label turnLabel;
     @FXML
@@ -73,7 +76,7 @@ public class GameboardController implements Initializable {
     private Player_Offline player1;
     private Player_Offline player2;
     private boolean gameEnded = false;
-    
+
     // Replay mode fields
     private boolean isReplayMode = false;
     private JsonObject replayRecord;
@@ -82,7 +85,7 @@ public class GameboardController implements Initializable {
     private PauseTransition currentTransition = null;
     private static final double REPLAY_DELAY = 1.0;
     private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    
+
     // Online mode fields
     private boolean isOnlineMode = false;
     private String opponentName;
@@ -91,35 +94,34 @@ public class GameboardController implements Initializable {
     private String myUsername; // Track current player's username
 
     // ==================== ONLINE MODE SETUP ====================
-    
 // In setOnlineMode - get username from NetworkConnection:
-public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
-    this.isOnlineMode = true;
-    this.opponentName = opponent;
-    this.mySymbol = symbol;
-    this.isMyTurn = myTurn;
-    this.mode = GameMode.ONLINE_MODE;
-    
-    // Get current player username from NetworkConnection
-    this.myUsername = NetworkConnection.getInstance().getCurrentUsername();
-    
-    if (this.myUsername == null || this.myUsername.isEmpty()) {
-        System.err.println("ERROR: Username not found!");
-        this.myUsername = "Player";
+    public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
+        this.isOnlineMode = true;
+        this.opponentName = opponent;
+        this.mySymbol = symbol;
+        this.isMyTurn = myTurn;
+        this.mode = GameMode.ONLINE_MODE;
+
+        // Get current player username from NetworkConnection
+        this.myUsername = NetworkConnection.getInstance().getCurrentUsername();
+
+        if (this.myUsername == null || this.myUsername.isEmpty()) {
+            System.err.println("ERROR: Username not found!");
+            this.myUsername = "Player";
+        }
+
+        System.out.println("Online mode set for: " + myUsername + " vs " + opponent);
+
+        Platform.runLater(() -> {
+            updateOnlinePlayersLabels();
+            setupOnlineNetworkListener();
+        });
     }
-    
-    System.out.println("Online mode set for: " + myUsername + " vs " + opponent);
-    
-    Platform.runLater(() -> {
-        updateOnlinePlayersLabels();
-        setupOnlineNetworkListener();
-    });
-}
-    
+
     private void setupOnlineNetworkListener() {
         NetworkConnection.getInstance().setListener(response -> {
             String type = response.optString("type");
-            
+
             Platform.runLater(() -> {
                 switch (type) {
                     case "move":
@@ -147,7 +149,7 @@ public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
             });
         });
     }
-    
+
     private void handleRematchStart(JSONObject response) {
         gameEnded = false;
         gameBoard = new Board();
@@ -166,93 +168,89 @@ public void setOnlineMode(String opponent, String symbol, boolean myTurn) {
         int row = response.getInt("row");
         int col = response.getInt("col");
         String symbol = response.getString("symbol");
-        
+
         StackPane cell = getCell(row, col);
         if (cell != null && cell.getChildren().isEmpty()) {
             Cell cellSymbol = "X".equals(symbol) ? Cell.X : Cell.O;
             placeMove(cell, cellSymbol);
             gameBoard.getGrid()[row][col] = cellSymbol;
-            
+
             // Record move if recording is active
             if (GameSession.isRecording()) {
                 GameSession.recordMove(row, col, symbol, opponentName);
             }
         }
     }
-    
+
     private void handleTurnUpdate(JSONObject response) {
         isMyTurn = response.getBoolean("yourTurn");
         updateOnlinePlayersLabels();
     }
-    
- 
+
 // In handleGameOver method - update to check if current user is recording:
-private void handleGameOver(JSONObject response) {
-    gameEnded = true;
-    String result = response.getString("result");
-    String finalResult = "";
-    
-    switch (result) {
-        case "win":
-            turnLabel.setText("You Win!");
-            finalResult = myUsername + " Wins";
-            GameSession.addWinP1();
-            showOnlineGameOverDialog(true, false);
-            break;
-        case "lose":
-            turnLabel.setText("You Lost!");
-            finalResult = opponentName + " Wins";
-            GameSession.addWinP2();
-            showOnlineGameOverDialog(false, false);
-            break;
-        case "draw":
-            turnLabel.setText("It's a Draw!");
-            finalResult = "Draw";
-            GameSession.addDraw();
-            showOnlineGameOverDialog(false, true);
-            break;
-    }
-    
-    // CRITICAL: Only save if THIS user initiated the recording
-    if (GameSession.isRecording() && GameSession.isRecordingInitiator(myUsername)) {
-        String filePath = GameSession.saveGameRecord(finalResult);
-        if (filePath != null) {
-            System.out.println("Online game saved to: " + filePath);
+    private void handleGameOver(JSONObject response) {
+        gameEnded = true;
+        String result = response.getString("result");
+        String finalResult = "";
+
+        switch (result) {
+            case "win":
+                turnLabel.setText("You Win!");
+                finalResult = myUsername + " Wins";
+                GameSession.addWinP1();
+                showOnlineGameOverDialog(true, false);
+                break;
+            case "lose":
+                turnLabel.setText("You Lost!");
+                finalResult = opponentName + " Wins";
+                GameSession.addWinP2();
+                showOnlineGameOverDialog(false, false);
+                break;
+            case "draw":
+                turnLabel.setText("It's a Draw!");
+                finalResult = "Draw";
+                GameSession.addDraw();
+                showOnlineGameOverDialog(false, true);
+                break;
         }
+
+        // CRITICAL: Only save if THIS user initiated the recording
+        if (GameSession.isRecording() && GameSession.isRecordingInitiator(myUsername)) {
+            String filePath = GameSession.saveGameRecord(finalResult);
+            if (filePath != null) {
+                System.out.println("Online game saved to: " + filePath);
+            }
+        }
+
+        updateScoreBoard();
     }
-    
-    updateScoreBoard();
-}
 
+    // In handleOpponentQuit - update to check recording initiator:
+    private void handleOpponentQuit(JSONObject response) {
+        String quitter = response.getString("quitter");
 
-    
-  // In handleOpponentQuit - update to check recording initiator:
-private void handleOpponentQuit(JSONObject response) {
-    String quitter = response.getString("quitter");
-    
-    // CRITICAL: Only save if THIS user initiated recording
-    if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
-        String result = myUsername + " Wins (Opponent Quit)";
-        GameSession.saveGameRecord(result);
+        // CRITICAL: Only save if THIS user initiated recording
+        if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
+            String result = myUsername + " Wins (Opponent Quit)";
+            GameSession.saveGameRecord(result);
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Victory!");
+        alert.setHeaderText("You Won!");
+        alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
+        alert.showAndWait();
+        goBack();
     }
-    
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Victory!");
-    alert.setHeaderText("You Won!");
-    alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
-    alert.showAndWait();
-    goBack();
-}
 
-    
     private void handleRematchRequest(JSONObject response) {
         String from = response.getString("from");
-        
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Rematch Request");
         alert.setHeaderText(from + " wants a rematch!");
         alert.setContentText("Do you want to play again?");
-        
+
         alert.showAndWait().ifPresent(button -> {
             if (button.getButtonData().isDefaultButton()) {
                 JSONObject playAgain = new JSONObject();
@@ -267,25 +265,25 @@ private void handleOpponentQuit(JSONObject response) {
             }
         });
     }
-    
+
     private void handleError(JSONObject response) {
         String message = response.optString("message", "An error occurred");
         System.err.println("Game error: " + message);
     }
-    
+
     private void resetBoardForRematch() {
         gameEnded = false;
         gameBoard = new Board();
-        
+
         for (var node : board.getChildren()) {
             if (node instanceof StackPane) {
                 ((StackPane) node).getChildren().clear();
             }
         }
-        
+
         updateOnlinePlayersLabels();
     }
-    
+
     private void showOnlineGameOverDialog(boolean won, boolean draw) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Game Over");
@@ -319,7 +317,7 @@ private void handleOpponentQuit(JSONObject response) {
             }
         });
     }
-    
+
     private void updateOnlinePlayersLabels() {
         if (playerNameP1 != null && playerNameP2 != null) {
             playerNameP1.setText("You (" + mySymbol + ")");
@@ -328,18 +326,16 @@ private void handleOpponentQuit(JSONObject response) {
         }
     }
 
- 
-
     public void updatePlayersLabels() {
         if (isOnlineMode) {
             updateOnlinePlayersLabels();
             return;
         }
-        
+
         if (isReplayMode) {
             return;
         }
-        
+
         if (mode == GameMode.LOCAL_MODE) {
             if (player1 != null && player2 != null) {
                 if (playerNameP1 != null && playerNameP2 != null) {
@@ -366,19 +362,18 @@ private void handleOpponentQuit(JSONObject response) {
     }
 
     // ==================== INITIALIZATION ====================
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("GameboardController initialize() called");
-        
+
         xImage = new Image(getClass().getResourceAsStream("/assets/X.png"));
         oImage = new Image(getClass().getResourceAsStream("/assets/O.png"));
-        
+
         if (replayControls != null) {
             replayControls.setVisible(false);
             replayControls.setManaged(false);
         }
-        
+
         if (!isReplayMode && !isOnlineMode) {
             gameBoard = new Board();
             ai = new Minimax();
@@ -387,7 +382,7 @@ private void handleOpponentQuit(JSONObject response) {
             player1 = GameSession.getPlayer1();
             player2 = GameSession.getPlayer2();
             gameEnded = false;
-            
+
             updatePlayersLabels();
             updateScoreBoard();
         } else if (!isReplayMode && isOnlineMode) {
@@ -396,12 +391,11 @@ private void handleOpponentQuit(JSONObject response) {
             updatePlayersLabels();
             updateScoreBoard();
         }
-        
+
         System.out.println("GameboardController initialize() complete");
     }
 
     // ==================== REPLAY MODE ====================
-
     public void setReplayMode(JsonObject record) {
         this.isReplayMode = true;
         this.replayRecord = record;
@@ -412,7 +406,9 @@ private void handleOpponentQuit(JSONObject response) {
 
         if (board != null) {
             for (var node : board.getChildren()) {
-                if (node instanceof StackPane) ((StackPane) node).getChildren().clear();
+                if (node instanceof StackPane) {
+                    ((StackPane) node).getChildren().clear();
+                }
             }
         }
 
@@ -423,27 +419,47 @@ private void handleOpponentQuit(JSONObject response) {
             replayControls.setVisible(true);
             replayControls.setManaged(true);
             replayControls.toFront();
-            
+
             if (rootPane != null) {
-                rootPane.requestLayout(); 
+                rootPane.requestLayout();
             }
             System.out.println("DEBUG: replayControls set to VISIBLE");
         } else {
             System.err.println("CRITICAL ERROR: replayControls is NULL! Check your FXML fx:id");
         }
 
-        if (scoreP1 != null) { scoreP1.setVisible(false); scoreP1.setManaged(false); }
-        if (scoreP2 != null) { scoreP2.setVisible(false); scoreP2.setManaged(false); }
+        if (scoreP1 != null) {
+            scoreP1.setVisible(false);
+            scoreP1.setManaged(false);
+        }
+        if (scoreP2 != null) {
+            scoreP2.setVisible(false);
+            scoreP2.setManaged(false);
+        }
 
-        if (playerNameP1 != null) playerNameP1.setText(player1.getName());
-        if (playerNameP2 != null) playerNameP2.setText(player2.getName());
-        if (turnLabel != null) turnLabel.setText("Replay Mode: " + record.getInt("totalMoves") + " moves loaded");
+        if (playerNameP1 != null) {
+            playerNameP1.setText(player1.getName());
+        }
+        if (playerNameP2 != null) {
+            playerNameP2.setText(player2.getName());
+        }
+        if (turnLabel != null) {
+            turnLabel.setText("Replay Mode: " + record.getInt("totalMoves") + " moves loaded");
+        }
 
-        if (board != null) board.setDisable(true);
+        if (board != null) {
+            board.setDisable(true);
+        }
 
-        if (playButton != null) playButton.setDisable(false);
-        if (pauseButton != null) pauseButton.setDisable(true);
-        if (resetButton != null) resetButton.setDisable(false);
+        if (playButton != null) {
+            playButton.setDisable(false);
+        }
+        if (pauseButton != null) {
+            pauseButton.setDisable(true);
+        }
+        if (resetButton != null) {
+            resetButton.setDisable(false);
+        }
 
         System.out.println("Replay mode set successfully");
     }
@@ -451,57 +467,63 @@ private void handleOpponentQuit(JSONObject response) {
     @FXML
     private void handlePlay() {
         System.out.println("Play button clicked");
-        
+
         if (!isReplayMode || replayRecord == null) {
             System.err.println("Not in replay mode or no record!");
             return;
         }
-        
+
         JsonArray moves = replayRecord.getJsonArray("moves");
-        
+
         if (currentReplayIndex >= moves.size()) {
             System.out.println("Replay finished, resetting...");
             handleReset();
             return;
         }
-        
+
         isReplaying = true;
-        if (playButton != null) playButton.setDisable(true);
-        if (pauseButton != null) pauseButton.setDisable(false);
-        if (resetButton != null) resetButton.setDisable(true);
-        
+        if (playButton != null) {
+            playButton.setDisable(true);
+        }
+        if (pauseButton != null) {
+            pauseButton.setDisable(false);
+        }
+        if (resetButton != null) {
+            resetButton.setDisable(true);
+        }
+
         System.out.println("Starting replay from move " + (currentReplayIndex + 1));
         playNextReplayMove();
     }
-    
+
     private void playNextReplayMove() {
         if (!isReplaying || replayRecord == null) {
             System.out.println("Replay stopped or no record");
             finishReplay();
             return;
         }
-        
+
         JsonArray moves = replayRecord.getJsonArray("moves");
         if (currentReplayIndex >= moves.size()) {
             System.out.println("All moves played");
             finishReplay();
             return;
         }
-        
+
         JsonObject move = moves.getJsonObject(currentReplayIndex);
-        
+
         System.out.println("Playing move " + (currentReplayIndex + 1) + "/" + moves.size());
-     
-        turnLabel.setText("Move " + (currentReplayIndex + 1) + "/" + moves.size() + ": " + 
-                         move.getString("playerName") + " plays " + 
-                         move.getString("symbol"));
-    
+
+        turnLabel.setText("Move " + (currentReplayIndex + 1) + "/" + moves.size() + ": "
+                + move.getString("playerName") + " plays "
+                + move.getString("symbol"));
+
         int row = move.getInt("row");
         int col = move.getInt("col");
         String symbol = move.getString("symbol");
-        
+
         System.out.println("Placing " + symbol + " at [" + row + "," + col + "]");
-        
+
         StackPane cell = getCell(row, col);
         if (cell != null) {
             Image img = symbol.equals("X") ? xImage : oImage;
@@ -514,9 +536,9 @@ private void handleOpponentQuit(JSONObject response) {
         } else {
             System.err.println("Cell not found for position [" + row + "," + col + "]");
         }
-        
+
         currentReplayIndex++;
-        
+
         if (isReplaying && currentReplayIndex < moves.size()) {
             currentTransition = new PauseTransition(Duration.seconds(REPLAY_DELAY));
             currentTransition.setOnFinished(e -> playNextReplayMove());
@@ -527,60 +549,76 @@ private void handleOpponentQuit(JSONObject response) {
             finishReplay();
         }
     }
-    
+
     private void finishReplay() {
         System.out.println("Finishing replay");
         isReplaying = false;
         currentTransition = null;
-        
-        if (playButton != null) playButton.setDisable(false);
-        if (pauseButton != null) pauseButton.setDisable(true);
-        if (resetButton != null) resetButton.setDisable(false);
-        
+
+        if (playButton != null) {
+            playButton.setDisable(false);
+        }
+        if (pauseButton != null) {
+            pauseButton.setDisable(true);
+        }
+        if (resetButton != null) {
+            resetButton.setDisable(false);
+        }
+
         if (replayRecord != null) {
             turnLabel.setText("Game Over - " + replayRecord.getString("result"));
         }
     }
-    
+
     @FXML
     private void handlePause() {
         System.out.println("Pause button clicked");
-        
-        if (!isReplayMode) return;
-        
+
+        if (!isReplayMode) {
+            return;
+        }
+
         isReplaying = false;
         if (currentTransition != null) {
             currentTransition.stop();
             currentTransition = null;
             System.out.println("Transition stopped");
         }
-        
-        if (playButton != null) playButton.setDisable(false);
-        if (pauseButton != null) pauseButton.setDisable(true);
-        if (resetButton != null) resetButton.setDisable(false);
-        
+
+        if (playButton != null) {
+            playButton.setDisable(false);
+        }
+        if (pauseButton != null) {
+            pauseButton.setDisable(true);
+        }
+        if (resetButton != null) {
+            resetButton.setDisable(false);
+        }
+
         if (replayRecord != null) {
             int totalMoves = replayRecord.getInt("totalMoves");
             turnLabel.setText("Paused at move " + currentReplayIndex + "/" + totalMoves);
         }
-        
+
         System.out.println("Replay paused at move " + currentReplayIndex);
     }
-    
+
     @FXML
     private void handleReset() {
         System.out.println("Reset button clicked");
-        
-        if (!isReplayMode) return;
-  
+
+        if (!isReplayMode) {
+            return;
+        }
+
         isReplaying = false;
         if (currentTransition != null) {
             currentTransition.stop();
             currentTransition = null;
         }
-        
+
         currentReplayIndex = 0;
-        
+
         if (board != null) {
             for (var node : board.getChildren()) {
                 if (node instanceof StackPane) {
@@ -589,37 +627,42 @@ private void handleOpponentQuit(JSONObject response) {
             }
             System.out.println("Board cleared");
         }
-        
-        if (playButton != null) playButton.setDisable(false);
-        if (pauseButton != null) pauseButton.setDisable(true);
-        if (resetButton != null) resetButton.setDisable(false);
-        
+
+        if (playButton != null) {
+            playButton.setDisable(false);
+        }
+        if (pauseButton != null) {
+            pauseButton.setDisable(true);
+        }
+        if (resetButton != null) {
+            resetButton.setDisable(false);
+        }
+
         if (replayRecord != null) {
             turnLabel.setText("Ready to replay - " + replayRecord.getInt("totalMoves") + " moves");
         }
-        
+
         System.out.println("Replay reset complete");
     }
 
     // ==================== NAVIGATION ====================
-
     @FXML
     private void goBack() {
         if (isReplaying && currentTransition != null) {
             currentTransition.stop();
             isReplaying = false;
         }
-        
+
         if (GameSession.isRecording() && !gameEnded) {
             GameSession.cancelRecording();
         }
-        
+
         if (isOnlineMode && !gameEnded) {
             JSONObject quit = new JSONObject();
             quit.put("type", "quit_game");
             NetworkConnection.getInstance().sendMessage(quit);
         }
-        
+
         if (isReplayMode) {
             Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
         } else if (isOnlineMode) {
@@ -630,7 +673,6 @@ private void handleOpponentQuit(JSONObject response) {
     }
 
     // ==================== CELL CLICK HANDLING ====================
-
     @FXML
     private void onCellClicked(MouseEvent event) {
         if (gameEnded || isReplayMode) {
@@ -648,30 +690,30 @@ private void handleOpponentQuit(JSONObject response) {
         if (!isMyTurn) {
             return;
         }
-        
+
         StackPane clickedCell = (StackPane) event.getSource();
         int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);
         int col = GridPane.getColumnIndex(clickedCell) == null ? 0 : GridPane.getColumnIndex(clickedCell);
-        
+
         if (!clickedCell.getChildren().isEmpty()) {
             return;
         }
-        
+
         Cell cellSymbol = "X".equals(mySymbol) ? Cell.X : Cell.O;
         placeMove(clickedCell, cellSymbol);
         gameBoard.getGrid()[row][col] = cellSymbol;
-        
+
         // Record move if recording is active
         if (GameSession.isRecording()) {
             GameSession.recordMove(row, col, mySymbol, myUsername);
         }
-        
+
         JSONObject moveMsg = new JSONObject();
         moveMsg.put("type", "move");
         moveMsg.put("row", row);
         moveMsg.put("col", col);
         NetworkConnection.getInstance().sendMessage(moveMsg);
-        
+
         isMyTurn = false;
         updateOnlinePlayersLabels();
     }
@@ -688,9 +730,9 @@ private void handleOpponentQuit(JSONObject response) {
                 if (Xturn) {
                     placeMove(clickedCell, Cell.X);
                     gameBoard.getGrid()[row][col] = Cell.X;
-                    
+
                     GameSession.recordMove(row, col, "X", "You");
-                    
+
                     Xturn = false;
                     turnLabel.setText("Computer's Turn");
                 }
@@ -702,12 +744,12 @@ private void handleOpponentQuit(JSONObject response) {
                         handleGameEnd(true, false);
                         turnLabel.setText("You Win!");
                     } else {
-                        handleGameEnd(false, false); 
+                        handleGameEnd(false, false);
                         turnLabel.setText("You Lost!");
                     }
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
-                    handleGameEnd(false, true); 
+                    handleGameEnd(false, true);
                     gameEnded = true;
                     turnLabel.setText("It's a Draw!");
                     actionTaken = true;
@@ -719,9 +761,9 @@ private void handleOpponentQuit(JSONObject response) {
                         int aiRow = bestMove.getRow();
                         int aiCol = bestMove.getCol();
                         gameBoard.getGrid()[aiRow][aiCol] = Cell.O;
-                        
+
                         GameSession.recordMove(aiRow, aiCol, "O", "Computer");
-                        
+
                         StackPane aiCell = getCell(aiRow, aiCol);
                         if (aiCell != null) {
                             placeMove(aiCell, Cell.O);
@@ -753,17 +795,17 @@ private void handleOpponentQuit(JSONObject response) {
                 if (Xturn && gameBoard.checkWinner() == Cell.EMPTY) {
                     placeMove(clickedCell, Cell.X);
                     gameBoard.getGrid()[row][col] = Cell.X;
-             
+
                     GameSession.recordMove(row, col, "X", player1.getName());
-                    
+
                     Xturn = false;
                 } else {
                     if (!actionTaken && gameBoard.checkWinner() == Cell.EMPTY) {
                         placeMove(clickedCell, Cell.O);
                         gameBoard.getGrid()[row][col] = Cell.O;
-                        
+
                         GameSession.recordMove(row, col, "O", player2.getName());
-                        
+
                         Xturn = true;
                     }
                 }
@@ -772,16 +814,16 @@ private void handleOpponentQuit(JSONObject response) {
                 if (winnerCell != Cell.EMPTY) {
                     gameEnded = true;
                     String winnerName = (winnerCell == Cell.X) ? player1.getName() : player2.getName();
-                    
+
                     if (winnerCell == Cell.X) {
                         GameSession.addWinP1();
                     } else {
                         GameSession.addWinP2();
                     }
-                    
+
                     updateScoreBoard();
                     turnLabel.setText(winnerName + " Wins!");
-                    
+
                     if (GameSession.isRecording()) {
                         String result = winnerName + " Wins";
                         String filePath = GameSession.saveGameRecord(result);
@@ -789,7 +831,7 @@ private void handleOpponentQuit(JSONObject response) {
                             System.out.println("Game saved to: " + filePath);
                         }
                     }
-                    
+
                     showLocalModeWinPopup(winnerName);
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
@@ -797,14 +839,14 @@ private void handleOpponentQuit(JSONObject response) {
                     GameSession.addDraw();
                     updateScoreBoard();
                     turnLabel.setText("It's a Draw!");
-           
+
                     if (GameSession.isRecording()) {
                         String filePath = GameSession.saveGameRecord("Draw");
                         if (filePath != null) {
                             System.out.println("Game saved to: " + filePath);
                         }
                     }
-                    
+
                     showDrawPopup();
                     actionTaken = true;
                 }
@@ -817,7 +859,6 @@ private void handleOpponentQuit(JSONObject response) {
     }
 
     // ==================== GAME END HANDLING ====================
-    
     private void handleGameEnd(boolean playerWon, boolean isDraw) {
         gameEnded = true;
 
@@ -825,45 +866,44 @@ private void handleOpponentQuit(JSONObject response) {
             turnLabel.setText("It's a Draw!");
             GameSession.addDraw();
             updateScoreBoard();
-            
+
             if (GameSession.isRecording()) {
                 String filePath = GameSession.saveGameRecord("Draw");
                 if (filePath != null) {
                     System.out.println("Game saved to: " + filePath);
                 }
             }
-            
+
             showDrawPopup();
         } else if (playerWon) {
             turnLabel.setText("You Win!");
             GameSession.addWinP1();
             updateScoreBoard();
-            
+
             if (GameSession.isRecording()) {
                 String filePath = GameSession.saveGameRecord("You Win");
                 if (filePath != null) {
                     System.out.println("Game saved to: " + filePath);
                 }
             }
-                showWinLosePopup(true);
+            showWinLosePopup(true);
         } else {
             turnLabel.setText("Computer Wins!");
             GameSession.addWinP2();
             updateScoreBoard();
-            
+
             if (GameSession.isRecording()) {
                 String filePath = GameSession.saveGameRecord("Computer Wins");
                 if (filePath != null) {
                     System.out.println("Game saved to: " + filePath);
                 }
             }
-            
+
             showWinLosePopup(false);
         }
     }
 
     // ==================== UTILITY METHODS ====================
-    
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
         ImageView imageView = new ImageView(img);
@@ -877,10 +917,10 @@ private void handleOpponentQuit(JSONObject response) {
         for (var node : board.getChildren()) {
             Integer r = GridPane.getRowIndex(node);
             Integer c = GridPane.getColumnIndex(node);
-            
+
             int rowIndex = (r == null) ? 0 : r;
             int colIndex = (c == null) ? 0 : c;
-            
+
             if (rowIndex == row && colIndex == col) {
                 return (StackPane) node;
             }
@@ -908,7 +948,7 @@ private void handleOpponentQuit(JSONObject response) {
             System.err.println("ERROR: Win_LoseController is null!");
         }
     }
-    
+
     private void showLocalModeWinPopup(String winnerName) {
         System.out.println("showLocalModeWinPopup called with winner: " + winnerName);
         Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
@@ -918,4 +958,5 @@ private void handleOpponentQuit(JSONObject response) {
             System.err.println("ERROR: Win_LoseController is null!");
         }
     }
+
 }

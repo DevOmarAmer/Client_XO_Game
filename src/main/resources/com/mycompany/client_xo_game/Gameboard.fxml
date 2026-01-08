@@ -14,141 +14,116 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Line?>
 
-<BorderPane fx:id="rootPane" prefHeight="600.0" prefWidth="700.0" styleClass="gameboard" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.client_xo_game.GameboardController">
+<StackPane fx:id="rootPane" prefHeight="768.0" prefWidth="1024.0" styleClass="gameboard-root" xmlns="http://javafx.com/javafx/13" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.client_xo_game.GameboardController">
 
-    <top>
-        <VBox spacing="10">
-            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="turn-bar">
-                <padding>
-                    <Insets bottom="16" left="16" right="16" top="16" />
-                </padding>
+    <Label styleClass="bg-symbol-x" text="X" translateX="-180" translateY="60" StackPane.alignment="CENTER_LEFT" />
+    <Label styleClass="bg-symbol-o" text="O" translateX="180" translateY="-60" StackPane.alignment="TOP_RIGHT" />
 
-                <!-- Back Button -->
-                <Button fx:id="backButton" onAction="#goBack" style="-fx-font-size: 14; -fx-padding: 5 10 5 10;" text="Back" />
+    <BorderPane>
+        <padding>
+            <Insets bottom="30" left="30" right="30" top="30" />
+        </padding>
 
-                <!-- Turn Label -->
-                <Label fx:id="turnLabel" styleClass="turn-label" text="Player 1 Turn">
-                    <font>
-                        <Font size="32" />
-                    </font>
-                </Label>
+        <top>
+            <HBox alignment="CENTER_LEFT">
+                <Button fx:id="backButton" onAction="#goBack" styleClass="action-btn" text="← BACK" />
             </HBox>
-            
-            <!-- Replay Controls (Hidden by default) -->
-            <HBox fx:id="replayControls" alignment="CENTER" spacing="15.0" visible="false" managed="false">
-                <padding>
-                    <Insets bottom="10" left="10" right="10" top="10" />
-                </padding>
-                <children>
-                    <Button fx:id="playButton" onAction="#handlePlay" 
-                            style="-fx-background-color: #00d4ff; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 30; -fx-background-radius: 10; -fx-cursor: hand;" 
-                            text="▶ Play" />
-                    <Button fx:id="pauseButton" onAction="#handlePause" 
-                            style="-fx-background-color: #ffd93d; -fx-text-fill: #1a1a2e; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 30; -fx-background-radius: 10; -fx-cursor: hand;" 
-                            text="⏸ Pause" />
-                    <Button fx:id="resetButton" onAction="#handleReset" 
-                            style="-fx-background-color: #ff6b6b; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 30; -fx-background-radius: 10; -fx-cursor: hand;" 
-                            text="↻ Reset" />
-                </children>
-            </HBox>
-        </VBox>
-    </top>
+        </top>
 
-
-    <center>
-        <StackPane fx:id="boardContainer" styleClass="board-container">
-            <GridPane fx:id="board" alignment="CENTER" hgap="14" styleClass="board" vgap="14">
+        <center>
+            <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" spacing="25" styleClass="xo-glass-panel">
                 
-                <columnConstraints>
-                    <ColumnConstraints />
-                    <ColumnConstraints />
-                    <ColumnConstraints />
-                </columnConstraints>
-
-                <rowConstraints>
-                    <RowConstraints />
-                    <RowConstraints />
-                    <RowConstraints />
-                </rowConstraints>
-
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" />
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="1" />
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="2" />
-
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.rowIndex="1" />
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.rowIndex="2" />
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            </GridPane>
-        </StackPane>
-    </center>
-
-    <bottom>
-        <HBox fx:id="playersBar" spacing="24" styleClass="players-bar">
-            <padding>
-                <Insets bottom="8" left="20" right="20" top="8" />
-            </padding>
-
-            <HBox alignment="CENTER_LEFT" spacing="14" styleClass="player-box" HBox.hgrow="ALWAYS">
-                <StackPane styleClass="avatar">
-                    <ImageView fitHeight="40" fitWidth="40" pickOnBounds="true" preserveRatio="true" smooth="true">
-                        <image>
-                            <Image url="@/assets/avatar.png" />
-                        </image>
-                        <clip>
-                            <Circle centerX="30" centerY="30" radius="30" />
-                        </clip>
-                    </ImageView>
-                </StackPane>
-
-                <VBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="4" HBox.hgrow="ALWAYS">
-                    <Label fx:id="playerNameP1" styleClass="player-name" text="Player 1" />
-                    <Label fx:id="scoreP1" styleClass="player-score" text="Score: 0" />
+                <VBox alignment="CENTER" spacing="5">
+                    <Label fx:id="turnLabel" styleClass="turn-label" text="YOUR TURN" />
+                    <Line endX="200" styleClass="glow-line" strokeWidth="2.0" />
                 </VBox>
 
-                <StackPane styleClass="icon-x">
-                    <ImageView fitHeight="40" fitWidth="40" preserveRatio="true" smooth="true">
-                        <image>
-                            <Image url="@/assets/X.png" />
-                        </image>
-                    </ImageView>
+                <HBox fx:id="replayControls" alignment="CENTER" managed="false" spacing="20.0" visible="false">
+                    <Button fx:id="playButton" onAction="#handlePlay" styleClass="action-btn" text="START REPLAY" />
+                    <Button fx:id="pauseButton" onAction="#handlePause" styleClass="action-btn, btn-pause" text="PAUSE" />
+                    <Button fx:id="resetButton" onAction="#handleReset" styleClass="action-btn, btn-reset" text="RESET" />
+                </HBox>
+
+                <StackPane fx:id="boardContainer">
+                    <GridPane fx:id="board" alignment="CENTER" hgap="15" styleClass="board" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints />
+                            <ColumnConstraints />
+                            <ColumnConstraints />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints />
+                            <RowConstraints />
+                            <RowConstraints />
+                        </rowConstraints>
+
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <StackPane onMouseClicked="#onCellClicked" styleClass="cell" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                    </GridPane>
                 </StackPane>
+            </VBox>
+        </center>
+
+        <bottom>
+            <HBox fx:id="playersBar" alignment="CENTER" spacing="50" styleClass="players-dock" BorderPane.alignment="CENTER">
+                
+                <HBox alignment="CENTER_LEFT" spacing="15" styleClass="player-card, p1-card">
+                    <VBox alignment="CENTER_LEFT" spacing="2">
+                        <Label text="PLAYER 1 (X)" styleClass="player-label" />
+                        <Label fx:id="playerNameP1" styleClass="player-name-text, p1-text" text="Username" />
+                        <Label fx:id="scoreP1" styleClass="player-label" text="Score: 0" />
+                    </VBox>
+                    <StackPane>
+                        <Circle radius="25" fill="transparent" stroke="#00fff0" strokeWidth="2" style="-fx-effect: dropshadow(gaussian, #00fff0, 10, 0.5, 0, 0);"/>
+                        <ImageView fitHeight="40" fitWidth="40" preserveRatio="true">
+                            <image>
+                                <Image url="@/assets/avatar.png" />
+                            </image>
+                            <clip>
+                                <Circle centerX="20" centerY="20" radius="20" />
+                            </clip>
+                        </ImageView>
+                    </StackPane>
+                </HBox>
+
+                <Label styleClass="vs-label" text="VS" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="15" styleClass="player-card, p2-card">
+                    <StackPane>
+                        <Circle radius="25" fill="transparent" stroke="#ff007f" strokeWidth="2" style="-fx-effect: dropshadow(gaussian, #ff007f, 10, 0.5, 0, 0);"/>
+                        <ImageView fitHeight="40" fitWidth="40" preserveRatio="true">
+                            <image>
+                                <Image url="@/assets/avatar.png" />
+                            </image>
+                            <clip>
+                                <Circle centerX="20" centerY="20" radius="20" />
+                            </clip>
+                        </ImageView>
+                    </StackPane>
+                    <VBox alignment="CENTER_RIGHT" spacing="2">
+                        <Label text="PLAYER 2 (O)" styleClass="player-label" />
+                        <Label fx:id="playerNameP2" styleClass="player-name-text, p2-text" text="Opponent" />
+                        <Label fx:id="scoreP2" styleClass="player-label" text="Score: 0" />
+                    </VBox>
+                </HBox>
+
             </HBox>
+        </bottom>
 
-            <HBox alignment="CENTER_RIGHT" spacing="14" styleClass="player-box" HBox.hgrow="ALWAYS">
-                <StackPane styleClass="icon-o">
-                    <ImageView fitHeight="40" fitWidth="40" preserveRatio="true" smooth="true">
-                        <image>
-                            <Image url="@/assets/O.png" />
-                        </image>
-                    </ImageView>
-                </StackPane>
-
-                <VBox alignment="CENTER_RIGHT" maxWidth="Infinity" spacing="4" HBox.hgrow="ALWAYS">
-                    <Label fx:id="playerNameP2" styleClass="player-name" text="Player 2" />
-                    <Label fx:id="scoreP2" styleClass="player-score" text="Score: 0" />
-                </VBox>
-
-                <StackPane styleClass="avatar">
-                    <ImageView fitHeight="40" fitWidth="40" pickOnBounds="true" preserveRatio="true" smooth="true">
-                        <image>
-                            <Image url="@/assets/avatar.png" />
-                        </image>
-                        <clip>
-                            <Circle centerX="30" centerY="30" radius="30" />
-                        </clip>
-                    </ImageView>
-                </StackPane>
-            </HBox>
-        </HBox>
-    </bottom>
+    </BorderPane>
 
     <stylesheets>
         <URL value="@/styles/gameboard.css" />
     </stylesheets>
-</BorderPane>
+</StackPane>
