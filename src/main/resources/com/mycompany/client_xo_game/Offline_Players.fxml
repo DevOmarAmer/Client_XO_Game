@@ -51,9 +51,13 @@
                        styleClass="xo-input"/>
         </VBox>
 
-        <CheckBox fx:id="record_game_chk"
-                  text="Record Game"
-                  styleClass="xo-checkbox"/>
+         <HBox alignment="CENTER" spacing="10">
+                <Circle fx:id="recordDot" radius="5" fill="#ff4b4b" visible="true" />
+                <CheckBox fx:id="record_game_chk"
+                          text="RECORD GAME"
+                          styleClass="xo-record-checkbox"
+                          selected="true"/>
+            </HBox>
 
         <Button fx:id="play_id"
                 text="START MATCH"

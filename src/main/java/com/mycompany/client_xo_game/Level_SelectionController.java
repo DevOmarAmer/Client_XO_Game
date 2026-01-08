@@ -1,8 +1,10 @@
 package com.mycompany.client_xo_game;
 
 import com.mycompany.client_xo_game.enums.AIDifficulty;
+import com.mycompany.client_xo_game.enums.Cell;
 import com.mycompany.client_xo_game.enums.GameMode;
 import com.mycompany.client_xo_game.model.GameSession;
+import com.mycompany.client_xo_game.model.Player_Offline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +15,8 @@ import javafx.util.Duration;
 
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import javafx.scene.control.CheckBox;
+import javafx.scene.shape.Circle;
 
 public class Level_SelectionController {
 
@@ -26,7 +30,10 @@ public class Level_SelectionController {
     private Label titleLabel;
     @FXML 
     private Button btnEasy, btnMedium, btnHard, btnBack;
-
+   @FXML
+    private CheckBox recordGameChk;
+   @FXML
+  private Circle recordDot; // Add this field
     @FXML
     public void initialize() {
         /* ===============================
@@ -44,7 +51,22 @@ public class Level_SelectionController {
         slide.setToY(0);
 
         new ParallelTransition(fade, slide).play();
+        /* ===============================
+       Recording Dot Animation
+       =============================== */
+    Timeline recordBlink = new Timeline(
+        new KeyFrame(Duration.seconds(0.6), new KeyValue(recordDot.opacityProperty(), 1.0)),
+        new KeyFrame(Duration.seconds(1.2), new KeyValue(recordDot.opacityProperty(), 0.1))
+    );
+    recordBlink.setAutoReverse(true);
+    recordBlink.setCycleCount(Animation.INDEFINITE);
+    recordBlink.play();
 
+    // Toggle dot visibility based on checkbox
+    recordGameChk.selectedProperty().addListener((obs, oldVal, newVal) -> {
+        recordDot.setVisible(newVal);
+        if(newVal) recordBlink.play(); else recordBlink.stop();
+    });
         /* ===============================
            Title glow breathing
            =============================== */
@@ -82,6 +104,11 @@ public class Level_SelectionController {
         addHover(btnEasy);
         addHover(btnMedium);
         addHover(btnHard);
+        addHover(btnBack);
+        
+         if (recordGameChk != null) {
+            recordGameChk.setSelected(true);
+        }
     }
 
     /* ===============================
@@ -91,20 +118,35 @@ public class Level_SelectionController {
     private void easy() {
         press(btnEasy);
         GameSession.setDifficulty(AIDifficulty.EASY);
-        Navigation.goTo(Routes.GAMEBOARD);
+        startAIGame();
     }
 
     @FXML
     private void medium() {
         press(btnMedium);
         GameSession.setDifficulty(AIDifficulty.MEDIUM);
-        Navigation.goTo(Routes.GAMEBOARD);
+        startAIGame();
     }
 
     @FXML
     private void hard() {
         press(btnHard);
         GameSession.setDifficulty(AIDifficulty.HARD);
+        startAIGame();
+    }
+    
+        private void startAIGame() {
+     
+        Player_Offline humanPlayer = new Player_Offline("You", Cell.X);
+        Player_Offline aiPlayer = new Player_Offline("Computer", Cell.O);
+        GameSession.setPlayers(humanPlayer, aiPlayer);
+        if (recordGameChk != null && recordGameChk.isSelected()) {
+            GameSession.startRecording();
+            System.out.println("Recording enabled for AI game");
+        } else {
+            System.out.println("Recording disabled for AI game");
+        }
+        
         Navigation.goTo(Routes.GAMEBOARD);
     }
 
