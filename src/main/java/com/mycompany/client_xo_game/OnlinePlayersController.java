@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class OnlinePlayersController implements Runnable {
+    
 
     @FXML
     private StackPane rootPane;
@@ -94,6 +95,7 @@ private void handleGameInvite(JSONObject response) {
     boolean inviterWantsRecording = response.optBoolean("recordGame", false);
     
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    styleAlert(alert);
     alert.setTitle("Game Invitation");
     
     String recordingNote = inviterWantsRecording 
@@ -342,6 +344,7 @@ private void handleInvite(String playerName) {
     System.out.println("Preparing to send invitation to: " + playerName);
     
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    styleAlert(alert);
     alert.setTitle("Send Game Invitation");
     alert.setHeaderText("Invite " + playerName + " to play");
     
@@ -395,6 +398,7 @@ private void handleInvite(String playerName) {
     
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
+        styleAlert(alert);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -425,4 +429,14 @@ private void handleInvite(String playerName) {
         stop();
         playExitTransition(() -> Navigation.goTo(Routes.LEADERBOARD));
     }
+    private void styleAlert(Alert alert) {
+    var dialogPane = alert.getDialogPane();
+
+    dialogPane.setId("xo-alert");
+
+    dialogPane.getStylesheets().add(
+        getClass().getResource("/styles/AlertStyle.css").toExternalForm()
+    );
+}
+
 }

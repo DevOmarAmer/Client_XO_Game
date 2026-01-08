@@ -237,6 +237,7 @@ private void handleOpponentQuit(JSONObject response) {
     }
     
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    styleAlert(alert);
     alert.setTitle("Victory!");
     alert.setHeaderText("You Won!");
     alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
@@ -249,6 +250,7 @@ private void handleOpponentQuit(JSONObject response) {
         String from = response.getString("from");
         
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        styleAlert(alert);
         alert.setTitle("Rematch Request");
         alert.setHeaderText(from + " wants a rematch!");
         alert.setContentText("Do you want to play again?");
@@ -288,6 +290,7 @@ private void handleOpponentQuit(JSONObject response) {
     
     private void showOnlineGameOverDialog(boolean won, boolean draw) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        styleAlert(alert);
         alert.setTitle("Game Over");
 
         if (draw) {
@@ -918,4 +921,15 @@ private void handleOpponentQuit(JSONObject response) {
             System.err.println("ERROR: Win_LoseController is null!");
         }
     }
+    private void styleAlert(Alert alert) {
+    var dialogPane = alert.getDialogPane();
+
+    dialogPane.setId("xo-alert");
+
+    dialogPane.getStylesheets().add(
+        getClass().getResource("/styles/AlertStyle.css").toExternalForm()
+    );
+}
+
+    
 }
