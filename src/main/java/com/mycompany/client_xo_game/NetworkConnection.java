@@ -5,21 +5,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import org.json.JSONObject;
 
 public class NetworkConnection {
-    private static NetworkConnection instance;
+    private static Map<String, NetworkConnection> instances = new HashMap<>();
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private String ip = "127.0.0.1"; // Change to Server IP if on different machine
     private int port = 8888;         // Must match Server.PORT
     private Consumer<JSONObject> listener;
     private String currentUsername; // Store logged-in username
     
-    private NetworkConnection() {
+    private NetworkConnection(String ip) {
         try {
             socket = new Socket(ip, port);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -30,11 +31,15 @@ public class NetworkConnection {
         }
     }
     
-    public static NetworkConnection getInstance() {
-        if (instance == null) {
-            instance = new NetworkConnection();
+    public static NetworkConnection getInstance(String ip) {
+        if (!instances.containsKey(ip)) {
+            instances.put(ip, new NetworkConnection(ip));
         }
-        return instance;
+        return instances.get(ip);
+    }
+    
+    public static NetworkConnection getInstance() {
+        return getInstance("127.0.0.1");
     }
     
     public void setCurrentUsername(String username) {
