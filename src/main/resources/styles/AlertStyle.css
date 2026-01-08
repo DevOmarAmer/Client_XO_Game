@@ -1,0 +1,126 @@
+/* Modern XO Alert Style - Complete Fix */
+
+#xo-alert {
+    /* Deep Navy Background */
+    -fx-background-color: rgba(10, 12, 25, 0.98);
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-border-color: rgba(0, 255, 240, 0.5);
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.25), 30, 0, 0, 0);
+    -fx-padding: 0;
+}
+
+/* =================================================================
+   1. GLOBAL TEXT FIXES
+   Target generic labels, standard text, and headers
+   ================================================================= */
+#xo-alert .label,
+#xo-alert .text {
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+#xo-alert .content {
+    -fx-padding: 20;
+}
+
+/* Body text specific - slightly off-white for readability */
+#xo-alert .content .label,
+#xo-alert .content .text {
+    -fx-text-fill: #e6ffff; 
+    -fx-font-size: 14px;
+    -fx-wrap-text: true;
+}
+
+/* Header Text - Bright Cyan */
+#xo-alert .header-panel .label {
+    -fx-text-fill: #00fff0;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.4), 10, 0, 0, 0);
+}
+
+/* =================================================================
+   2. THE FIX FOR THE GREY CHECKBOX TEXT
+   This targets the specific "Record this game" component
+   ================================================================= */
+
+/* Fix the text color of the checkbox */
+#xo-alert .check-box {
+    -fx-text-fill: #e6ffff; /* Forces the label text to be bright */
+    -fx-font-size: 14px;
+    -fx-opacity: 1.0;
+}
+
+/* Style the actual square box of the checkbox */
+#xo-alert .check-box .box {
+    -fx-background-color: transparent;
+    -fx-border-color: #00fff0;
+    -fx-border-radius: 3px; 
+    -fx-border-width: 1.5;
+}
+
+/* Style the "check" mark inside when selected */
+#xo-alert .check-box:selected .mark {
+    -fx-background-color: #00fff0;
+    -fx-shape: "M0,4 L3,7 L9,1 L8,0 L3,5 L1,3 Z"; /* Sharper checkmark */
+}
+
+/* Hover effect for the checkbox */
+#xo-alert .check-box:hover .box {
+    -fx-effect: dropshadow(gaussian, #00fff0, 5, 0.2, 0, 0);
+}
+
+/* =================================================================
+   3. CLEANUP (Header & Icon)
+   ================================================================= */
+
+#xo-alert .header-panel {
+    -fx-background-color: transparent;
+    -fx-padding: 15 20 5 20; /* Reduced bottom padding */
+}
+
+/* Force hide the Question Mark icon if you want it gone */
+#xo-alert .header-panel .graphic {
+    -fx-padding: 0;
+    -fx-opacity: 0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
+    visibility: hidden; 
+}
+
+/* =================================================================
+   4. BUTTONS
+   ================================================================= */
+
+#xo-alert .button-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 15;
+}
+
+#xo-alert .button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-border-color: #00fff0;
+    -fx-border-width: 2;
+    -fx-text-fill: #00fff0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 22;
+    -fx-cursor: hand;
+}
+
+#xo-alert .button:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.1);
+    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.4, 0, 0);
+    -fx-text-fill: white;
+    -fx-border-color: white;
+}
+
+#xo-alert .button:pressed {
+    -fx-background-color: #00fff0;
+    -fx-text-fill: #0a0c19;
+    -fx-effect: none;
+}
