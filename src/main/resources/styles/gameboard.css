@@ -1,95 +1,224 @@
-/*
- * Empty Stylesheet file.
- */
 
-/*
- * Empty Stylesheet file.
- */
+.gameboard-root {
+    /* Base dark color */
+    -fx-background-color: #080a12;
 
-BorderPane.root {
-    -fx-background-color: #0C1017;
+    /* Layer 1: Diagonal gradient from Deep Purple (Top-Left) to Deep Navy (Bottom-Right)
+       Layer 2: Radial vignette to focus eyes on the center (The Board)
+    */
+    -fx-background-image:
+        linear-gradient(to bottom right, #240b36 0%, #0f172a 100%),
+        radial-gradient(center 50% 50%, radius 100%, transparent 20%, rgba(0, 0, 0, 0.6) 100%);
 }
-.turn-bar {
 
-    -fx-border-width: 0 0 1 0;
-    -fx-pref-height: 60px;
-    -fx-min-height: 60px;
-    -fx-max-height: 60px;
+.bg-symbol-x {
+    -fx-font-family: "Segoe UI Black", "Arial Black";
+    -fx-font-size: 350px;
+    -fx-text-fill: rgba(0, 210, 255, 0.04); /* Cyan hint */
+    -fx-effect: dropshadow(gaussian, rgba(0, 210, 255, 0.1), 50, 0.2, 0, 0);
 }
+
+.bg-symbol-o {
+    -fx-font-family: "Segoe UI Black", "Arial Black";
+    -fx-font-size: 350px;
+    -fx-text-fill: rgba(255, 0, 127, 0.04); /* Pink hint */
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 127, 0.1), 50, 0.2, 0, 0);
+}
+.xo-glass-panel {
+    -fx-background-color: rgba(15, 23, 42, 0.6);
+    -fx-background-radius: 30;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 30;
+    -fx-border-width: 1.5;
+    -fx-padding: 30 40;
+
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.15), 40, 0.4, 0, 0);
+    -fx-min-width: 400px;
+}
+
+
 .turn-label {
-    -fx-text-fill: #E5E7EB;
-    -fx-font-weight: bold;
-/*    -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.6), 12, 0.3, 0, 0);*/
-    -fx-font-size: 28px;
+    /* Matches #title */
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI Black", "Arial Black";
+    -fx-font-size: 32px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 210, 255, 0.4), 20, 0.3, 0, 2);
 }
 
-.board-container {
-    -fx-alignment: CENTER;
-
+.glow-line {
+    -fx-stroke: linear-gradient(to right, transparent, #00fff0, transparent);
+    -fx-opacity: 0.5;
 }
+
+/* ======================================
+   THE GRID CELLS
+   ====================================== */
 .board {
-    -fx-padding: 20;
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
 
-     -fx-background-color: transparent;
-}
 .cell {
-    -fx-background-color: linear-gradient(to bottom right, #0B1220, #020617);
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: rgba(255,255,255,0.08);
-    
-    -fx-pref-width: 110px;
-    -fx-pref-height: 110px;
-    
-    
-  
-}
-.cell:focused {
-    -fx-background-insets: 0;
+    /* Matches general vbox card style base */
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 2;
+
+    -fx-pref-width: 100px;
+    -fx-pref-height: 100px;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease;
 }
 
 .cell:hover {
-    -fx-border-color: #3B82F6;
+    -fx-background-color: rgba(0, 210, 255, 0.08);
+    -fx-border-color: rgba(0, 210, 255, 0.6);
+    -fx-effect: dropshadow(gaussian, rgba(0, 210, 255, 0.4), 20, 0.4, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
-.players-bar {
 
-    -fx-border-color: rgba(255,255,255,0.08);
-    -fx-border-width: 1 0 0 0;
-    -fx-pref-height: 80px;
-    -fx-min-height: 80px;
-    -fx-max-height: 80px;
+.cell:pressed {
+    -fx-background-color: rgba(0, 210, 255, 0.15);
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
 }
-.player-box {
-    -fx-background-color: rgba(255,255,255,0.04);
-    -fx-padding: 8 ,14;
-    -fx-background-radius: 16;
-    -fx-min-height: 60px;
-}
-.symbol-badge {
-    -fx-pref-width: 34;
-    -fx-pref-height: 34;
-    -fx-background-radius: 50;
-    -fx-background-color: rgba(255,255,255,0.08);
-}
-.player-name {
-    -fx-text-fill: #E5E7EB;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-.player-score {
-    -fx-text-fill: #9CA3AF;
-    -fx-font-size: 12px;
-}
-.icon-x {
-    -fx-text-fill: #3B82F6;
-    -fx-font-weight: bold;
-}
-.icon-o {
-    -fx-text-fill: #EF4444;
-    -fx-font-weight: bold;
-}
-.avatar {
-    -fx-background-radius: 50;
-    -fx-background-color: rgba(255,255,255,0.12);
+
+/* ======================================
+   BOTTOM: PLAYER CARDS (Stats Card Style)
+   ====================================== */
+.players-dock {
+    -fx-padding: 20;
     -fx-alignment: center;
+}
+
+/* Base Card Style (Matches #onlinevbox / #ingamevbox base) */
+.player-card {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 25, 0.2, 0, 3);
+    -fx-padding: 10 25;
+    -fx-min-width: 280px;
+    -fx-transition: all 0.3s ease;
+}
+
+/* Player 1 Card -> Matches #onlinevbox (Cyan) */
+.p1-card {
+    -fx-border-color: linear-gradient(to bottom, rgba(0, 210, 255, 0.5), rgba(0, 255, 240, 0.3));
+}
+.p1-card:hover {
+    -fx-background-color: rgba(0, 210, 255, 0.08);
+    -fx-effect: dropshadow(gaussian, rgba(0, 210, 255, 0.6), 30, 0.4, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* Player 2 Card -> Matches #ingamevbox (Pink) */
+.p2-card {
+    -fx-border-color: linear-gradient(to bottom, rgba(255, 0, 127, 0.5), rgba(255, 77, 166, 0.3));
+}
+.p2-card:hover {
+    -fx-background-color: rgba(255, 0, 127, 0.08);
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 127, 0.6), 30, 0.4, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* Text Styles inside cards */
+.player-label {
+    -fx-font-family: "Segoe UI Bold";
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255, 255, 255, 0.6); /* .stat-sublabel */
+}
+
+.player-name-text {
+    -fx-font-family: "Segoe UI Black";
+    -fx-font-size: 24px;
+    -fx-fill: white;
+}
+
+.p1-text {
+    -fx-text-fill: #00fff0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.5), 10, 0.5, 0, 0);
+}
+.p2-text {
+    -fx-text-fill: #ff4da6;
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 127, 0.5), 10, 0.5, 0, 0);
+}
+
+/* VS Label */
+.vs-label {
+    -fx-text-fill: rgba(255, 255, 255, 0.3);
+    -fx-font-family: "Segoe UI Black";
+    -fx-font-size: 24px;
+}
+
+/* ======================================
+   BUTTONS (Matches #startbutton)
+   ====================================== */
+.action-btn {
+    -fx-background-color: linear-gradient(to bottom, rgba(0, 255, 240, 0.15), rgba(0, 210, 255, 0.25));
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 2;
+    -fx-border-color: #00fff0;
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI Bold";
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.3), 15, 0.4, 0, 0);
+    -fx-padding: 8 20;
+    -fx-transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(0, 255, 240, 0.3), rgba(0, 210, 255, 0.4));
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 20, 0.5, 0, 0);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+.action-btn:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Specific Replay Button Variations */
+.btn-pause {
+    -fx-border-color: #ffd700;
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.25));
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.3), 15, 0.4, 0, 0);
+}
+.btn-pause:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.4));
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.6), 20, 0.5, 0, 0);
+}
+
+.btn-reset {
+    -fx-border-color: #ff007f;
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 0, 127, 0.15), rgba(255, 0, 127, 0.25));
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 127, 0.3), 15, 0.4, 0, 0);
+}
+.btn-reset:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 0, 127, 0.3), rgba(255, 0, 127, 0.4));
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 127, 0.6), 20, 0.5, 0, 0);
+}
+
+.cell-winning {
+    /* Neon Green Glass Effect */
+    -fx-background-color: rgba(57, 255, 20, 0.15);
+    -fx-border-color: #39ff14;
+    -fx-border-width: 2;
+    /* Strong outer glow */
+    -fx-effect: dropshadow(gaussian, #39ff14, 30, 0.6, 0, 0);
+    -fx-transition: all 0.3s ease;
+}
+
+/* Optional: Make the symbol inside glow brighter */
+.cell-winning ImageView {
+    -fx-effect: dropshadow(gaussian, white, 10, 0.8, 0, 0);
 }
