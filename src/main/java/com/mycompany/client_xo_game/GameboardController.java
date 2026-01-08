@@ -135,9 +135,9 @@ public class GameboardController implements Initializable {
                     case "turn_update":
                         handleTurnUpdate(response);
                         break;
-                    case "opponent_quit":
-                        handleOpponentQuit(response);
-                        break;
+//                    case "opponent_quit":
+//                        handleOpponentQuit(response);
+//                        break;
                     case "rematch_start":
                         handleRematchStart(response);
                         break;
@@ -195,34 +195,57 @@ public class GameboardController implements Initializable {
         gameEnded = true;
         String result = response.getString("result");
         String finalResult = "";
+        boolean isForfeit = response.optBoolean("forfeit", false); // Check for forfeit flag
 
-        switch (result) {
-            case "win":
-                turnLabel.setText("You Win!");
-                finalResult = myUsername + " Wins";
-                GameSession.addWinP1();
+        if (isForfeit) {
+            // Logic for forfeit scenarios
+            switch (result) {
+                case "win":
+                    turnLabel.setText("You Won by Forfeit!");
+                    finalResult = myUsername + " Wins (Opponent Forfeited)";
+                    GameSession.addWinP1();
+                    // Highlight winning cells (My Symbol, if applicable for forfeit)
+                    highlightWinningCells("X".equals(mySymbol) ? Cell.X : Cell.O);
+                    showOnlineGameOverDialog(true, false, true, opponentName); // Added forfeit and opponent name
+                    break;
+                case "lose":
+                    turnLabel.setText("You Lost by Forfeit!");
+                    finalResult = opponentName + " Wins (You Forfeited)";
+                    GameSession.addWinP2(); // Still counts as a loss for P1 in GameSession
+                    // No highlight for losing player
+                    showOnlineGameOverDialog(false, false, true, opponentName); // Added forfeit and opponent name
+                    break;
+            }
+        } else {
+            // Existing logic for regular win/lose/draw
+            switch (result) {
+                case "win":
+                    turnLabel.setText("You Win!");
+                    finalResult = myUsername + " Wins";
+                    GameSession.addWinP1();
 
-                // Highlight winning cells for ME (My Symbol)
-                highlightWinningCells("X".equals(mySymbol) ? Cell.X : Cell.O);
+                    // Highlight winning cells for ME (My Symbol)
+                    highlightWinningCells("X".equals(mySymbol) ? Cell.X : Cell.O);
 
-                showOnlineGameOverDialog(true, false);
-                break;
-            case "lose":
-                turnLabel.setText("You Lost!");
-                finalResult = opponentName + " Wins";
-                GameSession.addWinP2();
+                    showOnlineGameOverDialog(true, false, false, null); // Original call
+                    break;
+                case "lose":
+                    turnLabel.setText("You Lost!");
+                    finalResult = opponentName + " Wins";
+                    GameSession.addWinP2();
 
-                // Highlight winning cells for OPPONENT
-                highlightWinningCells("X".equals(mySymbol) ? Cell.O : Cell.X);
+                    // Highlight winning cells for OPPONENT
+                    highlightWinningCells("X".equals(mySymbol) ? Cell.O : Cell.X);
 
-                showOnlineGameOverDialog(false, false);
-                break;
-            case "draw":
-                turnLabel.setText("It's a Draw!");
-                finalResult = "Draw";
-                GameSession.addDraw();
-                showOnlineGameOverDialog(false, true);
-                break;
+                    showOnlineGameOverDialog(false, false, false, null); // Original call
+                    break;
+                case "draw":
+                    turnLabel.setText("It's a Draw!");
+                    finalResult = "Draw";
+                    GameSession.addDraw();
+                    showOnlineGameOverDialog(false, true, false, null); // Original call
+                    break;
+            }
         }
 
         if (GameSession.isRecording() && GameSession.isRecordingInitiator(myUsername)) {
@@ -237,23 +260,7 @@ public class GameboardController implements Initializable {
 
 
 
-    private void handleOpponentQuit(JSONObject response) {
-        String quitter = response.getString("quitter");
-        
-        // CRITICAL: Only save if THIS user initiated recording
-        if (GameSession.isRecording() && !gameEnded && GameSession.isRecordingInitiator(myUsername)) {
-            String result = myUsername + " Wins (Opponent Quit)";
-            GameSession.saveGameRecord(result);
-        }
-        
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        styleAlert(alert);
-        alert.setTitle("Victory!");
-        alert.setHeaderText("You Won!");
-        alert.setContentText(quitter + " has forfeited. You have been awarded the victory!");
-        alert.showAndWait();
-        goBack();
-    }
+
 
     
     private void handleRematchRequest(JSONObject response) {
@@ -300,20 +307,36 @@ public class GameboardController implements Initializable {
         updateOnlinePlayersLabels();
     }
 
-    private void showOnlineGameOverDialog(boolean won, boolean draw) {
+    private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeitedOpponentName) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         styleAlert(alert);
         alert.setTitle("Game Over");
 
-        if (draw) {
+        if (isForfeit) {
+            if (won) {
+                alert.setHeaderText("You Won by Forfeit!");
+                alert.setContentText(forfeitedOpponentName + " has forfeited. You have been awarded the victory!"); // Removed "Would you like to play again?"
+                ButtonType okBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                alert.getButtonTypes().setAll(okBtn);
+
+                alert.showAndWait().ifPresent(button -> {
+                    goBack(); // Simply go back to online players list
+                });
+                return; // Exit method after showing custom dialog
+            } else { // lost by forfeit
+                alert.setHeaderText("You Lost by Forfeit!");
+                alert.setContentText("You have forfeited the game. Would you like to play again?");
+            }
+        } else if (draw) {
             alert.setHeaderText("It's a Draw!");
+            alert.setContentText("Would you like to play again?");
         } else if (won) {
             alert.setHeaderText("You Win!");
+            alert.setContentText("Would you like to play again?");
         } else {
             alert.setHeaderText("You Lost!");
+            alert.setContentText("Would you like to play again?");
         }
-
-        alert.setContentText("Would you like to play again?");
 
         ButtonType playAgainBtn = new ButtonType("Play Again");
         ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -681,14 +704,34 @@ public class GameboardController implements Initializable {
         }
 
         if (isOnlineMode && !gameEnded) {
-            JSONObject quit = new JSONObject();
-            quit.put("type", "quit_game");
-            NetworkConnection.getInstance().sendMessage(quit);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            styleAlert(alert);
+            alert.setTitle("Quit Game");
+            alert.setHeaderText("Are you sure you want to quit?");
+            alert.setContentText("Quitting this game means you forfeit and lose. Your opponent wins. Continue?");
+
+            ButtonType quitBtn = new ButtonType("Quit (Forfeit)", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(quitBtn, cancelBtn);
+
+            alert.showAndWait().ifPresent(button -> {
+                if (button == quitBtn) {
+                    JSONObject quit = new JSONObject();
+                    quit.put("type", "quit_game");
+                    NetworkConnection.getInstance().sendMessage(quit);
+                    System.out.println("----------Player Forfeited--------------");
+                    Navigation.goTo(Routes.ONLINE_PLAYERS); // Navigate back after sending quit message
+                } else {
+                    // Do nothing, stay on gameboard
+                }
+            });
+            return; // Important: return here to prevent further navigation if online game is active
         }
 
         if (isReplayMode) {
             Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
-        } else if (isOnlineMode) {
+        } else if (isOnlineMode) { // This else-if block will now only be reached if gameEnded is true for online mode
             Navigation.goTo(Routes.ONLINE_PLAYERS);
         } else {
             Navigation.goTo(Routes.MODE_SELECTION);
