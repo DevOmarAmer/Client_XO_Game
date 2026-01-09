@@ -13,14 +13,24 @@ import org.json.JSONObject;
 
 public class LoginController {
 
-    @FXML private StackPane rootPane;
-    @FXML private VBox contentBox;
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label messageLabel;
-    @FXML private Button back_id, loginBtn;
-    @FXML private Label titleLabel;
-    @FXML private Hyperlink registerLink;
+    @FXML
+    private StackPane rootPane;
+    @FXML
+    private VBox contentBox;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private TextField serverIpField;
+    @FXML
+    private Label messageLabel;
+    @FXML
+    private Button back_id, loginBtn;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private Hyperlink registerLink;
 
     @FXML
     public void initialize() {
@@ -31,8 +41,10 @@ public class LoginController {
         fadeIn.play();
 
         ScaleTransition pulse = new ScaleTransition(Duration.millis(2000), titleLabel);
-        pulse.setFromX(1.0); pulse.setFromY(1.0);
-        pulse.setToX(1.06); pulse.setToY(1.06);
+        pulse.setFromX(1.0);
+        pulse.setFromY(1.0);
+        pulse.setToX(1.06);
+        pulse.setToY(1.06);
         pulse.setCycleCount(Animation.INDEFINITE);
         pulse.setAutoReverse(true);
         pulse.play();
@@ -40,7 +52,6 @@ public class LoginController {
         rootPane.widthProperty().addListener((obs, oldVal, newVal) -> scaleComponents(newVal.doubleValue()));
         rootPane.heightProperty().addListener((obs, oldVal, newVal) -> contentBox.setMaxHeight(newVal.doubleValue() * 0.85));
 
-      
         // -----------------------------
         // 4. Add hover animations
         // -----------------------------
@@ -48,18 +59,23 @@ public class LoginController {
     }
 
     private void scaleComponents(double w) {
-        if (w > 1000) contentBox.setMaxWidth(w * 0.4);
-        else contentBox.setMaxWidth(Math.max(400, w * 0.8));
+        if (w > 1000) {
+            contentBox.setMaxWidth(w * 0.4);
+        } else {
+            contentBox.setMaxWidth(Math.max(400, w * 0.8));
+        }
 
         titleLabel.setStyle("-fx-font-size: " + Math.min(48, Math.max(22, w / 25)) + "px;");
 
         double inputHeight = Math.max(45, w / 18);
         usernameField.setPrefHeight(inputHeight);
         passwordField.setPrefHeight(inputHeight);
+        serverIpField.setPrefHeight(inputHeight);
 
         double inputFont = Math.max(14, w / 50);
         usernameField.setStyle("-fx-font-size:" + inputFont + "px;");
         passwordField.setStyle("-fx-font-size:" + inputFont + "px;");
+        serverIpField.setStyle("-fx-font-size:" + inputFont + "px;");
 
         double btnHeight = inputHeight + 5;
         loginBtn.setPrefHeight(btnHeight);
@@ -73,12 +89,14 @@ public class LoginController {
     private void addHoverAnimation(Button btn) {
         btn.setOnMouseEntered(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
-            st.setToX(1.05); st.setToY(1.05);
+            st.setToX(1.05);
+            st.setToY(1.05);
             st.play();
         });
         btn.setOnMouseExited(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
-            st.setToX(1.0); st.setToY(1.0);
+            st.setToX(1.0);
+            st.setToY(1.0);
             st.play();
         });
     }
@@ -97,24 +115,29 @@ public class LoginController {
             return;
         }
 
-        NetworkConnection.getInstance().setListener(this::onServerResponse);
+        if (serverIpField.getText().trim().isEmpty()) {
+            messageLabel.setText("Server IP address required!");
+            return;
+        }
+
+        NetworkConnection.getInstance(serverIpField.getText().trim()).setListener(this::onServerResponse);
 
         JSONObject json = new JSONObject();
         json.put("type", "login");
         json.put("username", usernameField.getText().trim());
         json.put("password", passwordField.getText().trim());
-        NetworkConnection.getInstance().sendMessage(json);
+        NetworkConnection.getInstance(serverIpField.getText().trim()).sendMessage(json);
     }
 
     private void onServerResponse(JSONObject json) {
         if ("login_response".equals(json.optString("type"))) {
             if ("success".equals(json.optString("status"))) {
-           
+
                 String username = usernameField.getText().trim();
                 NetworkConnection.getInstance().setCurrentUsername(username);
-                
+
                 System.out.println("Login successful for user: " + username);
-                
+
                 CurrentUser.setUsername(usernameField.getText().trim());
                 playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
             } else {
@@ -123,6 +146,13 @@ public class LoginController {
         }
     }
 
-    @FXML private void goToRegister() { playExitTransition(() -> Navigation.goTo(Routes.REGISTER)); }
-    @FXML private void goBack() { playExitTransition(() -> Navigation.goTo(Routes.MODE_SELECTION)); }
+    @FXML
+    private void goToRegister() {
+        playExitTransition(() -> Navigation.goTo(Routes.REGISTER));
+    }
+
+    @FXML
+    private void goBack() {
+        playExitTransition(() -> Navigation.goTo(Routes.MODE_SELECTION));
+    }
 }

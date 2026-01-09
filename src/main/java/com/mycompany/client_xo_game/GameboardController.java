@@ -679,6 +679,7 @@ public class GameboardController implements Initializable {
 
         System.out.println("Replay reset complete");
     }
+
     // ==================== NAVIGATION ====================
     @FXML
     private void goBack() {
@@ -1028,7 +1029,7 @@ public class GameboardController implements Initializable {
         dialogPane.setId("xo-alert");
 
         dialogPane.getStylesheets().add(
-                getClass().getResource("/styles/AlertStyle.css").toExternalForm()
+                getClass().getResource("/styles/alert.css").toExternalForm()
         );
     }
 
