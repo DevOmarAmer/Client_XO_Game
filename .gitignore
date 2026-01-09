@@ -1,2 +1,5 @@
 /target/
 target/classes/com/mycompany/client_xo_game/LoginController.class
+/game_records/
+game_records/
+*.json

@@ -28,7 +28,7 @@
 /* Body text specific - slightly off-white for readability */
 #xo-alert .content .label,
 #xo-alert .content .text {
-    -fx-text-fill: #e6ffff; 
+    -fx-text-fill: #e6ffff;
     -fx-font-size: 14px;
     -fx-wrap-text: true;
 }
@@ -57,7 +57,7 @@
 #xo-alert .check-box .box {
     -fx-background-color: transparent;
     -fx-border-color: #00fff0;
-    -fx-border-radius: 3px; 
+    -fx-border-radius: 3px;
     -fx-border-width: 1.5;
 }
 
@@ -87,7 +87,7 @@
     -fx-opacity: 0;
     -fx-max-width: 0;
     -fx-max-height: 0;
-    visibility: hidden; 
+    visibility: hidden;
 }
 
 /* =================================================================
@@ -123,4 +123,54 @@
     -fx-background-color: #00fff0;
     -fx-text-fill: #0a0c19;
     -fx-effect: none;
+}
+
+/* =================================================================
+   5. INPUT FIELDS (TextField & PasswordField)
+   ================================================================= */
+
+#xo-alert .text-field {
+    /* Subtle dark background so it pops against the navy dialog */
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+
+    /* Rounded corners matching buttons */
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+
+    /* Dim Cyan Border - nice and subtle */
+    -fx-border-color: rgba(0, 255, 240, 0.3);
+    -fx-border-width: 1;
+
+    /* Text Styling */
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 8;
+
+    /* Prompt/Placeholder text color */
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+
+    /* Cursor Color */
+    -fx-cursor: text;
+}
+
+/* When the user clicks inside the box */
+#xo-alert .text-field:focused {
+    /* Slight Cyan Tint in background */
+    -fx-background-color: rgba(0, 255, 240, 0.05);
+
+    /* Bright Cyan Border */
+    -fx-border-color: #00fff0;
+
+    /* The Neon Glow Effect */
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.5), 10, 0, 0, 0);
+
+    /* Brighten the prompt text slightly */
+    -fx-prompt-text-fill: rgba(0, 255, 240, 0.5);
+}
+
+/* Selection Highlight (When you drag-select text) */
+#xo-alert .text-field {
+    -fx-highlight-fill: #00fff0; /* Cyan background for selection */
+    -fx-highlight-text-fill: #0a0c19; /* Navy text for selection */
 }
