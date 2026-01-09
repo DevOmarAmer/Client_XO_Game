@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.effect.Bloom?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="rootPane" focusTraversable="true" prefHeight="600.0" prefWidth="900.0" styleClass="splash-root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.client_xo_game.SplashController">
+   
+    <StackPane styleClass="bg-grid-layer" opacity="0.3" mouseTransparent="true"/>
+   
+    <Circle fx:id="ring1" radius="100" styleClass="pulse-ring" strokeWidth="2" fill="transparent" opacity="0.0"/>
+    <Circle fx:id="ring2" radius="140" styleClass="pulse-ring" strokeWidth="1" fill="transparent" opacity="0.0"/>
+
+    <VBox alignment="CENTER" spacing="20.0" maxWidth="600">
+      
+        <HBox fx:id="logoContainer" alignment="CENTER" spacing="10.0">
+            <effect>
+                <Glow level="0.6" />
+            </effect>
+            <Label fx:id="labelX" text="X" styleClass="logo-x">
+                <font>
+                    <Font name="Segoe UI Black" size="120.0" />
+                </font>
+            </Label>
+            <Label fx:id="labelO" text="O" styleClass="logo-o">
+                <font>
+                    <Font name="Segoe UI Black" size="120.0" />
+                </font>
+            </Label>
+        </HBox>
+
+        <StackPane>
+            <Label text="TIC TAC TOE" styleClass="app-title-shadow" translateX="3" opacity="0.7">
+                <font>
+                    <Font name="Segoe UI Black" size="36.0" />
+                </font>
+            </Label>
+            <Label text="TIC TAC TOE" styleClass="app-title-shadow-2" translateX="-3" opacity="0.7">
+                <font>
+                    <Font name="Segoe UI Black" size="36.0" />
+                </font>
+            </Label>
+            <Label text="TIC TAC TOE" styleClass="app-title-main">
+                <font>
+                    <Font name="Segoe UI Black" size="36.0" />
+                </font>
+                <effect>
+                    <Bloom threshold="0.1" />
+                </effect>
+            </Label>
+            <VBox.margin>
+                <Insets bottom="30.0" top="-10.0" />
+            </VBox.margin>
+        </StackPane>
+
+        <VBox alignment="CENTER" spacing="8" maxWidth="500">
+            <HBox alignment="CENTER_LEFT">
+                <Label fx:id="loadingLabel" text="SYSTEM INITIALIZATION..." styleClass="loading-text" />
+            </HBox>
+            <ProgressBar fx:id="progressBar" prefWidth="500.0" progress="0.0" styleClass="neon-progress-bar">
+                <effect>
+                    <Glow level="0.8"/>
+                </effect>
+            </ProgressBar>
+        </VBox>
+      
+    </VBox>
+
+    <Label fx:id="continueLabel" text="[ PRESS ANY KEY TO START ]" styleClass="breathing-text" StackPane.alignment="BOTTOM_CENTER">
+        <StackPane.margin>
+            <Insets bottom="50.0" />
+        </StackPane.margin>
+        <font>
+            <Font name="Consolas Bold" size="16.0" />
+        </font>
+    </Label>
+
+    <stylesheets>
+        <URL value="@/styles/splash.css" />
+    </stylesheets>
+</StackPane>
