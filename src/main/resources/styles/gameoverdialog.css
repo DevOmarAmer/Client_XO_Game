@@ -1,0 +1,67 @@
+/* ======================================
+   ROOT DIALOG
+   ====================================== */
+.gameover-root {
+    -fx-background-color: rgba(8, 10, 18, 0.95);
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.9), 40, 0, 0, 0);
+}
+
+/* ======================================
+   HEADER & MESSAGE
+   ====================================== */
+.header-label {
+    -fx-text-fill: #00fff0; /* neon cyan */
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0,255,240,0.7), 20, 0, 0, 0);
+}
+
+.message-label {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-font-size: 16px;
+    -fx-text-alignment: center;
+}
+
+/* ======================================
+   MEDIA VIEW (VIDEO)
+   ====================================== */
+.media-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,255,240,0.4), 25, 0, 0, 0);
+    -fx-border-color: rgba(0, 255, 240, 0.3);
+    -fx-border-width: 2;
+}
+
+/* ======================================
+   BUTTONS
+   ====================================== */
+.play-again-btn, .close-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #00fff0;
+    -fx-border-radius: 30;
+    -fx-background-radius: 30;
+    -fx-text-fill: #00fff0;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-min-width: 220;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.play-again-btn:hover, .close-btn:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.15);
+    -fx-background-radius: 30;
+    -fx-effect: innershadow(gaussian, #00fff0, 20, 0, 0, 0);
+}
+
+/* CLOSE BUTTON RED STYLE (optional) */
+.close-btn {
+    -fx-border-color: #ff004c;
+    -fx-text-fill: #ff004c;
+}
+
+.close-btn:hover {
+    -fx-background-color: rgba(255, 0, 76, 0.15);
+    -fx-effect: innershadow(gaussian, #ff004c, 20, 0, 0, 0);
+}

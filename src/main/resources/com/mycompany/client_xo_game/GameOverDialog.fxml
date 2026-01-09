@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.geometry.Insets?>
+<?import java.net.URL?>
+
+
+<VBox spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/13"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.client_xo_game.GameOverDialogController"
+      styleClass="gameover-root">
+
+    <stylesheets>
+        <URL value="@/styles/gameoverdialog.css" />
+    </stylesheets>
+
+    <Label fx:id="headerLabel" styleClass="header-label" text="Game Over" />
+    <MediaView fx:id="mediaView" styleClass="media-view" fitWidth="500" fitHeight="300" />
+    <Label fx:id="messageLabel" styleClass="message-label" text="Message here" />
+
+    <VBox spacing="10" alignment="CENTER">
+        <Button fx:id="playAgainBtn" styleClass="play-again-btn" text="Play Again" />
+        <Button fx:id="closeBtn" styleClass="close-btn" text="Close" />
+    </VBox>
+</VBox>
+
+

@@ -32,8 +32,16 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.json.JSONObject;
 
 public class GameboardController implements Initializable {
@@ -288,67 +296,28 @@ public class GameboardController implements Initializable {
         boolean draw = result.equals("draw");
         showOnlineGameOverDialog(won, draw, isForfeit || opponentForfeited, forfeiter);
     }
-
+    
     private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeiter) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        styleAlert(alert);
-        alert.setTitle("Game Over");
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/GameOverDialog.fxml"));
+        Parent root = loader.load();
 
-        // Special case: opponent forfeited and you won - show simple OK dialog
-        if (isForfeit && won) {
-            alert.setHeaderText("Your Opponent Forfeited!");
-            alert.setContentText(opponentName + " has forfeited. You have been awarded the victory!");
+        Stage dialogStage = new Stage();
 
-            ButtonType okBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-            alert.getButtonTypes().setAll(okBtn);
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        dialogStage.setTitle("Game Over");
+        dialogStage.setScene(new Scene(root));
 
-            alert.showAndWait().ifPresent(button -> {
-                goBack(); // Simply go back to online players list
-            });
-            return; // Exit method - don't show play again options
-        }
+        GameOverDialogController controller = loader.getController();
+        controller.setDialogStage(dialogStage);
+        controller.initData(won, draw, isForfeit, opponentName);
 
-        // For all other cases (normal win/loss/draw, or you forfeited)
-        if (draw) {
-            alert.setHeaderText("It's a Draw!");
-            alert.setContentText("Would you like to play again?");
-        } else if (won) {
-            alert.setHeaderText("You Win!");
-            alert.setContentText("Would you like to play again?");
-        } else if (isForfeit) {
-            // You lost by forfeit
-            alert.setHeaderText("You Lost by Forfeit!");
-            alert.setContentText("You have forfeited the game. Would you like to play again?");
-        } else {
-            // Normal loss
-            alert.setHeaderText("You Lost!");
-            alert.setContentText("Would you like to play again?");
-        }
-
-        ButtonType playAgainBtn = new ButtonType("Play Again");
-        ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        alert.getButtonTypes().setAll(playAgainBtn, closeBtn);
-
-        alert.showAndWait().ifPresent(button -> {
-            if (button == playAgainBtn) {
-
-                turnLabel.setText("Waiting for opponent to rematch...");
-
-                JSONObject playAgain = new JSONObject();
-                playAgain.put("type", "play_again");
-                NetworkConnection.getInstance().sendMessage(playAgain);
-            } else {
-                // Game is already over, just send a clean disconnect
-                JSONObject disconnect = new JSONObject();
-                disconnect.put("type", "end_session");
-                NetworkConnection.getInstance().sendMessage(disconnect);
-
-                System.out.println("----------No Penalty (Game Already Ended)--------------");
-                goBack();
-            }
-        });
+        dialogStage.showAndWait();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
 
     private void handleError(JSONObject response) {
         String message = response.optString("message", "An error occurred");
