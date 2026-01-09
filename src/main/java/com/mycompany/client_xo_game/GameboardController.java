@@ -37,6 +37,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -859,7 +860,7 @@ public class GameboardController implements Initializable {
                     // HIGHLIGHT WINNER CELLS
                     highlightWinningCells(winnerCell);
 
-                    showLocalModeWinPopup(winnerName);
+                   showGameEndDialog("It's a Winn!", "Congrats you won");
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
                     gameEnded = true;
@@ -874,7 +875,7 @@ public class GameboardController implements Initializable {
                         }
                     }
 
-                    showDrawPopup();
+                   showGameEndDialog("It's a Draw!", "Wanna Rematch?");
                     actionTaken = true;
                 }
 
@@ -901,7 +902,7 @@ public class GameboardController implements Initializable {
                 }
             }
 
-            showDrawPopup();
+             showGameEndDialog("It's a Draw!", "No one wins");
         } else if (playerWon) {
             turnLabel.setText("You Win!");
             GameSession.addWinP1();
@@ -916,7 +917,7 @@ public class GameboardController implements Initializable {
                     System.out.println("Game saved to: " + filePath);
                 }
             }
-            showWinLosePopup(true);
+            showGameEndDialog("It's a Winn!", "Congrats you won");
         } else {
             turnLabel.setText("Computer Wins!");
             GameSession.addWinP2();
@@ -932,11 +933,65 @@ public class GameboardController implements Initializable {
                 }
             }
 
-            showWinLosePopup(false);
+            showGameEndDialog("You Lost!!", "Sorry Computer won!!");
         }
     }
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        styleDialog(alert); // Updated to use the generic method
 
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    // ==========================================
+    //  STYLING METHODS
+    // ==========================================
+    // Original method redirected to new one
+    private void styleAlert(Alert alert) {
+        styleDialog(alert);
+    }
+
+    // NEW GENERIC METHOD: Works for both Alerts and Dialogs
+    private void styleDialog(Dialog<?> dialog) {
+        var dialogPane = dialog.getDialogPane();
+        dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/styles/alert.css").toExternalForm()
+        );
+    }
     // ==================== UTILITY METHODS ====================
+    private void showGameEndDialog(String title, String header) {
+
+    Dialog<ButtonType> dialog = new Dialog<>();
+    dialog.setTitle(title);
+    dialog.setHeaderText(header);
+
+    // Apply your CSS styling
+    styleDialog(dialog);
+
+    // Buttons
+    ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
+    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+    dialog.getDialogPane().getButtonTypes().addAll(playAgainBtn, closeBtn);
+
+    dialog.showAndWait().ifPresent(response -> {
+
+        if (response == playAgainBtn) {
+            // SAME logic as Play Again button
+            Navigation.goTo(Routes.GAMEBOARD);
+
+        } else if (response == closeBtn) {
+            // SAME logic as Close button
+            GameSession.clearSession();
+            Navigation.goTo(Routes.MODE_SELECTION);
+        }
+    });
+}
+
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
         ImageView imageView = new ImageView(img);
@@ -962,45 +1017,8 @@ public class GameboardController implements Initializable {
         return null;
     }
 
-    private void showWinLosePopup(boolean won) {
-        System.out.println("showWinLosePopup called with won: " + won);
-        Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
-        if (controller != null) {
-            controller.setResult(won);
-        } else {
-            System.err.println("ERROR: Win_LoseController is null!");
-        }
-    }
+ 
 
-    private void showDrawPopup() {
-        System.out.println("showDrawPopup called");
-        Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
-        if (controller != null) {
-            controller.setResultDraw();
-        } else {
-            System.err.println("ERROR: Win_LoseController is null!");
-        }
-    }
-
-    private void showLocalModeWinPopup(String winnerName) {
-        System.out.println("showLocalModeWinPopup called with winner: " + winnerName);
-        Win_LoseController controller = Navigation.openModalWithController(Routes.WIN_LOSE);
-        if (controller != null) {
-            controller.setResultLocalMode(winnerName);
-        } else {
-            System.err.println("ERROR: Win_LoseController is null!");
-        }
-    }
-
-    private void styleAlert(Alert alert) {
-        var dialogPane = alert.getDialogPane();
-
-        dialogPane.setId("xo-alert");
-
-        dialogPane.getStylesheets().add(
-                getClass().getResource("/styles/alert.css").toExternalForm()
-        );
-    }
 
     private void highlightWinningCells(Cell winner) {
         Cell[][] grid = gameBoard.getGrid();
