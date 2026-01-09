@@ -1,0 +1,51 @@
+{
+    "player1Name": "ahmed",
+    "player2Name": "[ONLINE] alaa",
+    "gameStartTime": "2026-01-09T15:48:44.387495",
+    "gameEndTime": "2026-01-09T15:48:49.6547242",
+    "result": "ahmed Wins",
+    "totalMoves": 5,
+    "isOnlineGame": true,
+    "moves": [
+        {
+            "moveNumber": 1,
+            "row": 0,
+            "col": 0,
+            "symbol": "X",
+            "playerName": "ahmed",
+            "timestamp": "2026-01-09T15:48:45.9057282"
+        },
+        {
+            "moveNumber": 2,
+            "row": 1,
+            "col": 2,
+            "symbol": "O",
+            "playerName": "alaa",
+            "timestamp": "2026-01-09T15:48:47.5765363"
+        },
+        {
+            "moveNumber": 3,
+            "row": 1,
+            "col": 0,
+            "symbol": "X",
+            "playerName": "ahmed",
+            "timestamp": "2026-01-09T15:48:48.36599"
+        },
+        {
+            "moveNumber": 4,
+            "row": 2,
+            "col": 2,
+            "symbol": "O",
+            "playerName": "alaa",
+            "timestamp": "2026-01-09T15:48:49.0496136"
+        },
+        {
+            "moveNumber": 5,
+            "row": 2,
+            "col": 0,
+            "symbol": "X",
+            "playerName": "ahmed",
+            "timestamp": "2026-01-09T15:48:49.6491799"
+        }
+    ]
+}
