@@ -16,7 +16,7 @@ import javafx.application.Platform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class OnlinePlayersController implements Runnable {
+public class Online_PlayersController implements Runnable {
     
 
     @FXML

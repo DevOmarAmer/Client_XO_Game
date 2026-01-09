@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import jakarta.json.JsonObject;
 
-public class Game_replaysController {
+public class Game_ReplaysController {
 
     @FXML
     private StackPane rootPane;

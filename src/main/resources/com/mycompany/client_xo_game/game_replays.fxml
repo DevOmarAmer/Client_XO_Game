@@ -11,7 +11,7 @@
            styleClass="main-root"
            xmlns="http://javafx.com/javafx/13"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.mycompany.client_xo_game.Game_replaysController">
+           fx:controller="com.mycompany.client_xo_game.Game_ReplaysController">
 
     <Label text="X" styleClass="bg-symbol-x" StackPane.alignment="CENTER_LEFT" translateX="-50" translateY="100"/>
     <Label text="O" styleClass="bg-symbol-o" StackPane.alignment="TOP_RIGHT" translateX="50" translateY="-50"/>
