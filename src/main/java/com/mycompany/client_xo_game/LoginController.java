@@ -17,6 +17,7 @@ public class LoginController {
     @FXML private VBox contentBox;
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
+    @FXML private TextField serverIpField;
     @FXML private Label messageLabel;
     @FXML private Button back_id, loginBtn;
     @FXML private Label titleLabel;
@@ -56,10 +57,12 @@ public class LoginController {
         double inputHeight = Math.max(45, w / 18);
         usernameField.setPrefHeight(inputHeight);
         passwordField.setPrefHeight(inputHeight);
+        serverIpField.setPrefHeight(inputHeight);
 
         double inputFont = Math.max(14, w / 50);
         usernameField.setStyle("-fx-font-size:" + inputFont + "px;");
         passwordField.setStyle("-fx-font-size:" + inputFont + "px;");
+        serverIpField.setStyle("-fx-font-size:" + inputFont + "px;");
 
         double btnHeight = inputHeight + 5;
         loginBtn.setPrefHeight(btnHeight);
@@ -96,14 +99,19 @@ public class LoginController {
             messageLabel.setText("Arena credentials required!");
             return;
         }
+        
+        if (serverIpField.getText().trim().isEmpty()) {
+            messageLabel.setText("Server IP address required!");
+            return;
+        }
 
-        NetworkConnection.getInstance().setListener(this::onServerResponse);
+        NetworkConnection.getInstance(serverIpField.getText().trim()).setListener(this::onServerResponse);
 
         JSONObject json = new JSONObject();
         json.put("type", "login");
         json.put("username", usernameField.getText().trim());
         json.put("password", passwordField.getText().trim());
-        NetworkConnection.getInstance().sendMessage(json);
+        NetworkConnection.getInstance(serverIpField.getText().trim()).sendMessage(json);
     }
 
     private void onServerResponse(JSONObject json) {
