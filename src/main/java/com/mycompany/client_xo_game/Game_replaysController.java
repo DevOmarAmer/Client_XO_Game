@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog; // Import Dialog for the helper method
 import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -53,7 +54,7 @@ public class Game_ReplaysController {
 
         // Fallback if username isn't set (e.g. testing offline)
         if (currentUsername == null || currentUsername.isEmpty()) {
-            currentUsername = "Player"; 
+            currentUsername = "Player";
         }
 
         System.out.println("Loading replays for user: " + currentUsername);
@@ -77,8 +78,10 @@ public class Game_ReplaysController {
         for (File file : allFiles) {
             JsonObject record = GameRecorder.loadGameRecord(file);
 
-            if (record == null) continue;
-            
+            if (record == null) {
+                continue;
+            }
+
             if (!record.containsKey("player1Name") || !record.containsKey("result")) {
                 continue;
             }
@@ -106,8 +109,8 @@ public class Game_ReplaysController {
             JsonObject record = GameRecorder.loadGameRecord(file);
 
             LocalDateTime gameTime = LocalDateTime.parse(
-                record.getString("gameStartTime"), 
-                isoFormatter
+                    record.getString("gameStartTime"),
+                    isoFormatter
             );
             String dateStr = gameTime.format(displayFormatter);
 
@@ -120,15 +123,18 @@ public class Game_ReplaysController {
             // Check result symbol (Win/Loss/Draw)
             String resultText = record.getString("result");
             String icon = "➖"; // Default for draw
-            if (resultText.toLowerCase().contains("win")) icon = "🏆";
-            else if (resultText.toLowerCase().contains("lose") || resultText.toLowerCase().contains("lost")) icon = "❌";
+            if (resultText.toLowerCase().contains("win")) {
+                icon = "🏆";
+            } else if (resultText.toLowerCase().contains("lose") || resultText.toLowerCase().contains("lost")) {
+                icon = "❌";
+            }
 
             // Format: "Vs OpponentName - Date - Result"
             String displayText = String.format("Vs %s - %s - %s %s",
-                player2,
-                dateStr,
-                resultText,
-                icon
+                    player2,
+                    dateStr,
+                    resultText,
+                    icon
             );
 
             replaysList.getItems().add(displayText);
@@ -141,7 +147,7 @@ public class Game_ReplaysController {
 
         // Basic validation
         if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
-            return; 
+            return;
         }
 
         File selectedFile = gameFiles[selectedIndex];
@@ -159,9 +165,9 @@ public class Game_ReplaysController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/Gameboard.fxml"));
                 Parent root = loader.load();
-                
+
                 GameboardController controller = loader.getController();
-                controller.setReplayMode(record); 
+                controller.setReplayMode(record);
 
                 if (rootPane.getScene() != null) {
                     rootPane.getScene().setRoot(root);
@@ -184,6 +190,11 @@ public class Game_ReplaysController {
         File selectedFile = gameFiles[selectedIndex];
 
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+
+        // --- STYLE APPLIED HERE ---
+        styleDialog(confirmAlert);
+        // --------------------------
+
         confirmAlert.setTitle("Delete Replay");
         confirmAlert.setHeaderText("Delete this replay?");
         confirmAlert.setContentText("This cannot be undone.");
@@ -201,10 +212,26 @@ public class Game_ReplaysController {
 
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+        // --- STYLE APPLIED HERE ---
+        styleDialog(alert);
+        // --------------------------
+
         alert.setTitle("Info");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.show();
+    }
+
+    // ==========================================
+    //  STYLING HELPER
+    // ==========================================
+    private void styleDialog(Dialog<?> dialog) {
+        var dialogPane = dialog.getDialogPane();
+        dialogPane.setId("xo-alert"); // Matches your CSS ID
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/styles/alert.css").toExternalForm()
+        );
     }
 
     @FXML

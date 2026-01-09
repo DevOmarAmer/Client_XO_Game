@@ -17,11 +17,16 @@ import org.json.JSONObject;
 
 public class ProfileController {
 
-    @FXML private StackPane rootPane;
-    @FXML private Label usernameLabel;
-    @FXML private Label emailLabel;
-    @FXML private Label scoreLabel;
-    @FXML private Label winsLabel, drawsLabel, lossesLabel;
+    @FXML
+    private StackPane rootPane;
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private Label emailLabel;
+    @FXML
+    private Label scoreLabel;
+    @FXML
+    private Label winsLabel, drawsLabel, lossesLabel;
     @FXML
     private VBox contentBox;
     @FXML
@@ -96,6 +101,9 @@ public class ProfileController {
         dialog.setTitle("Edit Profile");
         dialog.setHeaderText("Update your account details");
 
+        // 1. APPLY STYLING HERE using the new helper method
+        styleDialog(dialog);
+
         // Set the button types
         ButtonType updateButtonType = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(updateButtonType, ButtonType.CANCEL);
@@ -106,10 +114,14 @@ public class ProfileController {
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
+        // Optional: Style the internal grid if needed
+        // grid.setStyle("-fx-text-fill: white;"); 
         // Create fields
         TextField usernameField = new TextField();
         usernameField.setPromptText("New Username");
         usernameField.setText(usernameLabel.getText()); // Pre-fill current data
+        // Add style class to text fields if you have one in your CSS (e.g., "neon-input")
+        usernameField.getStyleClass().add("text-field");
 
         TextField emailField = new TextField();
         emailField.setPromptText("New Email");
@@ -122,6 +134,7 @@ public class ProfileController {
         confirmPasswordField.setPromptText("Confirm Password");
 
         // Add to grid
+        // Note: Labels inside the grid might need white text styling depending on your CSS
         grid.add(new Label("Username:"), 0, 0);
         grid.add(usernameField, 1, 0);
         grid.add(new Label("Email:"), 0, 1);
@@ -149,7 +162,7 @@ public class ProfileController {
                     showAlert(Alert.AlertType.ERROR, "Validation Error", "Username and Email cannot be empty.");
                     return null;
                 }
-                
+
                 // Password Validation
                 if (!pass.isEmpty() && !pass.equals(confirm)) {
                     showAlert(Alert.AlertType.ERROR, "Validation Error", "Passwords do not match!");
@@ -174,7 +187,7 @@ public class ProfileController {
             req.put("username", newDetails.getString("username"));
             req.put("email", newDetails.getString("email"));
             req.put("password", newDetails.getString("password"));
-            
+
             NetworkConnection.getInstance().sendMessage(req);
         });
     }
@@ -184,6 +197,8 @@ public class ProfileController {
     // ==========================================
     private void handleDelete() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        styleDialog(alert); // Updated to use the generic method
+
         alert.setTitle("Delete Account");
         alert.setHeaderText("CRITICAL WARNING!");
         alert.setContentText("Are you sure you want to permanently delete your account?\n\nThis action cannot be undone and you will lose all your progress.");
@@ -219,10 +234,29 @@ public class ProfileController {
 
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
+        styleDialog(alert); // Updated to use the generic method
+
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    // ==========================================
+    //  STYLING METHODS
+    // ==========================================
+    // Original method redirected to new one
+    private void styleAlert(Alert alert) {
+        styleDialog(alert);
+    }
+
+    // NEW GENERIC METHOD: Works for both Alerts and Dialogs
+    private void styleDialog(Dialog<?> dialog) {
+        var dialogPane = dialog.getDialogPane();
+        dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/styles/alert.css").toExternalForm()
+        );
     }
 
     @FXML
