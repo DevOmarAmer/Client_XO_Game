@@ -1,0 +1,109 @@
+/* ======================================
+   ROOT & BACKGROUND
+   ====================================== */
+.splash-root {
+    -fx-background-color: #05070a; /* Ultra dark navy/black */
+    -fx-background-image:
+        radial-gradient(center 50% 50%, radius 120%, rgba(17, 26, 51, 0.4) 0%, #05070a 100%);
+}
+
+/* Simulated Cyber Grid Background */
+.bg-grid-layer {
+    -fx-background-color: transparent;
+    -fx-background-image:
+        linear-gradient(to right, rgba(0, 255, 240, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 240, 0.05) 1px, transparent 1px);
+    -fx-background-size: 40px 40px; /* Grid cell size */
+}
+
+/* Pulsing Rings behind Logo */
+.pulse-ring {
+    -fx-stroke: linear-gradient(to right, #00fff0, #ff007f);
+    -fx-stroke-dash-array: 20 20;
+    /* Reduced Glow: Sharper definition (Radius 5 instead of 20) */
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.2), 5, 0.3, 0, 0);
+}
+
+/* ======================================
+   LOGO SYMBOLS
+   ====================================== */
+.logo-x {
+    -fx-text-fill: linear-gradient(to bottom, #00fff0, #0099ff);
+    /* Subtle, sharp glow: Radius 10, Spread 0.2 */
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.4), 10, 0.2, 0, 0);
+}
+
+.logo-o {
+    -fx-text-fill: linear-gradient(to bottom, #ff007f, #ff00cc);
+    /* Subtle, sharp glow: Radius 10, Spread 0.2 */
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 127, 0.4), 10, 0.2, 0, 0);
+}
+
+/* ======================================
+   GLITCH TITLE EFFECT
+   ====================================== */
+.app-title-main {
+    -fx-text-fill: white;
+    -fx-letter-spacing: 8px;
+    /* Crisp edge, almost no blur to pop against background */
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.3), 2, 0.5, 0, 0);
+}
+
+/* Cyan Shadow Offset - Sharpened */
+.app-title-shadow {
+    -fx-text-fill: rgba(0, 255, 240, 0.6);
+    -fx-letter-spacing: 8px;
+}
+
+/* Pink Shadow Offset - Sharpened */
+.app-title-shadow-2 {
+    -fx-text-fill: rgba(255, 0, 127, 0.6);
+    -fx-letter-spacing: 8px;
+}
+
+/* ======================================
+   LOADING & PROGRESS
+   ====================================== */
+.loading-text {
+    -fx-text-fill: #00fff0;
+    -fx-font-family: "Consolas", monospace; /* Hacker aesthetic */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    /* Very subtle outline instead of heavy glow */
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 255, 240, 0.3), 1, 1.0, 0, 0);
+}
+
+.neon-progress-bar {
+    -fx-background-color: transparent;
+    -fx-pref-height: 4px; /* Even thinner for precision look */
+}
+
+.neon-progress-bar .track {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 2;
+}
+
+.neon-progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, #00fff0 0%, #ff007f 100%);
+    -fx-background-radius: 2;
+    -fx-background-insets: 0;
+    /* Sharp glow: low radius (5), high spread (0.4) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 255, 240, 0.5), 5, 0.4, 0, 0);
+}
+
+/* ======================================
+   BREATHING TEXT
+   ====================================== */
+.breathing-text {
+    -fx-text-fill: white;
+    -fx-font-family: "Consolas", monospace;
+    -fx-font-size: 16px;
+    -fx-opacity: 0;
+    -fx-background-color: rgba(0, 255, 240, 0.05);
+    -fx-background-radius: 3;
+    -fx-padding: 5 15;
+    -fx-border-color: rgba(0, 255, 240, 0.2);
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    /* Removed drop shadow entirely for a cleaner, flatter tech look */
+}
