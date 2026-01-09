@@ -18,5 +18,7 @@ public class Routes {
     public static final String GAME_REPLAYS = "Game_Replays";
     public static final String LEADERBOARD = "Leaderboard";
     public static final String Profile = "Profile";
+    
+    public static final String GAME_Over_Dialog = "GameOverDialog";
 
 }
