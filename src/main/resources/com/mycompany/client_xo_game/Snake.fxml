@@ -32,7 +32,7 @@
         <Label fx:id="lblLevel" 
                text="LEVEL: 1" 
                styleClass="hud-score" 
-               AnchorPane.topAnchor="50.0" 
+               AnchorPane.topAnchor="100.0" 
                AnchorPane.rightAnchor="30.0"/>
     </AnchorPane>
 
