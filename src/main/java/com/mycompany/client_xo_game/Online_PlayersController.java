@@ -351,6 +351,7 @@ public class Online_PlayersController implements Runnable {
 
         // Create checkbox for recording option
         CheckBox recordCheckbox = new CheckBox("Record this game (saved to MY records)");
+        recordCheckbox.setStyle("-fx-text-fill: white;");
         recordCheckbox.setSelected(false);
 
         VBox dialogContent = new VBox(10);
@@ -361,8 +362,12 @@ public class Online_PlayersController implements Runnable {
                 + "The filename will have YOUR name first (e.g., ONLINE_" + currentUsername + "_VS_" + playerName + "_...)\n"
                 + playerName + " can also choose to record it separately with THEIR name first."
         );
+        
         explanationLabel.setWrapText(true);
+        
+        explanationLabel.setStyle("-fx-text-fill: white;");
         dialogContent.getChildren().add(explanationLabel);
+       
 
         alert.getDialogPane().setContent(dialogContent);
 
