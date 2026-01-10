@@ -45,6 +45,7 @@ import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import org.json.JSONObject;
 
 public class GameboardController implements Initializable {
@@ -108,6 +109,7 @@ public class GameboardController implements Initializable {
     private String mySymbol;
     private boolean isMyTurn;
     private String myUsername;
+    private GameOverDialogController gameOverDialogController;
 
     //online mode functions
     //called when navigating
@@ -153,6 +155,12 @@ public class GameboardController implements Initializable {
                     case "rematch_start":
                         handleRematchStart(response);
                         break;
+                    case "opponent_wants_rematch":
+                        handleOpponentWantsRematch();
+                        break;
+                    case "opponent_left":
+                        handleOpponentLeft();
+                        break;
                     case "error":
                         handleError(response);
                         break;
@@ -170,6 +178,9 @@ public class GameboardController implements Initializable {
     }
 
     private void handleRematchStart(JSONObject response) {
+        if (gameOverDialogController != null) {
+            gameOverDialogController.closeDialog();
+        }
         gameEnded = false;
         gameBoard = new Board();
 
@@ -228,63 +239,59 @@ public class GameboardController implements Initializable {
     private void handleGameOver(JSONObject response) {
         gameEnded = true;
         String result = response.getString("result");
+        boolean isForfeit = response.optBoolean("forfeit", false);
 
-        // Check BOTH possible forfeit flags from server
-        boolean opponentForfeited = response.optBoolean("opponent_forfeited", false);
-        boolean isForfeit = response.optBoolean("forfeit", false) || opponentForfeited;
+        // Handle opponent forfeit case first
+        if ("win".equals(result) && isForfeit) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                styleAlert(alert);
+                alert.setTitle("You Win!");
+                alert.setHeaderText(opponentName + " has left the game.");
+                alert.setContentText("You win by forfeit.");
+                alert.showAndWait();
+                Navigation.goTo(Routes.ONLINE_PLAYERS);
+            });
+            return; // Exit the method to prevent showing the game over dialog
+        }
+
+        // Existing logic for normal game over
         String forfeiter = response.optString("forfeiter", "");
-
-        System.out.println("DEBUG: Game Over - Result: " + result + ", Opponent Forfeited: " + opponentForfeited + ", Is Forfeit: " + isForfeit + ", Forfeiter: " + forfeiter);
+        System.out.println("DEBUG: Game Over - Result: " + result + ", Is Forfeit: " + isForfeit + ", Forfeiter: " + forfeiter);
 
         String finalResult = "";
-        int scoreToAdd = 0;
-
-        // Calculate score for THIS game (for display purposes only)
+        
         switch (result) {
             case "win":
-                if (isForfeit || opponentForfeited) {
-                    // Opponent quit - show forfeit message
-                    turnLabel.setText(opponentName + " Forfeited - You Win!");
-                    finalResult = myUsername + " Wins (Opponent Forfeited)";
-                    System.out.println("INFO: Opponent forfeited, you win!");
-                    // Don't highlight cells for forfeit win
-                } else {
-                    // Normal win
-                    turnLabel.setText("You Win!");
-                    finalResult = myUsername + " Wins";
-                    highlightWinningCells("X".equals(mySymbol) ? Cell.X : Cell.O);
-                }
-                mySessionScore += 10; // You get +10 for winning
-                opponentSessionScore -= 5; // Opponent gets -5 for losing (estimated)
+                turnLabel.setText("You Win!");
+                finalResult = myUsername + " Wins";
+                highlightWinningCells("X".equals(mySymbol) ? Cell.X : Cell.O);
+                mySessionScore += 10;
+                opponentSessionScore -= 5;
                 break;
 
             case "lose":
-                if (isForfeit || (forfeiter != null && forfeiter.equals(myUsername))) {
-                    // You forfeited
+                 if (isForfeit) {
                     turnLabel.setText("You Forfeited - You Lost!");
                     finalResult = opponentName + " Wins (You Forfeited)";
-                    System.out.println("INFO: You forfeited the game");
                 } else {
-                    // Normal loss
                     turnLabel.setText("You Lost!");
                     finalResult = opponentName + " Wins";
                     highlightWinningCells("X".equals(mySymbol) ? Cell.O : Cell.X);
                 }
-                mySessionScore -= 5; // You get -5 for losing
-                opponentSessionScore += 10; // Opponent gets +10 for winning (estimated)
+                mySessionScore -= 5;
+                opponentSessionScore += 10;
                 break;
 
             case "draw":
                 turnLabel.setText("It's a Draw!");
                 finalResult = "Draw";
-                mySessionScore += 2; // You get +2 for draw
-                opponentSessionScore += 2; // Opponent gets +2 for draw (estimated)
+                mySessionScore += 2;
+                opponentSessionScore += 2;
                 break;
         }
 
         System.out.println("DEBUG: Scores updated - My Score: " + mySessionScore + ", Opponent Score: " + opponentSessionScore);
-
-        // Update UI with new session scores IMMEDIATELY
         updateOnlineScoreBoard();
 
         if (GameSession.isRecording() && GameSession.isRecordingInitiator(myUsername)) {
@@ -294,45 +301,44 @@ public class GameboardController implements Initializable {
             }
         }
 
-        // Show dialog with forfeit information
         boolean won = result.equals("win");
         boolean draw = result.equals("draw");
-        showOnlineGameOverDialog(won, draw, isForfeit || opponentForfeited, forfeiter);
+        showOnlineGameOverDialog(won, draw, isForfeit, forfeiter);
     }
 private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeiter) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/GameOverDialog.fxml"));
             Parent root = loader.load();
 
-            GameOverDialogController controller = loader.getController();
+            this.gameOverDialogController = loader.getController();
 
             // 1. Create a NEW Stage
             Stage dialogStage = new Stage();
 
-            // 2. THIS REMOVES THE X BUTTON AND BORDERS (From alert-decoration branch)
+            // 2. THIS REMOVES THE X BUTTON AND BORDERS
             dialogStage.initStyle(StageStyle.UNDECORATED); 
-            // Note: Use StageStyle.TRANSPARENT if you want rounded corners, but remember to set scene fill to null
 
-            // 3. Keep it on top of the game (From alert-decoration branch)
+            // 3. Keep it on top of the game
             if (App.getStage() != null) {
                 dialogStage.initOwner(App.getStage());
-                dialogStage.initModality(Modality.APPLICATION_MODAL); // Block clicking the game behind
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
             }
 
             // 4. Pass Data
-            controller.setDialogStage(dialogStage);
-            // We use 'opponentName' (the class variable) because we want to show who we were playing against
-            controller.initData(won, draw, isForfeit, opponentName); 
+            gameOverDialogController.setDialogStage(dialogStage);
+            gameOverDialogController.initData(won, draw, isForfeit, opponentName); 
 
             // 5. Set Scene
             Scene scene = new Scene(root);
-            // scene.setFill(null); // Uncomment this if you change StageStyle to TRANSPARENT above
             
             dialogStage.setScene(scene);
             dialogStage.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            // Clean up the reference after the dialog is closed
+            this.gameOverDialogController = null;
         }
     }
 
@@ -340,6 +346,66 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
         String message = response.optString("message", "An error occurred");
         System.err.println("Game error: " + message);
     }
+
+    private void handleOpponentWantsRematch() {
+        if (gameOverDialogController != null) {
+            gameOverDialogController.showOpponentWantsRematch();
+        } else {
+            // Fallback in case the dialog is not open for some reason
+            if (turnLabel != null) {
+                turnLabel.setText("Opponent wants a rematch!");
+            }
+        }
+    }
+
+    private void handleOpponentLeft() {
+        // Ensure this runs on the JavaFX Application Thread
+        Platform.runLater(() -> {
+            if (gameOverDialogController != null) {
+                gameOverDialogController.closeDialog();
+            }
+            
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            styleAlert(alert);
+            alert.setTitle("Opponent Left");
+            alert.setHeaderText(null);
+            alert.setContentText("Your opponent has left the game.");
+            alert.showAndWait();
+
+            Navigation.goTo(Routes.ONLINE_PLAYERS);
+        });
+    }
+
+//    private void handleOpponentWantsRematch() {
+//        if (turnLabel != null) {
+//            turnLabel.setText("Opponent wants a rematch!");
+//        }
+//    }
+
+//    private void handleOpponentLeft() {
+//        // Ensure this runs on the JavaFX Application Thread
+//        Platform.runLater(() -> {
+//            // Close the game over dialog if it's open
+//            // This is a bit tricky since we don't have a direct reference.
+//            // A simple way is to find the stage and close it.
+//            Stage gameOverStage = (Stage) rootPane.getScene().getWindow();
+//            for (Window window : Window.getWindows()) {
+//                if (window instanceof Stage && ((Stage) window).getOwner() == gameOverStage) {
+//                    ((Stage) window).close();
+//                    break;
+//                }
+//            }
+//            
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            styleAlert(alert);
+//            alert.setTitle("Opponent Left");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Your opponent has left the game.");
+//            alert.showAndWait();
+//
+//            Navigation.goTo(Routes.ONLINE_PLAYERS);
+//        });
+//    }
 
     private void updateOnlinePlayersLabels() {
         if (playerNameP1 != null && playerNameP2 != null) {

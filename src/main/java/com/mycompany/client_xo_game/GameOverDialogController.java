@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.util.Duration;
 import org.json.JSONObject;
@@ -109,19 +110,32 @@ public class GameOverDialogController {
             JSONObject playAgain = new JSONObject();
             playAgain.put("type", "play_again");
             NetworkConnection.getInstance().sendMessage(playAgain);
-            stopVideo();
-            dialogStage.close();
+            
+            // Update UI to show waiting state
+            playAgainBtn.setText("Waiting for Opponent...");
+            playAgainBtn.setDisable(true);
+            
+            // The dialog now stays open, waiting for a server response
+            // which will be handled by GameboardController
         });
 
         closeBtn.setOnAction(e -> {
-            JSONObject disconnect = new JSONObject();
-            disconnect.put("type", "end_session");
-            NetworkConnection.getInstance().sendMessage(disconnect);
-            System.out.println("----------No Penalty (Game Already Ended)--------------");
+            JSONObject quitMessage = new JSONObject();
+            quitMessage.put("type", "quit_game");
+            NetworkConnection.getInstance().sendMessage(quitMessage);
+            System.out.println("----------Player chose to exit post-game.--------------");
             stopVideo();
             dialogStage.close();
             // 3. FIX TRANSITION: Pass the rootPane
             playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
+        });
+    }
+
+    public void showOpponentWantsRematch() {
+        Platform.runLater(() -> {
+            if (messageLabel != null) {
+                messageLabel.setText("Opponent wants to play again!");
+            }
         });
     }
 
@@ -141,5 +155,14 @@ public class GameOverDialogController {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
+    }
+
+    public void closeDialog() {
+        Platform.runLater(() -> {
+            stopVideo();
+            if (dialogStage != null) {
+                dialogStage.close();
+            }
+        });
     }
 }
