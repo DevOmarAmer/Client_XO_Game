@@ -79,10 +79,16 @@ public class GameSession {
     }
     
     public static void addDraw() {
-        scoreP1 += 5;
-        scoreP2 += 5;
+        scoreP1 += 2;
+        scoreP2 += 2;
     }
-    
+    public static void addLossP1() {
+    scoreP1 -= 5;
+}
+
+public static void addLossP2() {
+    scoreP2 -= 5;
+}
     public static void clearSession() {
         currentMode = null;
         difficulty = null;
@@ -94,10 +100,7 @@ public class GameSession {
         recordingInitiator = null;
         isOnlineRecording = false;
     }
-    
-    /**
-     * Start recording for offline games (kept as is)
-     */
+  
     public static void startRecording() {
         if (player1 == null || player2 == null) {
             System.err.println("Cannot start recording: Players not set");
@@ -125,23 +128,17 @@ public class GameSession {
                           " (initiator) vs " + opponentUsername);
     }
     
-    /**
-     * Check if current user is the one who initiated recording
-     */
+   
     public static boolean isRecordingInitiator(String username) {
         return recordingInitiator != null && recordingInitiator.equals(username);
     }
     
-    /**
-     * Get the username of who initiated recording
-     */
+  
     public static String getRecordingInitiator() {
         return recordingInitiator;
     }
     
-    /**
-     * Check if this is an online game recording
-     */
+  
     public static boolean isOnlineRecording() {
         return isOnlineRecording;
     }
