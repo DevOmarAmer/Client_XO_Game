@@ -18,14 +18,14 @@
     -fx-border-width: 2px;
     -fx-border-radius: 8;
     -fx-padding: 8 16;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 8, 0.4, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00f3ff, 3, 0.2, 0, 0);
 }
 
 .hud-btn:hover {
   
     
     -fx-border-color: #66ffff;
-    -fx-effect: dropshadow(gaussian, #66ffff, 15, 0.8, 0, 0);
+    -fx-effect: dropshadow(gaussian, #66ffff, 7, 0.4, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
@@ -34,8 +34,7 @@
     -fx-text-fill: #00f3ff;
     -fx-font-family: "Courier New", monospace;
     -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 12, 0.6, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00f3ff, 5, 0.3, 0, 0);
     -fx-background-color: rgba(10, 10, 26, 0.7);
     -fx-padding: 8 16;
     -fx-background-radius: 8;
@@ -49,10 +48,10 @@
     -fx-background-color: rgba(10, 10, 26, 0.98);
     -fx-background-radius: 20;
     -fx-border-color: #ff00ff;
-    -fx-border-width: 3px;
+    -fx-border-width: 2px;
     -fx-border-radius: 20;
-    -fx-effect: dropshadow(three-pass-box, #ff00ff, 40, 0.7, 0, 0);
-    -fx-padding: 50;
+    -fx-effect: dropshadow(gaussian, #ff00ff, 10, 0.3, 0, 0);
+    -fx-padding: 30;
     -fx-max-width: 450;
     -fx-min-width: 400;
 }
@@ -63,14 +62,16 @@
     -fx-font-size: 52px;
     -fx-font-weight: bold;
     -fx-letter-spacing: 3px;
-    -fx-effect: dropshadow(gaussian, #ff00ff, 20, 0.8, 0, 0);
+    -fx-stroke: #ffffff; /* White stroke for sharper definition */
+    -fx-stroke-width: 1px; /* Subtle stroke width */
+    -fx-effect: dropshadow(gaussian, #ff00ff, 7, 0.4, 0, 0); /* Reduced glow */
 }
 
 .separator-line {
     -fx-stroke: #00f3ff;
     -fx-stroke-width: 3;
     -fx-opacity: 0.7;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 12, 0.6, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00f3ff, 5, 0.3, 0, 0);
 }
 
 .final-score {
@@ -78,7 +79,7 @@
     -fx-font-family: "Courier New", monospace;
     -fx-font-size: 32px;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 8, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 3, 0.2, 0, 0);
 }
 
 /* 4. CYBERPUNK BUTTONS */
@@ -99,13 +100,13 @@
     -fx-background-color: rgba(0, 243, 255, 0.15);
     -fx-border-color: #00f3ff;
     -fx-text-fill: #00f3ff;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 10, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00f3ff, 4, 0.25, 0, 0);
 }
 
 .cyan-btn:hover {
     -fx-background-color: #00f3ff;
     -fx-text-fill: #0a0a1a;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 20, 0.9, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00f3ff, 10, 0.5, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
@@ -114,14 +115,13 @@
 .pink-btn {
     -fx-background-color: rgba(255, 0, 255, 0.15);
     -fx-border-color: #ff00ff;
-    -fx-text-fill: #ff00ff;
-    -fx-effect: dropshadow(gaussian, #ff00ff, 10, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #ff00ff, 4, 0.25, 0, 0);
 }
 
 .pink-btn:hover {
     -fx-background-color: #ff00ff;
     -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(gaussian, #ff00ff, 20, 0.9, 0, 0);
+    -fx-effect: dropshadow(gaussian, #ff00ff, 10, 0.5, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
