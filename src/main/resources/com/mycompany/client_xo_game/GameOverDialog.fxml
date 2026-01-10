@@ -8,7 +8,7 @@
 <?import java.net.URL?>
 
 
-<VBox spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/13"
+<VBox fx:id="rootPane" spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/13"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.mycompany.client_xo_game.GameOverDialogController"
       styleClass="gameover-root">

@@ -32,6 +32,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,6 +44,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.json.JSONObject;
 
 public class GameboardController implements Initializable {
@@ -297,28 +299,41 @@ public class GameboardController implements Initializable {
         boolean draw = result.equals("draw");
         showOnlineGameOverDialog(won, draw, isForfeit || opponentForfeited, forfeiter);
     }
-    
-    private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeiter) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/GameOverDialog.fxml"));
-        Parent root = loader.load();
 
-        Stage dialogStage = new Stage();
+    private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String opponentName) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/GameOverDialog.fxml"));
+            Parent root = loader.load();
 
-        dialogStage.initModality(Modality.APPLICATION_MODAL);
-        dialogStage.setTitle("Game Over");
-        dialogStage.setScene(new Scene(root));
+            GameOverDialogController controller = loader.getController();
 
-        GameOverDialogController controller = loader.getController();
-        controller.setDialogStage(dialogStage);
-        controller.initData(won, draw, isForfeit, opponentName);
+            // 1. Create a NEW Stage
+            Stage dialogStage = new Stage();
 
-        dialogStage.showAndWait();
-    } catch (Exception e) {
-        e.printStackTrace();
+            // 2. THIS REMOVES THE X BUTTON AND BORDERS
+            dialogStage.initStyle(StageStyle.UNDECORATED);
+            // OR use StageStyle.TRANSPARENT if you want rounded corners via CSS
+
+            // 3. Keep it on top of the game
+            if (App.getStage() != null) {
+                dialogStage.initOwner(App.getStage());
+                dialogStage.initModality(Modality.APPLICATION_MODAL); // Block clicking the game behind
+            }
+
+            controller.setDialogStage(dialogStage);
+            controller.initData(won, draw, isForfeit, opponentName);
+
+            // 4. Set Scene (Transparent fill needed if using rounded corners)
+            Scene scene = new Scene(root);
+            // scene.setFill(Color.TRANSPARENT); // Uncomment if using StageStyle.TRANSPARENT
+
+            dialogStage.setScene(scene);
+            dialogStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-}
-
 
     private void handleError(JSONObject response) {
         String message = response.optString("message", "An error occurred");
@@ -860,7 +875,7 @@ public class GameboardController implements Initializable {
                     // HIGHLIGHT WINNER CELLS
                     highlightWinningCells(winnerCell);
 
-                   showGameEndDialog("It's a Winn!", "Congrats you won");
+                    showGameEndDialog("It's a Winn!", "Congrats you won");
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
                     gameEnded = true;
@@ -875,7 +890,7 @@ public class GameboardController implements Initializable {
                         }
                     }
 
-                   showGameEndDialog("It's a Draw!", "Wanna Rematch?");
+                    showGameEndDialog("It's a Draw!", "Wanna Rematch?");
                     actionTaken = true;
                 }
 
@@ -902,7 +917,7 @@ public class GameboardController implements Initializable {
                 }
             }
 
-             showGameEndDialog("It's a Draw!", "No one wins");
+            showGameEndDialog("It's a Draw!", "No one wins");
         } else if (playerWon) {
             turnLabel.setText("You Win!");
             GameSession.addWinP1();
@@ -936,6 +951,7 @@ public class GameboardController implements Initializable {
             showGameEndDialog("You Lost!!", "Sorry Computer won!!");
         }
     }
+
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         styleDialog(alert); // Updated to use the generic method
@@ -949,48 +965,60 @@ public class GameboardController implements Initializable {
     // ==========================================
     //  STYLING METHODS
     // ==========================================
-    // Original method redirected to new one
     private void styleAlert(Alert alert) {
         styleDialog(alert);
     }
 
-    // NEW GENERIC METHOD: Works for both Alerts and Dialogs
+    // UPDATED GENERIC METHOD: Removes X button and links to global styles
     private void styleDialog(Dialog<?> dialog) {
+        // 1. Remove the "X" Window Bar
+        dialog.initStyle(StageStyle.UNDECORATED);
+
+        // 2. Set the owner to App.getStage() so it stays on top
+        if (App.getStage() != null) {
+            dialog.initOwner(App.getStage());
+        }
+
+        // 3. Apply CSS
         var dialogPane = dialog.getDialogPane();
         dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
-        dialogPane.getStylesheets().add(
-                getClass().getResource("/styles/alert.css").toExternalForm()
-        );
+
+        // Use the global styles.css we created
+        var cssUrl = getClass().getResource("/styles/styles.css");
+        if (cssUrl != null) {
+            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
+        }
     }
+
     // ==================== UTILITY METHODS ====================
     private void showGameEndDialog(String title, String header) {
 
-    Dialog<ButtonType> dialog = new Dialog<>();
-    dialog.setTitle(title);
-    dialog.setHeaderText(header);
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
 
-    // Apply your CSS styling
-    styleDialog(dialog);
+        // Apply your CSS styling
+        styleDialog(dialog);
 
-    // Buttons
-    ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
-    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        // Buttons
+        ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
+        ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-    dialog.getDialogPane().getButtonTypes().addAll(playAgainBtn, closeBtn);
+        dialog.getDialogPane().getButtonTypes().addAll(playAgainBtn, closeBtn);
 
-    dialog.showAndWait().ifPresent(response -> {
+        dialog.showAndWait().ifPresent(response -> {
 
-        if (response == playAgainBtn) {
-            // SAME logic as Play Again button
-            Navigation.goTo(Routes.GAMEBOARD);
+            if (response == playAgainBtn) {
+                // SAME logic as Play Again button
+                Navigation.goTo(Routes.GAMEBOARD);
 
-        } else if (response == closeBtn) {
-            // SAME logic as Close button
-            GameSession.clearSession();
-            Navigation.goTo(Routes.MODE_SELECTION);
-        }
-    });
-}
+            } else if (response == closeBtn) {
+                // SAME logic as Close button
+                GameSession.clearSession();
+                Navigation.goTo(Routes.MODE_SELECTION);
+            }
+        });
+    }
 
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
@@ -1016,9 +1044,6 @@ public class GameboardController implements Initializable {
         System.err.println("WARNING: Cell not found at [" + row + "," + col + "]");
         return null;
     }
-
- 
-
 
     private void highlightWinningCells(Cell winner) {
         Cell[][] grid = gameBoard.getGrid();
