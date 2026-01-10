@@ -15,8 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.StageStyle;
 import org.json.JSONObject;
+import com.mycompany.client_xo_game.util.ClientUtils;
 
-public class ProfileController {
+public class ProfileController extends AbstractNetworkController {
 
     @FXML
     private StackPane rootPane;
@@ -34,14 +35,13 @@ public class ProfileController {
     private Button deleteAccountBtn;
 
     public void initialize() {
+        super.setupNetworkListener(); // Setup network listener from the base class
+
         // 1. Entrance Animation
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(800), rootPane);
         fadeIn.setToValue(1);
         fadeIn.play();
-
-        // 2. Setup Network Listener
-        NetworkConnection.getInstance().setListener(this::onServerResponse);
 
         // 3. Request Data from Server
         requestProfileData();
@@ -53,18 +53,21 @@ public class ProfileController {
         NetworkConnection.getInstance().sendMessage(req);
     }
 
-    private void onServerResponse(JSONObject json) {
-        String type = json.optString("type");
+
+
+    @Override
+    protected void handleGenericResponse(JSONObject response) {
+        String type = response.optString("type");
 
         Platform.runLater(() -> {
             switch (type) {
                 case "profile_response":
-                    if ("success".equals(json.optString("status"))) {
-                        updateUI(json);
+                    if ("success".equals(response.optString("status"))) {
+                        updateUI(response);
                     }
                     break;
                 case "update_profile_response":
-                    if ("success".equals(json.optString("status"))) {
+                    if ("success".equals(response.optString("status"))) {
                         showAlert(Alert.AlertType.INFORMATION, "Success", "Profile Updated Successfully!");
                         requestProfileData(); // Refresh data to show changes
                     } else {
@@ -72,12 +75,16 @@ public class ProfileController {
                     }
                     break;
                 case "delete_account_response":
-                    if ("success".equals(json.optString("status"))) {
+                    if ("success".equals(response.optString("status"))) {
                         showAlert(Alert.AlertType.INFORMATION, "Account Deleted", "Your account has been permanently deleted.");
                         playExitTransition(() -> Navigation.goTo(Routes.LOGIN));
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete account.");
                     }
+                    break;
+                default:
+                    // Log unhandled response types if necessary
+                    System.out.println("ProfileController - Unhandled response type: " + type);
                     break;
             }
         });
@@ -103,7 +110,7 @@ public class ProfileController {
         dialog.setHeaderText("Update your account details");
 
         // 1. APPLY STYLING HERE using the new helper method
-        styleDialog(dialog);
+        ClientUtils.styleDialog(dialog);
 
         // Set the button types
         ButtonType updateButtonType = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
@@ -198,7 +205,7 @@ public class ProfileController {
     // ==========================================
     private void handleDelete() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        styleDialog(alert); // Updated to use the generic method
+        ClientUtils.styleAlert(alert); // Updated to use the generic method
 
         alert.setTitle("Delete Account");
         alert.setHeaderText("CRITICAL WARNING!");
@@ -233,43 +240,14 @@ public class ProfileController {
         fadeOut.play();
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        styleDialog(alert); // Updated to use the generic method
 
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 
     // ==========================================
     //  STYLING METHODS
     // ==========================================
-    private void styleAlert(Alert alert) {
-        styleDialog(alert);
-    }
 
-    // UPDATED GENERIC METHOD: Removes X button and links to global styles
-    private void styleDialog(Dialog<?> dialog) {
-        // 1. Remove the "X" Window Bar
-        dialog.initStyle(StageStyle.UNDECORATED);
 
-        // 2. Set the owner to App.getStage() so it stays on top
-        if (App.getStage() != null) {
-            dialog.initOwner(App.getStage());
-        }
 
-        // 3. Apply CSS
-        var dialogPane = dialog.getDialogPane();
-        dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
-
-        // Use the global styles.css we created
-        var cssUrl = getClass().getResource("/styles/styles.css");
-        if (cssUrl != null) {
-            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
-        }
-    }
 
     @FXML
     private void handleDeleteAccount(ActionEvent event) {

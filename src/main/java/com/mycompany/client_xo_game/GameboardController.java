@@ -10,6 +10,7 @@ import com.mycompany.client_xo_game.model.Move;
 import com.mycompany.client_xo_game.model.Player_Offline;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
+import com.mycompany.client_xo_game.util.ClientUtils;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -48,7 +49,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.json.JSONObject;
 
-public class GameboardController implements Initializable {
+public class GameboardController extends AbstractNetworkController implements Initializable {
 
     @FXML
     private StackPane rootPane;
@@ -131,45 +132,12 @@ public class GameboardController implements Initializable {
         //allows background threads to update ui
         Platform.runLater(() -> {
             updateOnlinePlayersLabels();
-            setupOnlineNetworkListener();
+            super.setupNetworkListener(); // Use the centralized listener from the base class
             updateOnlineScoreBoard();
         });
     }
 
-    private void setupOnlineNetworkListener() {
-        NetworkConnection.getInstance().setListener(response -> {
-            //opt string is safer than getString in case no type is returned
-            String type = response.optString("type");
-            //updates ui so its better to be seperated
-            Platform.runLater(() -> {
-                switch (type) {
-                    case "move":
-                        handleOpponentMove(response);
-                        break;
-                    case "game_over":
-                        handleGameOver(response);
-                        break;
-                    case "turn_update":
-                        handleTurnUpdate(response);
-                        break;
-                    case "rematch_start":
-                        handleRematchStart(response);
-                        break;
-                    case "opponent_wants_rematch":
-                        handleOpponentWantsRematch();
-                        break;
-                    case "opponent_left":
-                        handleOpponentLeft();
-                        break;
-                    case "error":
-                        handleError(response);
-                        break;
-                        
-                        
-                }
-            });
-        });
-    }
+
 
     private void updateOnlineScoreBoard() {
         if (scoreP1 != null && scoreP2 != null) {
@@ -247,7 +215,7 @@ public class GameboardController implements Initializable {
         if ("win".equals(result) && isForfeit) {
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                styleAlert(alert);
+                ClientUtils.styleAlert(alert);
                 alert.setTitle("You Win!");
                 alert.setHeaderText(opponentName + " has left the game.");
                 alert.setContentText("You win by forfeit.");
@@ -262,7 +230,7 @@ public class GameboardController implements Initializable {
         System.out.println("DEBUG: Game Over - Result: " + result + ", Is Forfeit: " + isForfeit + ", Forfeiter: " + forfeiter);
 
         String finalResult = "";
-        
+
         switch (result) {
             case "win":
                 turnLabel.setText("You Win!");
@@ -273,7 +241,7 @@ public class GameboardController implements Initializable {
                 break;
 
             case "lose":
-                 if (isForfeit) {
+                if (isForfeit) {
                     turnLabel.setText("You Forfeited - You Lost!");
                     finalResult = opponentName + " Wins (You Forfeited)";
                 } else {
@@ -307,7 +275,8 @@ public class GameboardController implements Initializable {
         boolean draw = result.equals("draw");
         showOnlineGameOverDialog(won, draw, isForfeit, forfeiter);
     }
-private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeiter) {
+
+    private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeiter) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/GameOverDialog.fxml"));
             Parent root = loader.load();
@@ -318,7 +287,7 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
             Stage dialogStage = new Stage();
 
             // 2. THIS REMOVES THE X BUTTON AND BORDERS
-            dialogStage.initStyle(StageStyle.UNDECORATED); 
+            dialogStage.initStyle(StageStyle.UNDECORATED);
 
             // 3. Keep it on top of the game
             if (App.getStage() != null) {
@@ -328,11 +297,11 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
 
             // 4. Pass Data
             gameOverDialogController.setDialogStage(dialogStage);
-            gameOverDialogController.initData(won, draw, isForfeit, opponentName); 
+            gameOverDialogController.initData(won, draw, isForfeit, opponentName);
 
             // 5. Set Scene
             Scene scene = new Scene(root);
-            
+
             dialogStage.setScene(scene);
             dialogStage.showAndWait();
 
@@ -344,10 +313,7 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
         }
     }
 
-    private void handleError(JSONObject response) {
-        String message = response.optString("message", "An error occurred");
-        System.err.println("Game error: " + message);
-    }
+
 
     private void handleOpponentWantsRematch() {
         if (gameOverDialogController != null) {
@@ -366,10 +332,9 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
             if (gameOverDialogController != null) {
                 gameOverDialogController.closeDialog();
             }
-            
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            styleAlert(alert);
-            alert.setTitle("Opponent Left");
+
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            ClientUtils.styleAlert(alert);            alert.setTitle("Opponent Left");
             alert.setHeaderText(null);
             alert.setContentText("Your opponent has left the game.");
             alert.showAndWait();
@@ -378,12 +343,13 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
         });
     }
 
+
+
 //    private void handleOpponentWantsRematch() {
 //        if (turnLabel != null) {
 //            turnLabel.setText("Opponent wants a rematch!");
 //        }
 //    }
-
 //    private void handleOpponentLeft() {
 //        // Ensure this runs on the JavaFX Application Thread
 //        Platform.runLater(() -> {
@@ -408,7 +374,6 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
 //            Navigation.goTo(Routes.ONLINE_PLAYERS);
 //        });
 //    }
-
     private void updateOnlinePlayersLabels() {
         if (playerNameP1 != null && playerNameP2 != null) {
             playerNameP1.setText("You (" + mySymbol + ")");
@@ -478,159 +443,166 @@ private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfe
         }
     }
 
-private boolean isOnlineReplay = false; // Track if this is an online game replay
+    private boolean isOnlineReplay = false; // Track if this is an online game replay
 
-public void setReplayMode(JsonObject record) {
-    this.isReplayMode = true;
-    this.replayRecord = record;
-    this.currentReplayIndex = 0;
-    this.isReplaying = false;
+    public void setReplayMode(JsonObject record) {
+        this.isReplayMode = true;
+        this.replayRecord = record;
+        this.currentReplayIndex = 0;
+        this.isReplaying = false;
 
-    System.out.println("====== DEBUG: Starting setReplayMode ======");
+        System.out.println("====== DEBUG: Starting setReplayMode ======");
 
-    // Clear board
-    if (board != null) {
-        for (var node : board.getChildren()) {
-            if (node instanceof StackPane) {
-                ((StackPane) node).getChildren().clear();
+        // Clear board
+        if (board != null) {
+            for (var node : board.getChildren()) {
+                if (node instanceof StackPane) {
+                    ((StackPane) node).getChildren().clear();
+                }
             }
         }
-    }
 
-    // Set players
-    player1 = new Player_Offline(record.getString("player1Name"), Cell.X);
-    String player2Name = record.getString("player2Name", "");
-    player2 = new Player_Offline(player2Name, Cell.O);
+        // Set players
+        player1 = new Player_Offline(record.getString("player1Name"), Cell.X);
+        String player2Name = record.getString("player2Name", "");
+        player2 = new Player_Offline(player2Name, Cell.O);
 
-    // *** CRITICAL FIX: Detect if this is an online replay ***
-    // Method 1: Check the isOnlineGame field (newer records)
-    boolean hasOnlineGameField = record.containsKey("isOnlineGame") && 
-                                  record.getBoolean("isOnlineGame");
-    
-    // Method 2: Check if player2Name has [ONLINE] prefix (all online records)
-    boolean hasOnlinePrefix = player2Name.startsWith("[ONLINE]");
-    
-    // If EITHER indicates online, it's an online replay
-    this.isOnlineReplay = hasOnlineGameField || hasOnlinePrefix;
-    
-    // Debug logging
-    System.out.println("DEBUG: player2Name = '" + player2Name + "'");
-    System.out.println("DEBUG: hasOnlineGameField = " + hasOnlineGameField);
-    System.out.println("DEBUG: hasOnlinePrefix = " + hasOnlinePrefix);
-    System.out.println("DEBUG: *** isOnlineReplay = " + this.isOnlineReplay + " ***");
+        // *** CRITICAL FIX: Detect if this is an online replay ***
+        // Method 1: Check the isOnlineGame field (newer records)
+        boolean hasOnlineGameField = record.containsKey("isOnlineGame")
+                && record.getBoolean("isOnlineGame");
 
-    // Show replay controls
-    if (replayControls != null) {
-        replayControls.setVisible(true);
-        replayControls.setManaged(true);
-        replayControls.toFront();
-        if (rootPane != null) {
-            rootPane.requestLayout();
+        // Method 2: Check if player2Name has [ONLINE] prefix (all online records)
+        boolean hasOnlinePrefix = player2Name.startsWith("[ONLINE]");
+
+        // If EITHER indicates online, it's an online replay
+        this.isOnlineReplay = hasOnlineGameField || hasOnlinePrefix;
+
+        // Debug logging
+        System.out.println("DEBUG: player2Name = '" + player2Name + "'");
+        System.out.println("DEBUG: hasOnlineGameField = " + hasOnlineGameField);
+        System.out.println("DEBUG: hasOnlinePrefix = " + hasOnlinePrefix);
+        System.out.println("DEBUG: *** isOnlineReplay = " + this.isOnlineReplay + " ***");
+
+        // Show replay controls
+        if (replayControls != null) {
+            replayControls.setVisible(true);
+            replayControls.setManaged(true);
+            replayControls.toFront();
+            if (rootPane != null) {
+                rootPane.requestLayout();
+            }
         }
-    }
 
-    // Hide scores
-    if (scoreP1 != null) {
-        scoreP1.setVisible(false);
-        scoreP1.setManaged(false);
-    }
-    if (scoreP2 != null) {
-        scoreP2.setVisible(false);
-        scoreP2.setManaged(false);
-    }
+        // Hide scores
+        if (scoreP1 != null) {
+            scoreP1.setVisible(false);
+            scoreP1.setManaged(false);
+        }
+        if (scoreP2 != null) {
+            scoreP2.setVisible(false);
+            scoreP2.setManaged(false);
+        }
 
-    // Update labels
-    if (playerNameP1 != null) {
-        playerNameP1.setText(player1.getName());
-    }
-    if (playerNameP2 != null) {
-        playerNameP2.setText(player2.getName());
-    }
-    if (turnLabel != null) {
-        turnLabel.setText("Replay Mode: " + record.getInt("totalMoves") + " moves");
-    }
+        // Update labels
+        if (playerNameP1 != null) {
+            playerNameP1.setText(player1.getName());
+        }
+        if (playerNameP2 != null) {
+            playerNameP2.setText(player2.getName());
+        }
+        if (turnLabel != null) {
+            turnLabel.setText("Replay Mode: " + record.getInt("totalMoves") + " moves");
+        }
 
-    // Disable board interaction
-    if (board != null) {
-        board.setDisable(true);
+        // Disable board interaction
+        if (board != null) {
+            board.setDisable(true);
+        }
+
+        // Set button states
+        if (playButton != null) {
+            playButton.setDisable(false);
+        }
+        if (pauseButton != null) {
+            pauseButton.setDisable(true);
+        }
+        if (resetButton != null) {
+            resetButton.setDisable(false);
+        }
+
+        System.out.println("====== Replay mode initialized successfully ======");
     }
-
-    // Set button states
-    if (playButton != null) playButton.setDisable(false);
-    if (pauseButton != null) pauseButton.setDisable(true);
-    if (resetButton != null) resetButton.setDisable(false);
-
-    System.out.println("====== Replay mode initialized successfully ======");
-}
 
 // METHOD 2: goBack - Uses isOnlineReplay flag for navigation
-@FXML
-private void goBack() {
-    // Stop any ongoing replay
-    if (isReplaying && currentTransition != null) {
-        currentTransition.stop();
-        isReplaying = false;
-    }
-
-    // Cancel recording if active
-    if (GameSession.isRecording() && !gameEnded) {
-        GameSession.cancelRecording();
-    }
-
-    System.out.println("====== DEBUG: goBack() called ======");
-    System.out.println("DEBUG: isReplayMode = " + isReplayMode);
-    System.out.println("DEBUG: isOnlineReplay = " + isOnlineReplay);
-    System.out.println("DEBUG: isOnlineMode = " + isOnlineMode);
-    System.out.println("DEBUG: gameEnded = " + gameEnded);
-
-    // PRIORITY 1: Handle replay mode navigation
-    // Uses isOnlineReplay flag set during setReplayMode()
-    if (isReplayMode) {
-        if (isOnlineReplay) {
-            System.out.println("DEBUG: Navigating to GAME_REPLAYS (online replay)");
-            Navigation.goTo(Routes.GAME_REPLAYS);
-        } else {
-            System.out.println("DEBUG: Navigating to GAME_RECORDS_OFFLINE (offline replay)");
-            Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
+    @FXML
+    private void goBack() {
+        // Stop any ongoing replay
+        if (isReplaying && currentTransition != null) {
+            currentTransition.stop();
+            isReplaying = false;
         }
-        return;
-    }
 
-    // PRIORITY 2: Handle active online game (forfeit confirmation)
-    if (isOnlineMode && !gameEnded) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        styleAlert(alert);
-        alert.setTitle("Quit Game");
-        alert.setHeaderText("Are you sure you want to quit?");
-        alert.setContentText("Quitting means you forfeit and lose. Continue?");
+        // Cancel recording if active
+        if (GameSession.isRecording() && !gameEnded) {
+            GameSession.cancelRecording();
+        }
 
-        ButtonType quitBtn = new ButtonType("Quit (Forfeit)", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(quitBtn, cancelBtn);
+        System.out.println("====== DEBUG: goBack() called ======");
+        System.out.println("DEBUG: isReplayMode = " + isReplayMode);
+        System.out.println("DEBUG: isOnlineReplay = " + isOnlineReplay);
+        System.out.println("DEBUG: isOnlineMode = " + isOnlineMode);
+        System.out.println("DEBUG: gameEnded = " + gameEnded);
 
-        alert.showAndWait().ifPresent(button -> {
-            if (button == quitBtn) {
-                JSONObject quit = new JSONObject();
-                quit.put("type", "quit_game");
-                NetworkConnection.getInstance().sendMessage(quit);
-                System.out.println("Player forfeited the game");
-                Navigation.goTo(Routes.ONLINE_PLAYERS);
+        // PRIORITY 1: Handle replay mode navigation
+        // Uses isOnlineReplay flag set during setReplayMode()
+        if (isReplayMode) {
+            if (isOnlineReplay) {
+                System.out.println("DEBUG: Navigating to GAME_REPLAYS (online replay)");
+                Navigation.goTo(Routes.GAME_REPLAYS);
+            } else {
+                System.out.println("DEBUG: Navigating to GAME_RECORDS_OFFLINE (offline replay)");
+                Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
             }
-        });
-        return;
+            return;
+        }
+
+        // PRIORITY 2: Handle active online game (forfeit confirmation)
+        if (isOnlineMode && !gameEnded) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            ClientUtils.styleAlert(alert);
+            alert.setTitle("Quit Game");
+            alert.setHeaderText("Are you sure you want to quit?");
+            alert.setContentText("Quitting means you forfeit and lose. Continue?");
+
+            ButtonType quitBtn = new ButtonType("Quit (Forfeit)", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(quitBtn, cancelBtn);
+
+            alert.showAndWait().ifPresent(button -> {
+                if (button == quitBtn) {
+                    JSONObject quit = new JSONObject();
+                    quit.put("type", "quit_game");
+                    NetworkConnection.getInstance().sendMessage(quit);
+                    System.out.println("Player forfeited the game");
+                    Navigation.goTo(Routes.ONLINE_PLAYERS);
+                }
+            });
+            return;
+        }
+
+        // PRIORITY 3: Handle finished online game
+        if (isOnlineMode) {
+            System.out.println("DEBUG: Navigating to ONLINE_PLAYERS (finished online game)");
+            Navigation.goTo(Routes.ONLINE_PLAYERS);
+            return;
+        }
+
+        // PRIORITY 4: Handle offline mode (default)
+        System.out.println("DEBUG: Navigating to MODE_SELECTION (offline mode)");
+        Navigation.goTo(Routes.MODE_SELECTION);
     }
 
-    // PRIORITY 3: Handle finished online game
-    if (isOnlineMode) {
-        System.out.println("DEBUG: Navigating to ONLINE_PLAYERS (finished online game)");
-        Navigation.goTo(Routes.ONLINE_PLAYERS);
-        return;
-    }
-
-    // PRIORITY 4: Handle offline mode (default)
-    System.out.println("DEBUG: Navigating to MODE_SELECTION (offline mode)");
-    Navigation.goTo(Routes.MODE_SELECTION);
-}
     @FXML
     private void handlePlay() {
         System.out.println("Play button clicked");
@@ -819,8 +791,6 @@ private void goBack() {
     }
 
     // ==================== NAVIGATION ====================
- 
-
     // ==================== CELL CLICK HANDLING ====================
     @FXML
     private void onCellClicked(MouseEvent event) {
@@ -1063,44 +1033,52 @@ private void goBack() {
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        styleDialog(alert); // Updated to use the generic method
 
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 
     // ==========================================
     //  STYLING METHODS
     // ==========================================
-    private void styleAlert(Alert alert) {
-        styleDialog(alert);
-    }
+
 
     // UPDATED GENERIC METHOD: Removes X button and links to global styles
-private void styleDialog(Dialog<?> dialog) {
-        // 1. Remove the "X" Window Bar
-        dialog.initStyle(StageStyle.UNDECORATED);
 
-        // 2. Set the owner to App.getStage() so it stays on top
-        if (App.getStage() != null) {
-            dialog.initOwner(App.getStage());
-        }
 
-        // 3. Apply CSS
-        var dialogPane = dialog.getDialogPane();
-        dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
+    @Override
+    protected void handleGenericResponse(JSONObject response) {
+        String type = response.optString("type");
 
-        // MERGED: Use the global styles.css with the safety check
-        var cssUrl = getClass().getResource("/styles/styles.css");
-        if (cssUrl != null) {
-            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
-        } else {
-            System.err.println("WARNING: Could not find /styles/styles.css");
-        }
+        Platform.runLater(() -> {
+            switch (type) {
+                case "move":
+                    handleOpponentMove(response);
+                    break;
+                case "game_over":
+                    handleGameOver(response);
+                    break;
+                case "turn_update":
+                    handleTurnUpdate(response);
+                    break;
+                case "rematch_start":
+                    handleRematchStart(response);
+                    break;
+                case "opponent_wants_rematch":
+                    handleOpponentWantsRematch();
+                    break;
+                case "opponent_left":
+                    handleOpponentLeft();
+                    break;
+                default:
+                    super.handleGenericResponse(response); // Call super to log unhandled types
+                    break;
+            }
+        });
+    }
+
+    @Override
+    protected void handleError(JSONObject response) {
+        String message = response.optString("message", "An error occurred");
+        System.err.println("Game error: " + message);
+        super.handleError(response); // Call super to ensure default handling (e.g., showAlert) if desired
     }
 
     // ==================== UTILITY METHODS ====================
@@ -1111,7 +1089,7 @@ private void styleDialog(Dialog<?> dialog) {
         dialog.setHeaderText(header);
 
         // Apply your CSS styling
-        styleDialog(dialog);
+        ClientUtils.styleDialog(dialog);
 
         // Buttons
         ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);

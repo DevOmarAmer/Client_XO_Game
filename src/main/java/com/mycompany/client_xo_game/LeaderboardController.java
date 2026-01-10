@@ -15,7 +15,7 @@ import com.mycompany.client_xo_game.model.CurrentUser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class LeaderboardController {
+public class LeaderboardController extends AbstractNetworkController {
 
     @FXML
     private StackPane rootPane;
@@ -41,6 +41,8 @@ public class LeaderboardController {
 
     @FXML
     public void initialize() {
+        super.setupNetworkListener(); // Setup network listener from the base class
+
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(800), rootPane);
         fadeIn.setToValue(1);
@@ -54,8 +56,6 @@ public class LeaderboardController {
         loadingSpinner.setVisible(true);
         scoreList.setVisible(false);
 
-        NetworkConnection.getInstance().setListener(this::onServerResponse);
-
         JSONObject req = new JSONObject();
         req.put("type", "get_leaderboard");
         NetworkConnection.getInstance().sendMessage(req);
@@ -67,7 +67,10 @@ public class LeaderboardController {
         });
     }
 
-    private void onServerResponse(JSONObject json) {
+
+
+    @Override
+    protected void handleGenericResponse(JSONObject json) {
         String type = json.optString("type");
         if ("leaderboard_response".equals(type)) {
             Platform.runLater(() -> {
