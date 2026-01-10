@@ -21,8 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import jakarta.json.JsonObject;
 import javafx.stage.StageStyle;
+import com.mycompany.client_xo_game.util.ClientUtils;
+import org.json.JSONObject;
 
-public class Game_ReplaysController {
+public class Game_ReplaysController extends AbstractNetworkController {
 
     @FXML
     private StackPane rootPane;
@@ -38,7 +40,8 @@ public class Game_ReplaysController {
 
     @FXML
     public void initialize() {
-     
+        super.setupNetworkListener(); // Setup network listener from the base class
+
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(800), rootPane);
         fadeIn.setToValue(1);
@@ -51,13 +54,7 @@ public class Game_ReplaysController {
         });
 
         // 3. Get Username & Load Data
-        currentUsername = NetworkConnection.getInstance().getCurrentUsername();
-
-        // Fallback if username isn't set (e.g. testing offline)
-        if (currentUsername == null || currentUsername.isEmpty()) {
-            currentUsername = "Player";
-        }
-
+        // currentUsername is now managed by AbstractNetworkController
         System.out.println("Loading replays for user: " + currentUsername);
         loadGameRecords();
     }
@@ -149,7 +146,7 @@ private void handleWatch() {
 
     // Check if no selection or invalid index
     if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
-        showAlert("Please select a replay to watch");
+        showAlert(Alert.AlertType.INFORMATION, "Info", "Please select a replay to watch");
         return;
     }
 
@@ -157,7 +154,7 @@ private void handleWatch() {
     JsonObject record = GameRecorder.loadGameRecord(selectedFile);
 
     if (record == null) {
-        showAlert("Error loading replay");
+        showAlert(Alert.AlertType.ERROR, "Error", "Error loading replay");
         return;
     }
 
@@ -177,7 +174,7 @@ private void handleWatch() {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Error loading replay: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Error loading replay: " + e.getMessage());
         }
     });
 }
@@ -187,7 +184,9 @@ private void handleWatch() {
         int selectedIndex = replaysList.getSelectionModel().getSelectedIndex();
 
         if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
-            showAlert("Please select a replay to delete");
+          
+             showAlert(Alert.AlertType.NONE, "Info", "Please select a replay to delete");
+
             return;
         }
 
@@ -195,7 +194,7 @@ private void handleWatch() {
 
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
 
-        styleDialog(confirmAlert);
+        ClientUtils.styleAlert(confirmAlert);
        
 
         confirmAlert.setTitle("Delete Replay");
@@ -207,52 +206,26 @@ private void handleWatch() {
                 if (selectedFile.delete()) {
                     loadGameRecords(); // Refresh list
                 } else {
-                    showAlert("Failed to delete file.");
+                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete file.");
                 }
             }
         });
     }
 
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-        // --- STYLE APPLIED HERE ---
-        styleDialog(alert);
-        // --------------------------
 
-        alert.setTitle("Info");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.show();
+    @Override
+    protected void handleGenericResponse(JSONObject response) {
+        // No specific handling needed for generic responses in Game_ReplaysController
+        // super.handleGenericResponse(response); // Call super if you want default logging
     }
 
     // ==========================================
     //  STYLING HELPER
     // ==========================================
-    private void styleAlert(Alert alert) {
-        styleDialog(alert);
-    }
 
-    // UPDATED GENERIC METHOD: Removes X button and links to global styles
-    private void styleDialog(Dialog<?> dialog) {
-        // 1. Remove the "X" Window Bar
-        dialog.initStyle(StageStyle.UNDECORATED);
 
-        // 2. Set the owner to App.getStage() so it stays on top
-        if (App.getStage() != null) {
-            dialog.initOwner(App.getStage());
-        }
 
-        // 3. Apply CSS
-        var dialogPane = dialog.getDialogPane();
-        dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
-
-        // Use the global styles.css we created
-        var cssUrl = getClass().getResource("/styles/styles.css");
-        if (cssUrl != null) {
-            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
-        }
-    }
 
     @FXML
     private void goBack() {

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import jakarta.json.JsonObject;
 import javafx.stage.StageStyle;
+import com.mycompany.client_xo_game.util.ClientUtils;
 
 public class OfflineRecordController {
 
@@ -152,7 +153,7 @@ public class OfflineRecordController {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
 
         // --- STYLE APPLIED HERE ---
-        styleDialog(confirmAlert);
+        ClientUtils.styleAlert(confirmAlert);
         // --------------------------
 
         confirmAlert.setTitle("Confirm Delete");
@@ -176,7 +177,7 @@ public class OfflineRecordController {
         Alert alert = new Alert(Alert.AlertType.WARNING);
 
         // --- STYLE APPLIED HERE ---
-        styleDialog(alert);
+        ClientUtils.styleAlert(alert);
         // --------------------------
 
         alert.setTitle("Warning");
@@ -188,30 +189,9 @@ public class OfflineRecordController {
     // ==========================================
     //  STYLING HELPER
     // ==========================================
-    private void styleAlert(Alert alert) {
-        styleDialog(alert);
-    }
 
-    // UPDATED GENERIC METHOD: Removes X button and links to global styles
-    private void styleDialog(Dialog<?> dialog) {
-        // 1. Remove the "X" Window Bar
-        dialog.initStyle(StageStyle.UNDECORATED);
 
-        // 2. Set the owner to App.getStage() so it stays on top
-        if (App.getStage() != null) {
-            dialog.initOwner(App.getStage());
-        }
 
-        // 3. Apply CSS
-        var dialogPane = dialog.getDialogPane();
-        dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
-
-        // Use the global styles.css we created
-        var cssUrl = getClass().getResource("/styles/styles.css");
-        if (cssUrl != null) {
-            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
-        }
-    }
 
     @FXML
     private void handleRefresh() {

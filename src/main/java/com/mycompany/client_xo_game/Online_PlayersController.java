@@ -16,8 +16,9 @@ import javafx.application.Platform;
 import javafx.stage.StageStyle;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import com.mycompany.client_xo_game.util.ClientUtils;
 
-public class Online_PlayersController implements Runnable {
+public class Online_PlayersController extends AbstractNetworkController implements Runnable {
 
     @FXML
     private StackPane rootPane;
@@ -31,7 +32,6 @@ public class Online_PlayersController implements Runnable {
     private boolean running = true;
     private Thread refreshThread;
     private ObservableList<Player> playersObservableList;
-    private String currentUsername;
 
     private static class Player {
 
@@ -44,38 +44,10 @@ public class Online_PlayersController implements Runnable {
         }
     }
 
-    private void setupNetworkListener() {
-        NetworkConnection.getInstance().setListener(response -> {
-            String type = response.optString("type");
 
-            Platform.runLater(() -> {
-                switch (type) {
-                    case "available_players":
-                        handleAvailablePlayers(response);
-                        break;
-                    case "invitation": // Server sends "invitation" when you receive an invite
-                    case "game_invite":
-                        handleGameInvite(response);
-                        break;
-                    case "invite_response": // Server sends this when someone responds to YOUR invite
-                        handleInviteResponse(response);
-                        break;
-                    case "game_start":
-                        handleGameStart(response);
-                        break;
-                    case "invite_sent":
-                        handleInviteSent(response);
-                        break;
-                    case "error":
-                        handleError(response);
-                        break;
-                        
-                }
-            });
-        });
-    }
 
-    private void handleAvailablePlayers(JSONObject response) {
+    @Override
+    protected void handleAvailablePlayers(JSONObject response) {
         JSONArray array = response.optJSONArray("players");
         if (array == null) {
             return;
@@ -91,15 +63,15 @@ public class Online_PlayersController implements Runnable {
         }
     }
 
-    /**
-     * Handle receiving a game invite - show dialog with recording option
-     */
-    private void handleGameInvite(JSONObject response) {
+
+
+    @Override
+    protected void handleGameInvite(JSONObject response) {
         String from = response.getString("from");
         boolean inviterWantsRecording = response.optBoolean("recordGame", false);
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        styleAlert(alert);
+        ClientUtils.styleAlert(alert);
         alert.setTitle("Game Invitation");
 
         String recordingNote = inviterWantsRecording
@@ -165,7 +137,8 @@ public class Online_PlayersController implements Runnable {
     /**
      * Handle invite response - when someone accepts/declines YOUR invite
      */
-    private void handleInviteResponse(JSONObject response) {
+    @Override
+    protected void handleInviteResponse(JSONObject response) {
         boolean accepted = response.getBoolean("accepted");
         String from = response.optString("from", "Player");
 
@@ -203,7 +176,8 @@ public class Online_PlayersController implements Runnable {
         }
     }
 
-    private void handleGameStart(JSONObject response) {
+    @Override
+    protected void handleGameStart(JSONObject response) {
         stop(); // Stop refresh thread
 
         String opponent = response.getString("opponent");
@@ -218,7 +192,8 @@ public class Online_PlayersController implements Runnable {
         });
     }
 
-    private void handleInviteSent(JSONObject response) {
+    @Override
+    protected void handleInviteSent(JSONObject response) {
         String status = response.getString("status");
         if ("failed".equals(status)) {
             String reason = response.optString("reason", "Unknown error");
@@ -226,7 +201,8 @@ public class Online_PlayersController implements Runnable {
         }
     }
 
-    private void handleError(JSONObject response) {
+    @Override
+    protected void handleError(JSONObject response) {
         String message = response.optString("message", "An error occurred");
         showAlert(Alert.AlertType.ERROR, "Error", message);
     }
@@ -260,14 +236,7 @@ public class Online_PlayersController implements Runnable {
 
     @FXML
     public void initialize() {
-        // Get current username
-        currentUsername = NetworkConnection.getInstance().getCurrentUsername();
-
-        if (currentUsername == null || currentUsername.isEmpty()) {
-            System.err.println("ERROR: No username found in NetworkConnection!");
-            currentUsername = "UnknownPlayer";
-        }
-
+        // currentUsername is initialized in AbstractNetworkController constructor
         System.out.println("OnlinePlayersController initialized for user: " + currentUsername);
 
         rootPane.setOpacity(0);
@@ -278,7 +247,7 @@ public class Online_PlayersController implements Runnable {
         playersObservableList = FXCollections.observableArrayList();
         playersList.setItems(playersObservableList);
 
-        setupNetworkListener();
+        super.setupNetworkListener(); // Call the setup from the abstract base class
         requestAvailablePlayers();
 
         refreshThread = new Thread(this);
@@ -345,7 +314,7 @@ public class Online_PlayersController implements Runnable {
         System.out.println("Preparing to send invitation to: " + playerName);
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        styleAlert(alert);
+        ClientUtils.styleAlert(alert);
         alert.setTitle("Send Game Invitation");
         alert.setHeaderText("Invite " + playerName + " to play");
 
@@ -362,12 +331,11 @@ public class Online_PlayersController implements Runnable {
                 + "The filename will have YOUR name first (e.g., ONLINE_" + currentUsername + "_VS_" + playerName + "_...)\n"
                 + playerName + " can also choose to record it separately with THEIR name first."
         );
-        
+
         explanationLabel.setWrapText(true);
-        
+
         explanationLabel.setStyle("-fx-text-fill: white;");
         dialogContent.getChildren().add(explanationLabel);
-       
 
         alert.getDialogPane().setContent(dialogContent);
 
@@ -402,14 +370,7 @@ public class Online_PlayersController implements Runnable {
         });
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        styleAlert(alert);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.show();
-    }
+
 
     private void playExitTransition(Runnable onFinished) {
         FadeTransition fadeOut = new FadeTransition(Duration.millis(300), rootPane);
@@ -436,24 +397,6 @@ public class Online_PlayersController implements Runnable {
         playExitTransition(() -> Navigation.goTo(Routes.LEADERBOARD));
     }
 
-private void styleAlert(Alert alert) {
-        // 1. Remove the "X" Window Bar
-        alert.initStyle(StageStyle.UNDECORATED);
 
-        // 2. Set the owner to App.getStage() so it stays on top of the app
-        if (App.getStage() != null) {
-            alert.initOwner(App.getStage());
-        }
-
-        // 3. Apply CSS
-        var dialogPane = alert.getDialogPane();
-        dialogPane.setId("xo-alert");
-
-        // Use the global styles.css we created earlier
-        var cssUrl = getClass().getResource("/styles/styles.css");
-        if (cssUrl != null) {
-            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
-        }
-    }
 
 }
