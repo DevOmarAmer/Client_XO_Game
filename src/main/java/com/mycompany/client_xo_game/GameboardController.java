@@ -535,73 +535,83 @@ public class GameboardController extends AbstractNetworkController implements In
     }
 
 // METHOD 2: goBack - Uses isOnlineReplay flag for navigation
-    @FXML
-    private void goBack() {
-        // Stop any ongoing replay
-        if (isReplaying && currentTransition != null) {
-            currentTransition.stop();
-            isReplaying = false;
-        }
-
-        // Cancel recording if active
-        if (GameSession.isRecording() && !gameEnded) {
-            GameSession.cancelRecording();
-        }
-
-        System.out.println("====== DEBUG: goBack() called ======");
-        System.out.println("DEBUG: isReplayMode = " + isReplayMode);
-        System.out.println("DEBUG: isOnlineReplay = " + isOnlineReplay);
-        System.out.println("DEBUG: isOnlineMode = " + isOnlineMode);
-        System.out.println("DEBUG: gameEnded = " + gameEnded);
-
-        // PRIORITY 1: Handle replay mode navigation
-        // Uses isOnlineReplay flag set during setReplayMode()
-        if (isReplayMode) {
-            if (isOnlineReplay) {
-                System.out.println("DEBUG: Navigating to GAME_REPLAYS (online replay)");
-                Navigation.goTo(Routes.GAME_REPLAYS);
-            } else {
-                System.out.println("DEBUG: Navigating to GAME_RECORDS_OFFLINE (offline replay)");
-                Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
-            }
-            return;
-        }
-
-        // PRIORITY 2: Handle active online game (forfeit confirmation)
-        if (isOnlineMode && !gameEnded) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            ClientUtils.styleAlert(alert);
-            alert.setTitle("Quit Game");
-            alert.setHeaderText("Are you sure you want to quit?");
-            alert.setContentText("Quitting means you forfeit and lose. Continue?");
-
-            ButtonType quitBtn = new ButtonType("Quit (Forfeit)", ButtonBar.ButtonData.OK_DONE);
-            ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(quitBtn, cancelBtn);
-
-            alert.showAndWait().ifPresent(button -> {
-                if (button == quitBtn) {
-                    JSONObject quit = new JSONObject();
-                    quit.put("type", "quit_game");
-                    NetworkConnection.getInstance().sendMessage(quit);
-                    System.out.println("Player forfeited the game");
-                    Navigation.goTo(Routes.ONLINE_PLAYERS);
-                }
-            });
-            return;
-        }
-
-        // PRIORITY 3: Handle finished online game
-        if (isOnlineMode) {
-            System.out.println("DEBUG: Navigating to ONLINE_PLAYERS (finished online game)");
-            Navigation.goTo(Routes.ONLINE_PLAYERS);
-            return;
-        }
-
-        // PRIORITY 4: Handle offline mode (default)
-        System.out.println("DEBUG: Navigating to MODE_SELECTION (offline mode)");
-        Navigation.goTo(Routes.MODE_SELECTION);
+ @FXML
+private void goBack() {
+    // Stop any ongoing replay
+    if (isReplaying && currentTransition != null) {
+        currentTransition.stop();
+        isReplaying = false;
     }
+
+    // Cancel recording if active
+    if (GameSession.isRecording() && !gameEnded) {
+        GameSession.cancelRecording();
+    }
+
+    System.out.println("====== DEBUG: goBack() called ======");
+    System.out.println("DEBUG: isReplayMode = " + isReplayMode);
+    System.out.println("DEBUG: isOnlineReplay = " + isOnlineReplay);
+    System.out.println("DEBUG: isOnlineMode = " + isOnlineMode);
+    System.out.println("DEBUG: gameEnded = " + gameEnded);
+    System.out.println("DEBUG: mode = " + mode);
+
+    // PRIORITY 1: Handle replay mode navigation
+    if (isReplayMode) {
+        if (isOnlineReplay) {
+            System.out.println("DEBUG: Navigating to GAME_REPLAYS (online replay)");
+            Navigation.goTo(Routes.GAME_REPLAYS);
+        } else {
+            System.out.println("DEBUG: Navigating to GAME_RECORDS_OFFLINE (offline replay)");
+            Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
+        }
+        return;
+    }
+
+    // PRIORITY 2: Handle active online game (forfeit confirmation)
+    if (isOnlineMode && !gameEnded) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        ClientUtils.styleAlert(alert);
+        alert.setTitle("Quit Game");
+        alert.setHeaderText("Are you sure you want to quit?");
+        alert.setContentText("Quitting means you forfeit and lose. Continue?");
+
+        ButtonType quitBtn = new ButtonType("Quit (Forfeit)", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(quitBtn, cancelBtn);
+
+        alert.showAndWait().ifPresent(button -> {
+            if (button == quitBtn) {
+                JSONObject quit = new JSONObject();
+                quit.put("type", "quit_game");
+                NetworkConnection.getInstance().sendMessage(quit);
+                System.out.println("Player forfeited the game");
+                Navigation.goTo(Routes.ONLINE_PLAYERS);
+            }
+        });
+        return;
+    }
+
+    // PRIORITY 3: Handle finished online game
+    if (isOnlineMode) {
+        System.out.println("DEBUG: Navigating to ONLINE_PLAYERS (finished online game)");
+        Navigation.goTo(Routes.ONLINE_PLAYERS);
+        return;
+    }
+
+    // PRIORITY 4: Handle offline mode (Computer vs Local)
+    if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
+        System.out.println("DEBUG: Computer mode detected - navigating to LEVEL_SELECTION");
+        GameSession.clearSession();
+        Navigation.goTo(Routes.LEVEL_SELECTION);
+        return; // *** ADD RETURN HERE ***
+    } else {
+        // Local mode or other offline modes
+        System.out.println("DEBUG: Local mode detected - navigating to MODE_SELECTION");
+        GameSession.clearSession();
+        Navigation.goTo(Routes.MODE_SELECTION);
+        return; // *** ADD RETURN HERE ***
+    }
+}
 
     @FXML
     private void handlePlay() {
@@ -864,9 +874,11 @@ private void handleOfflineCellClick(MouseEvent event) {
                 if (winnerCell == Cell.X) {
                     handleGameEndOffline(true, false);
                     turnLabel.setText("You Win!");
+                 
                 } else {
                     handleGameEndOffline(false, false);
                     turnLabel.setText("You Lost!");
+            
                 }
                 actionTaken = true;
             } else if (gameBoard.isFull()) {
@@ -965,7 +977,6 @@ private void handleOfflineCellClick(MouseEvent event) {
     }
 }
 
-// *** ADD THIS NEW METHOD ***
 private void executeAIMove() {
     Move bestMove = ai.getBestMove(gameBoard, difficulty);
     if (bestMove != null) {
@@ -1001,65 +1012,62 @@ private void executeAIMove() {
     }
 }
 
-    // ==================== GAME END HANDLING ====================
-    private void handleGameEndOffline(boolean playerWon, boolean isDraw) {
-        gameEnded = true;
+// UPDATE handleGameEndOffline to use Platform.runLater for dialogs
+private void handleGameEndOffline(boolean playerWon, boolean isDraw) {
+    gameEnded = true;
 
-        if (isDraw) {
-            turnLabel.setText("It's a Draw!");
-            GameSession.addDraw();
-            updateScoreBoard();
-
-            if (GameSession.isRecording()) {
-                String filePath = GameSession.saveGameRecord("Draw");
-                if (filePath != null) {
-                    System.out.println("Game saved to: " + filePath);
-                }
+    if (isDraw) {
+        turnLabel.setText("It's a Draw!");
+        GameSession.addDraw();
+        updateScoreBoard();
+        if (GameSession.isRecording()) {
+            String filePath = GameSession.saveGameRecord("Draw");
+            if (filePath != null) {
+                System.out.println("Game saved to: " + filePath);
             }
-
-            showGameEndDialog("It's a Draw!", "No one wins");
-        } else if (playerWon) {
-            turnLabel.setText("You Win!");
-            GameSession.addWinP1();
-            updateScoreBoard();
-
-            // Highlight Winning Cells (Player uses X locally vs Computer)
-            highlightWinningCells(Cell.X);
-
-            if (GameSession.isRecording()) {
-                String filePath = GameSession.saveGameRecord("You Win");
-                if (filePath != null) {
-                    System.out.println("Game saved to: " + filePath);
-                }
-            }
-            showGameEndDialog("It's a Winn!", "Congrats you won");
-        } else {
-            turnLabel.setText("Computer Wins!");
-            GameSession.addWinP2();
-            updateScoreBoard();
-
-            // Highlight Winning Cells (Computer uses O)
-            highlightWinningCells(Cell.O);
-
-            if (GameSession.isRecording()) {
-                String filePath = GameSession.saveGameRecord("Computer Wins");
-                if (filePath != null) {
-                    System.out.println("Game saved to: " + filePath);
-                }
-            }
-
-            showGameEndDialog("You Lost!!", "Sorry Computer won!!");
         }
+        // *** WRAP IN Platform.runLater ***
+        Platform.runLater(() -> showGameEndDialog("It's a Draw!", "No one wins"));
+        
+    } else if (playerWon) {
+        turnLabel.setText("You Win!");
+        GameSession.addWinP1();
+        updateScoreBoard();
+
+        highlightWinningCells(Cell.X);
+
+        if (GameSession.isRecording()) {
+            String filePath = GameSession.saveGameRecord("You Win");
+            if (filePath != null) {
+                System.out.println("Game saved to: " + filePath);
+            }
+        }
+        // *** WRAP IN Platform.runLater ***
+        Platform.runLater(() -> showGameEndDialog("It's a Win!", "Congrats you won"));
+        
+    } else {
+        // COMPUTER WINS
+        turnLabel.setText("Computer Wins!");
+        GameSession.addWinP2();
+        updateScoreBoard();
+      
+        highlightWinningCells(Cell.O);
+
+        if (GameSession.isRecording()) {
+            String filePath = GameSession.saveGameRecord("Computer Wins");
+            if (filePath != null) {
+                System.out.println("Game saved to: " + filePath);
+            }
+        }
+
+        // *** WRAP IN Platform.runLater ***
+        Platform.runLater(() -> showGameEndDialog("You Lost!", "Sorry Computer won!"));
     }
+}
 
 
 
-    // ==========================================
-    //  STYLING METHODS
-    // ==========================================
-
-
-    // UPDATED GENERIC METHOD: Removes X button and links to global styles
+ 
 
 
     @Override
@@ -1100,15 +1108,15 @@ private void executeAIMove() {
         super.handleError(response); // Call super to ensure default handling (e.g., showAlert) if desired
     }
 
-    // ==================== UTILITY METHODS ====================
+
     private void showGameEndDialog(String title, String header) {
 
     Dialog<ButtonType> dialog = new Dialog<>();
     dialog.setTitle(title);
     dialog.setHeaderText(header);
 
-        // Apply your CSS styling
-        ClientUtils.styleDialog(dialog);
+    // Apply your CSS styling
+    ClientUtils.styleDialog(dialog);
 
     // Buttons
     ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
