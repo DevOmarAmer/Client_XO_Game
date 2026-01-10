@@ -837,150 +837,169 @@ public class GameboardController extends AbstractNetworkController implements In
         updateOnlinePlayersLabels();
     }
 
-    private void handleOfflineCellClick(MouseEvent event) {
-        boolean actionTaken = false;
+// In GameboardController - Update the handleOfflineCellClick method for AI mode
 
-        StackPane clickedCell = (StackPane) event.getSource();
-        int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);
-        int col = GridPane.getColumnIndex(clickedCell) == null ? 0 : GridPane.getColumnIndex(clickedCell);
+private void handleOfflineCellClick(MouseEvent event) {
+    boolean actionTaken = false;
 
-        if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
-            if (clickedCell.getChildren().isEmpty()) {
-                if (Xturn) {
-                    placeMove(clickedCell, Cell.X);
-                    gameBoard.getGrid()[row][col] = Cell.X;
+    StackPane clickedCell = (StackPane) event.getSource();
+    int row = GridPane.getRowIndex(clickedCell) == null ? 0 : GridPane.getRowIndex(clickedCell);
+    int col = GridPane.getColumnIndex(clickedCell) == null ? 0 : GridPane.getColumnIndex(clickedCell);
 
-                    GameSession.recordMove(row, col, "X", "You");
+    if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
+        if (clickedCell.getChildren().isEmpty()) {
+            if (Xturn) {
+                placeMove(clickedCell, Cell.X);
+                gameBoard.getGrid()[row][col] = Cell.X;
 
-                    Xturn = false;
-                    turnLabel.setText("Computer's Turn");
+                GameSession.recordMove(row, col, "X", "You");
+
+                Xturn = false;
+                turnLabel.setText("Computer's Turn");
+            }
+
+            Cell winnerCell = gameBoard.checkWinner();
+            if (winnerCell != Cell.EMPTY) {
+                gameEnded = true;
+                if (winnerCell == Cell.X) {
+                    handleGameEndOffline(true, false);
+                    turnLabel.setText("You Win!");
+                } else {
+                    handleGameEndOffline(false, false);
+                    turnLabel.setText("You Lost!");
                 }
+                actionTaken = true;
+            } else if (gameBoard.isFull()) {
+                handleGameEndOffline(false, true);
+                gameEnded = true;
+                turnLabel.setText("It's a Draw!");
+                actionTaken = true;
+            }
 
-                Cell winnerCell = gameBoard.checkWinner();
-                if (winnerCell != Cell.EMPTY) {
-                    gameEnded = true;
-                    if (winnerCell == Cell.X) {
-                        handleGameEndOffline(true, false);
-                        turnLabel.setText("You Win!");
-                    } else {
-                        handleGameEndOffline(false, false);
-                        turnLabel.setText("You Lost!");
+            if (!actionTaken) {
+                // *** ADD DELAY BEFORE AI MOVE ***
+                // Disable board temporarily to prevent double clicks
+                board.setDisable(true);
+                
+                PauseTransition aiDelay = new PauseTransition(Duration.millis(800));
+                aiDelay.setOnFinished(e -> {
+                    executeAIMove();
+                    // Re-enable board if game is not ended
+                    if (!gameEnded) {
+                        board.setDisable(false);
                     }
-                    actionTaken = true;
-                } else if (gameBoard.isFull()) {
-                    handleGameEndOffline(false, true);
-                    gameEnded = true;
-                    turnLabel.setText("It's a Draw!");
-                    actionTaken = true;
-                }
+                });
+                aiDelay.play();
+            }
+        }
+    } else if (mode == GameMode.LOCAL_MODE) {
+        if (clickedCell.getChildren().isEmpty()) {
+            if (Xturn && gameBoard.checkWinner() == Cell.EMPTY) {
+                placeMove(clickedCell, Cell.X);
+                gameBoard.getGrid()[row][col] = Cell.X;
 
-                if (!actionTaken) {
-                    Move bestMove = ai.getBestMove(gameBoard, difficulty);
-                    if (bestMove != null) {
-                        int aiRow = bestMove.getRow();
-                        int aiCol = bestMove.getCol();
-                        gameBoard.getGrid()[aiRow][aiCol] = Cell.O;
+                GameSession.recordMove(row, col, "X", player1.getName());
 
-                        GameSession.recordMove(aiRow, aiCol, "O", "Computer");
+                Xturn = false;
+            } else {
+                if (!actionTaken && gameBoard.checkWinner() == Cell.EMPTY) {
+                    placeMove(clickedCell, Cell.O);
+                    gameBoard.getGrid()[row][col] = Cell.O;
 
-                        StackPane aiCell = getCell(aiRow, aiCol);
-                        if (aiCell != null) {
-                            placeMove(aiCell, Cell.O);
-                        }
+                    GameSession.recordMove(row, col, "O", player2.getName());
 
-                        winnerCell = gameBoard.checkWinner();
-                        if (winnerCell != Cell.EMPTY) {
-                            gameEnded = true;
-                            if (winnerCell == Cell.O) {
-                                handleGameEndOffline(false, false);
-                                turnLabel.setText("Computer Wins!");
-                            } else {
-                                handleGameEndOffline(true, false);
-                                turnLabel.setText("You Win!");
-                            }
-                        } else if (gameBoard.isFull()) {
-                            handleGameEndOffline(false, true);
-                            gameEnded = true;
-                            turnLabel.setText("It's a Draw!");
-                        } else {
-                            Xturn = true;
-                            turnLabel.setText("Your Turn");
-                        }
-                    }
+                    Xturn = true;
                 }
             }
-        } else if (mode == GameMode.LOCAL_MODE) {
-            if (clickedCell.getChildren().isEmpty()) {
-                if (Xturn && gameBoard.checkWinner() == Cell.EMPTY) {
-                    placeMove(clickedCell, Cell.X);
-                    gameBoard.getGrid()[row][col] = Cell.X;
 
-                    GameSession.recordMove(row, col, "X", player1.getName());
+            Cell winnerCell = gameBoard.checkWinner();
+            if (winnerCell != Cell.EMPTY) {
+                gameEnded = true;
+                String winnerName = (winnerCell == Cell.X) ? player1.getName() : player2.getName();
 
-                    Xturn = false;
+                // add win for winner (+10) and loss for loser (-5)
+                if (winnerCell == Cell.X) {
+                    GameSession.addWinP1();
+                    GameSession.addLossP2();
                 } else {
-                    if (!actionTaken && gameBoard.checkWinner() == Cell.EMPTY) {
-                        placeMove(clickedCell, Cell.O);
-                        gameBoard.getGrid()[row][col] = Cell.O;
+                    GameSession.addWinP2();
+                    GameSession.addLossP1();
+                }
 
-                        GameSession.recordMove(row, col, "O", player2.getName());
+                updateScoreBoard();
+                turnLabel.setText(winnerName + " Wins!");
 
-                        Xturn = true;
+                if (GameSession.isRecording()) {
+                    String result = winnerName + " Wins";
+                    String filePath = GameSession.saveGameRecord(result);
+                    if (filePath != null) {
+                        System.out.println("Game saved to: " + filePath);
                     }
                 }
 
-                Cell winnerCell = gameBoard.checkWinner();
-                if (winnerCell != Cell.EMPTY) {
-                    gameEnded = true;
-                    String winnerName = (winnerCell == Cell.X) ? player1.getName() : player2.getName();
+                highlightWinningCells(winnerCell);
 
-                    // add win for winner (+10) and loss for loser (-5)
-                    if (winnerCell == Cell.X) {
-                        GameSession.addWinP1();
-                        GameSession.addLossP2();
-                    } else {
-                        GameSession.addWinP2();
-                        GameSession.addLossP1();
+                showGameEndDialog("It's a Winn!", "Congrats you won");
+                actionTaken = true;
+            } else if (gameBoard.isFull()) {
+                gameEnded = true;
+                GameSession.addDraw();
+                updateScoreBoard();
+                turnLabel.setText("It's a Draw!");
+
+                if (GameSession.isRecording()) {
+                    String filePath = GameSession.saveGameRecord("Draw");
+                    if (filePath != null) {
+                        System.out.println("Game saved to: " + filePath);
                     }
-
-                    updateScoreBoard();
-                    turnLabel.setText(winnerName + " Wins!");
-
-                    if (GameSession.isRecording()) {
-                        String result = winnerName + " Wins";
-                        String filePath = GameSession.saveGameRecord(result);
-                        if (filePath != null) {
-                            System.out.println("Game saved to: " + filePath);
-                        }
-                    }
-
-                    highlightWinningCells(winnerCell);
-
-                    showGameEndDialog("It's a Winn!", "Congrats you won");
-                    actionTaken = true;
-                } else if (gameBoard.isFull()) {
-                    gameEnded = true;
-                    GameSession.addDraw();
-                    updateScoreBoard();
-                    turnLabel.setText("It's a Draw!");
-
-                    if (GameSession.isRecording()) {
-                        String filePath = GameSession.saveGameRecord("Draw");
-                        if (filePath != null) {
-                            System.out.println("Game saved to: " + filePath);
-                        }
-                    }
-
-                    showGameEndDialog("It's a Draw!", "Wanna Rematch?");
-                    actionTaken = true;
                 }
 
-                if (!actionTaken) {
-                    turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
-                }
+                showGameEndDialog("It's a Draw!", "Wanna Rematch?");
+                actionTaken = true;
+            }
+
+            if (!actionTaken) {
+                turnLabel.setText(Xturn ? player1.getName() + "'s Turn" : player2.getName() + "'s Turn");
             }
         }
     }
+}
+
+// *** ADD THIS NEW METHOD ***
+private void executeAIMove() {
+    Move bestMove = ai.getBestMove(gameBoard, difficulty);
+    if (bestMove != null) {
+        int aiRow = bestMove.getRow();
+        int aiCol = bestMove.getCol();
+        gameBoard.getGrid()[aiRow][aiCol] = Cell.O;
+
+        GameSession.recordMove(aiRow, aiCol, "O", "Computer");
+
+        StackPane aiCell = getCell(aiRow, aiCol);
+        if (aiCell != null) {
+            placeMove(aiCell, Cell.O);
+        }
+
+        Cell winnerCell = gameBoard.checkWinner();
+        if (winnerCell != Cell.EMPTY) {
+            gameEnded = true;
+            if (winnerCell == Cell.O) {
+                handleGameEndOffline(false, false);
+                turnLabel.setText("Computer Wins!");
+            } else {
+                handleGameEndOffline(true, false);
+                turnLabel.setText("You Win!");
+            }
+        } else if (gameBoard.isFull()) {
+            handleGameEndOffline(false, true);
+            gameEnded = true;
+            turnLabel.setText("It's a Draw!");
+        } else {
+            Xturn = true;
+            turnLabel.setText("Your Turn");
+        }
+    }
+}
 
     // ==================== GAME END HANDLING ====================
     private void handleGameEndOffline(boolean playerWon, boolean isDraw) {
@@ -1084,32 +1103,53 @@ public class GameboardController extends AbstractNetworkController implements In
     // ==================== UTILITY METHODS ====================
     private void showGameEndDialog(String title, String header) {
 
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle(title);
-        dialog.setHeaderText(header);
+    Dialog<ButtonType> dialog = new Dialog<>();
+    dialog.setTitle(title);
+    dialog.setHeaderText(header);
 
         // Apply your CSS styling
         ClientUtils.styleDialog(dialog);
 
-        // Buttons
-        ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
-        ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+    // Buttons
+    ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
+    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        dialog.getDialogPane().getButtonTypes().addAll(playAgainBtn, closeBtn);
+    dialog.getDialogPane().getButtonTypes().addAll(playAgainBtn, closeBtn);
 
-        dialog.showAndWait().ifPresent(response -> {
+    dialog.showAndWait().ifPresent(response -> {
 
-            if (response == playAgainBtn) {
-                // SAME logic as Play Again button
-                Navigation.goTo(Routes.GAMEBOARD);
+        if (response == playAgainBtn) {
+            // Clear the board and reset for a new game in the SAME mode
+            gameEnded = false;
+            gameBoard = new Board();
+            Xturn = true;
+            
+            // Clear the board UI
+            clearHighlights();
+            for (var node : board.getChildren()) {
+                if (node instanceof StackPane) {
+                    ((StackPane) node).getChildren().clear();
+                }
+            }
+            
+            // Update labels for new game
+            updatePlayersLabels();
+            
+            // DON'T navigate - just reset the current game
+            // The players, mode, and difficulty are still set in GameSession
 
-            } else if (response == closeBtn) {
-                // SAME logic as Close button
+        } else if (response == closeBtn) {
+            // Clear session and go back to appropriate menu
+            if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
+                GameSession.clearSession();
+                Navigation.goTo(Routes.LEVEL_SELECTION);
+            } else {
                 GameSession.clearSession();
                 Navigation.goTo(Routes.MODE_SELECTION);
             }
-        });
-    }
+        }
+    });
+}
 
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
