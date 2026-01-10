@@ -12,36 +12,95 @@ import com.mycompany.client_xo_game.navigation.Routes;
 
 public class Mode_SelectionController {
 
-    @FXML private StackPane rootPane;
-    @FXML private VBox contentBox;
-    @FXML private VBox buttonContainer;
-    @FXML private Label titleLabel;
-    @FXML private Button btnComputer, btnOffline, btnOnline , btnviewPreviousMatches;
+    @FXML
+    private StackPane rootPane;
+    @FXML
+    private VBox contentBox;
+    @FXML
+    private VBox buttonContainer;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private Button btnComputer, btnOffline, btnOnline, btnviewPreviousMatches;
+
+    // --- NEW AUDIO CONTROLS ---
+    @FXML
+    private Slider volumeSlider;
+    @FXML
+    private Button btnMute;
 
     @FXML
     public void initialize() {
-        // -----------------------------
+        setupAnimations();
+        setupResponsiveLayout();
+        setupAudioControls();
+    }
+
+    private void setupAudioControls() {
+        // Init state from App (so it remembers if you muted it previously)
+        boolean currentMute = App.isMuted();
+        volumeSlider.setValue(App.getVolume());
+        volumeSlider.setDisable(currentMute);
+        updateMuteIcon(currentMute);
+
+        // Slider Listener: Change volume as user drags
+        volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (!btnMute.getText().equals("🔇")) { // Only update if not strictly muted
+                App.setVolume(newVal.doubleValue());
+            }
+        });
+    }
+
+    @FXML
+    private void toggleMute() {
+        boolean isNowMuted = App.toggleMute();
+        updateMuteIcon(isNowMuted);
+
+        // Disable slider to visually indicate mute
+        if (isNowMuted) {
+            volumeSlider.setDisable(true);
+        } else {
+            volumeSlider.setDisable(false);
+            volumeSlider.setValue(App.getVolume());
+        }
+    }
+
+    private void updateMuteIcon(boolean isMuted) {
+        if (isMuted) {
+            btnMute.setText("🔇");
+            btnMute.setStyle("-fx-text-fill: #ff007f; -fx-border-color: #ff007f;");
+        } else {
+            btnMute.setText("🔊");
+            btnMute.setStyle("-fx-text-fill: #00fff0; -fx-border-color: #00fff0;");
+        }
+    }
+
+    private void setupAnimations() {
         // 1. Entrance Fade-in
-        // -----------------------------
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1200), rootPane);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
         fadeIn.play();
 
-        // -----------------------------
         // 2. Title breathing animation
-        // -----------------------------
         ScaleTransition pulse = new ScaleTransition(Duration.millis(2000), titleLabel);
-        pulse.setFromX(1.0); pulse.setFromY(1.0);
-        pulse.setToX(1.06); pulse.setToY(1.06);
+        pulse.setFromX(1.0);
+        pulse.setFromY(1.0);
+        pulse.setToX(1.06);
+        pulse.setToY(1.06);
         pulse.setCycleCount(Animation.INDEFINITE);
         pulse.setAutoReverse(true);
         pulse.play();
 
-        // -----------------------------
-        // 3. Responsive scaling
-        // -----------------------------
+        // 4. Add hover animations to buttons
+        addHoverAnimation(btnComputer, "#00d2ff");
+        addHoverAnimation(btnOffline, "#00d2ff");
+        addHoverAnimation(btnOnline, "#ff007f");
+        addHoverAnimation(btnviewPreviousMatches, "#ff007f");
+    }
+
+    private void setupResponsiveLayout() {
         rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
             double width = newVal.doubleValue();
 
@@ -64,48 +123,42 @@ public class Mode_SelectionController {
             // Container width
             contentBox.setMaxWidth(width * 0.65);
         });
-
-        // -----------------------------
-        // 4. Add hover animations to buttons
-        // -----------------------------
-        addHoverAnimation(btnComputer, "#00d2ff");
-        addHoverAnimation(btnOffline, "#00d2ff");
-        addHoverAnimation(btnOnline, "#ff007f");
-        addHoverAnimation(btnviewPreviousMatches, "#ff007f");
     }
 
     // -----------------------------
     // Button navigation
     // -----------------------------
-
-    @FXML private void goToLevelSelection() { 
-        animateButton(btnComputer); 
-         GameSession.setGameMode(GameMode.HUMAN_VS_COMPUTER_MODE);
+    @FXML
+    private void goToLevelSelection() {
+        animateButton(btnComputer);
+        GameSession.setGameMode(GameMode.HUMAN_VS_COMPUTER_MODE);
         NetworkConnection.setActiveIP("127.0.0.1");
-        Navigation.goTo(Routes.LEVEL_SELECTION); 
+        Navigation.goTo(Routes.LEVEL_SELECTION);
     }
 
-    @FXML private void goToOfflinePlayers() { 
-        animateButton(btnOffline); 
-         GameSession.setGameMode(GameMode.LOCAL_MODE);
+    @FXML
+    private void goToOfflinePlayers() {
+        animateButton(btnOffline);
+        GameSession.setGameMode(GameMode.LOCAL_MODE);
         NetworkConnection.setActiveIP("127.0.0.1");
-        Navigation.goTo(Routes.OFFLINE_PLAYERS); 
+        Navigation.goTo(Routes.OFFLINE_PLAYERS);
     }
 
-    @FXML private void goToLogin() { 
-        animateButton(btnOnline); 
-         GameSession.setGameMode(GameMode.ONLINE_MODE);
-        Navigation.goTo(Routes.LOGIN); 
+    @FXML
+    private void goToLogin() {
+        animateButton(btnOnline);
+        GameSession.setGameMode(GameMode.ONLINE_MODE);
+        Navigation.goTo(Routes.LOGIN);
     }
 
-    @FXML 
-    private void onViewPreviousMatches() { 
-         animateButton(btnviewPreviousMatches); 
-         Navigation.goTo(Routes.GAME_RECORDS_OFFLINE); 
-     
+    @FXML
+    private void onViewPreviousMatches() {
+        animateButton(btnviewPreviousMatches);
+        Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
     }
+
     // -----------------------------
-    // Smooth button press animation
+    // Helper Animations
     // -----------------------------
     private void animateButton(Button btn) {
         ScaleTransition st = new ScaleTransition(Duration.millis(150), btn);
@@ -118,9 +171,6 @@ public class Mode_SelectionController {
         st.play();
     }
 
-    // -----------------------------
-    // Smooth hover animation
-    // -----------------------------
     private void addHoverAnimation(Button btn, String color) {
         btn.setOnMouseEntered(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(200), btn);
