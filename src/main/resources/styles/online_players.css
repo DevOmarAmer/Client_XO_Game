@@ -164,6 +164,6 @@
     -fx-cursor: hand;
 }
 .nav-btn:hover {
-    -fx-text-fill: #00fff0;
-    -fx-effect: dropshadow(gaussian, #00fff0, 8, 0.4, 0, 0);
+    -fx-background-color: rgba(0, 255, 240, 0.2);
+    -fx-effect: dropshadow(gaussian, #00fff0, 15, 0.6, 0, 0);
 }
