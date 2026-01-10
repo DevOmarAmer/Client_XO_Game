@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Dialog; // Import Dialog for the helper method
+import javafx.scene.control.Dialog; 
 import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -37,7 +37,7 @@ public class Game_ReplaysController {
 
     @FXML
     public void initialize() {
-        // 1. Animation
+     
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(800), rootPane);
         fadeIn.setToValue(1);
@@ -86,7 +86,7 @@ public class Game_ReplaysController {
                 continue;
             }
 
-            // CRITICAL CHECK: Only show if current user is player1 (recording initiator)
+      
             String player1Name = record.getString("player1Name");
 
             if (player1Name.equals(currentUsername)) {
@@ -120,7 +120,7 @@ public class Game_ReplaysController {
                 player2 = player2.substring(8).trim();
             }
 
-            // Check result symbol (Win/Loss/Draw)
+         
             String resultText = record.getString("result");
             String icon = "➖"; // Default for draw
             if (resultText.toLowerCase().contains("win")) {
