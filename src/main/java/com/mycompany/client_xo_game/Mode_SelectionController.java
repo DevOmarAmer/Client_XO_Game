@@ -28,6 +28,8 @@ public class Mode_SelectionController {
     private Slider volumeSlider;
     @FXML
     private Button btnMute;
+    @FXML
+    private Button btnSnake;
 
     @FXML
     public void initialize() {
@@ -98,6 +100,7 @@ public class Mode_SelectionController {
         addHoverAnimation(btnOffline, "#00d2ff");
         addHoverAnimation(btnOnline, "#ff007f");
         addHoverAnimation(btnviewPreviousMatches, "#ff007f");
+        addHoverAnimation(btnSnake, "#32CD32");
     }
 
     private void setupResponsiveLayout() {
@@ -155,6 +158,12 @@ public class Mode_SelectionController {
     private void onViewPreviousMatches() {
         animateButton(btnviewPreviousMatches);
         Navigation.goTo(Routes.GAME_RECORDS_OFFLINE);
+    }
+
+    @FXML
+    private void goToSnake() {
+        animateButton(btnSnake);
+        Navigation.goTo(Routes.SNAKE);
     }
 
     // -----------------------------
