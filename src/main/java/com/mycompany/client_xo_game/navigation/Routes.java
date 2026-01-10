@@ -3,6 +3,7 @@ package com.mycompany.client_xo_game.navigation;
 public class Routes {
 
     public static final String MODE_SELECTION = "Mode_Selection";
+    public static final String SNAKE = "snake";
 
     public static final String LEVEL_SELECTION = "Level_Selection";
     public static final String OFFLINE_PLAYERS = "Offline_Players";

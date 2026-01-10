@@ -79,6 +79,13 @@
                     onAction="#toggleMute"
                     styleClass="icon-btn"/>
         </HBox>
+        
+        <Button fx:id="btnSnake"
+                text="🐍"
+                onAction="#goToSnake"
+                styleClass="icon-btn, snake-btn"
+                AnchorPane.bottomAnchor="30.0"
+                AnchorPane.rightAnchor="30.0"/>
     </AnchorPane>
 
 </StackPane>
