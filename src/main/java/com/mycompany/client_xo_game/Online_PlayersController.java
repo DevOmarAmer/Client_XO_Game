@@ -65,74 +65,7 @@ public class Online_PlayersController extends AbstractNetworkController implemen
 
 
 
-    @Override
-    protected void handleGameInvite(JSONObject response) {
-        String from = response.getString("from");
-        boolean inviterWantsRecording = response.optBoolean("recordGame", false);
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        ClientUtils.styleAlert(alert);
-        alert.setTitle("Game Invitation");
-
-        String recordingNote = inviterWantsRecording
-                ? " and wants to record the game"
-                : "";
-        alert.setHeaderText(from + " wants to play with you" + recordingNote);
-
-        // Create checkbox for receiver's recording preference
-        CheckBox recordCheckbox = new CheckBox("I also want to record this game (saved to MY records)");
-        recordCheckbox.setSelected(false);
-
-        VBox dialogContent = new VBox(10);
-        dialogContent.getChildren().add(recordCheckbox);
-
-        // Add explanation text
-        Label explanationLabel = new Label();
-        if (inviterWantsRecording) {
-            explanationLabel.setText(from + " will have this game saved to their records.\n"
-                    + "You can also save it to YOUR records by checking the box above.\n"
-                    + "Each player gets their own recording with their name first.");
-        } else {
-            explanationLabel.setText("Check the box if you want to save this game to YOUR records.\n"
-                    + "The file will have YOUR name first in the filename.");
-        }
-        explanationLabel.setWrapText(true);
-        dialogContent.getChildren().add(explanationLabel);
-
-        alert.getDialogPane().setContent(dialogContent);
-
-        ButtonType acceptBtn = new ButtonType("Accept");
-        ButtonType declineBtn = new ButtonType("Decline", ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(acceptBtn, declineBtn);
-
-        alert.showAndWait().ifPresent(button -> {
-            boolean receiverWantsRecording = recordCheckbox.isSelected();
-
-            JSONObject inviteResponse = new JSONObject();
-            inviteResponse.put("type", "invite_response");
-            inviteResponse.put("from", from);
-            inviteResponse.put("accepted", button == acceptBtn);
-
-            if (button == acceptBtn) {
-                inviteResponse.put("inviterWantsRecording", inviterWantsRecording);
-                inviteResponse.put("receiverWantsRecording", receiverWantsRecording);
-
-                // CRITICAL: Start recording IMMEDIATELY if receiver wants to record
-                // This ensures recording is active BEFORE game starts
-                if (receiverWantsRecording) {
-                    GameSession.startOnlineRecording(currentUsername, from);
-                    System.out.println("Recording started for " + currentUsername + " (YOU are player1 in your file)");
-                }
-
-                System.out.println("Invitation accepted"
-                        + (receiverWantsRecording ? " with your recording enabled" : ""));
-            } else {
-                System.out.println("Invitation declined");
-            }
-
-            NetworkConnection.getInstance().sendMessage(inviteResponse);
-        });
-    }
 
     /**
      * Handle invite response - when someone accepts/declines YOUR invite
@@ -179,17 +112,7 @@ public class Online_PlayersController extends AbstractNetworkController implemen
     @Override
     protected void handleGameStart(JSONObject response) {
         stop(); // Stop refresh thread
-
-        String opponent = response.getString("opponent");
-        String yourSymbol = response.getString("yourSymbol");
-        boolean yourTurn = response.getBoolean("yourTurn");
-
-        System.out.println("Game starting! Opponent: " + opponent + ", Symbol: " + yourSymbol + ", Turn: " + yourTurn);
-
-        // Navigate to online gameboard
-        playExitTransition(() -> {
-            Navigation.goToOnlineGame(opponent, yourSymbol, yourTurn);
-        });
+        super.handleGameStart(response); // Call the centralized game start handler
     }
 
     @Override
