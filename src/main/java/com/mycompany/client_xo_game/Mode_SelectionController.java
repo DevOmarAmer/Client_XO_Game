@@ -81,12 +81,14 @@ public class Mode_SelectionController {
     @FXML private void goToLevelSelection() { 
         animateButton(btnComputer); 
          GameSession.setGameMode(GameMode.HUMAN_VS_COMPUTER_MODE);
+        NetworkConnection.setActiveIP("127.0.0.1");
         Navigation.goTo(Routes.LEVEL_SELECTION); 
     }
 
     @FXML private void goToOfflinePlayers() { 
         animateButton(btnOffline); 
          GameSession.setGameMode(GameMode.LOCAL_MODE);
+        NetworkConnection.setActiveIP("127.0.0.1");
         Navigation.goTo(Routes.OFFLINE_PLAYERS); 
     }
 

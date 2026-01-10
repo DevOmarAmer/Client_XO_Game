@@ -14,6 +14,7 @@ import org.json.JSONObject;
 public class NetworkConnection {
 
     private static Map<String, NetworkConnection> instances = new HashMap<>();
+    private static String activeIP = "127.0.0.1";
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
@@ -32,6 +33,12 @@ public class NetworkConnection {
         }
     }
 
+    public static void setActiveIP(String ip) {
+        if (ip != null && !ip.trim().isEmpty()) {
+            activeIP = ip;
+        }
+    }
+
     public static NetworkConnection getInstance(String ip) {
         if (!instances.containsKey(ip)) {
             instances.put(ip, new NetworkConnection(ip));
@@ -40,7 +47,7 @@ public class NetworkConnection {
     }
 
     public static NetworkConnection getInstance() {
-        return getInstance("127.0.0.1");
+        return getInstance(activeIP);
     }
 
     public void setCurrentUsername(String username) {

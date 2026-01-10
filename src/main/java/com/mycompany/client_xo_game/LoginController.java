@@ -120,13 +120,16 @@ public class LoginController {
             return;
         }
 
-        NetworkConnection.getInstance(serverIpField.getText().trim()).setListener(this::onServerResponse);
+        String serverIp = serverIpField.getText().trim();
+        NetworkConnection.setActiveIP(serverIp);
+        NetworkConnection nc = NetworkConnection.getInstance();
+        nc.setListener(this::onServerResponse);
 
         JSONObject json = new JSONObject();
         json.put("type", "login");
         json.put("username", usernameField.getText().trim());
         json.put("password", passwordField.getText().trim());
-        NetworkConnection.getInstance(serverIpField.getText().trim()).sendMessage(json);
+        nc.sendMessage(json);
     }
 
     private void onServerResponse(JSONObject json) {
