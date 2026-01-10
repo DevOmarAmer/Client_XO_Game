@@ -38,33 +38,34 @@ public class Offline_PlayersController {
     private CheckBox record_game_chk;
     @FXML
     private Label titleLabel;
-       @FXML
-  private Circle recordDot; // Add this field
+    @FXML
+    private Circle recordDot;
+    
     @FXML
     public void initialize() {
-           /* ===============================
-       Recording Dot Animation
-       =============================== */
-    Timeline recordBlink = new Timeline(
-        new KeyFrame(Duration.seconds(0.6), new KeyValue(recordDot.opacityProperty(), 1.0)),
-        new KeyFrame(Duration.seconds(1.2), new KeyValue(recordDot.opacityProperty(), 0.1))
-    );
-    recordBlink.setAutoReverse(true);
-    recordBlink.setCycleCount(Animation.INDEFINITE);
-    recordBlink.play();
+        /* ===============================
+           Recording Dot Animation
+           =============================== */
+        Timeline recordBlink = new Timeline(
+            new KeyFrame(Duration.seconds(0.6), new KeyValue(recordDot.opacityProperty(), 1.0)),
+            new KeyFrame(Duration.seconds(1.2), new KeyValue(recordDot.opacityProperty(), 0.1))
+        );
+        recordBlink.setAutoReverse(true);
+        recordBlink.setCycleCount(Animation.INDEFINITE);
+        recordBlink.play();
 
-    // Toggle dot visibility based on checkbox
-    record_game_chk.selectedProperty().addListener((obs, oldVal, newVal) -> {
-        recordDot.setVisible(newVal);
-        if(newVal) recordBlink.play(); else recordBlink.stop();
-    });
+        // Toggle dot visibility based on checkbox
+        record_game_chk.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            recordDot.setVisible(newVal);
+            if(newVal) recordBlink.play(); else recordBlink.stop();
+        });
+        
         rootPane.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(1200), rootPane);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
         fadeIn.play();
 
-        
         ScaleTransition pulse = new ScaleTransition(Duration.millis(2000), titleLabel);
         pulse.setFromX(1.0);
         pulse.setFromY(1.0);
@@ -74,7 +75,6 @@ public class Offline_PlayersController {
         pulse.setAutoReverse(true);
         pulse.play();
 
-        
         rootPane.widthProperty().addListener((obs, oldVal, newVal) -> {
             double w = newVal.doubleValue();
 
@@ -107,7 +107,6 @@ public class Offline_PlayersController {
             contentBox.setSpacing(w * 0.04);
             inputContainer.setSpacing(w * 0.03);
 
-     
             if (back_id.getParent() instanceof HBox) {
                 ((HBox) back_id.getParent()).setSpacing(w * 0.03);
             }
@@ -118,7 +117,6 @@ public class Offline_PlayersController {
             contentBox.setMaxHeight(h * 0.85);
         });
 
-    
         addHoverAnimation(play_id);
         
         if (record_game_chk != null) {
@@ -129,6 +127,7 @@ public class Offline_PlayersController {
     @FXML
     private void goBack() {
         animateButton(back_id);
+        GameSession.clearSession();
         Navigation.goTo(Routes.MODE_SELECTION);
     }
 
@@ -141,11 +140,13 @@ public class Offline_PlayersController {
             System.out.println("Both players must enter names");
             return;
         }
+        
+        // CRITICAL: Set the game mode first
+        GameSession.setGameMode(GameMode.LOCAL_MODE);
+        
         Player_Offline player1 = new Player_Offline(p1Name, Cell.X);
         Player_Offline player2 = new Player_Offline(p2Name, Cell.O);
-
         GameSession.setPlayers(player1, player2);
-        
         
         if (record_game_chk != null && record_game_chk.isSelected()) {
             GameSession.startRecording();
@@ -153,6 +154,8 @@ public class Offline_PlayersController {
         } else {
             System.out.println("Recording disabled for this game");
         }
+        
+        System.out.println("Starting Local game - Mode: " + GameSession.getGameMode());
         
         Navigation.goTo(Routes.GAMEBOARD);
     }
