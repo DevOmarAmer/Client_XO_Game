@@ -29,6 +29,11 @@
                styleClass="hud-score" 
                AnchorPane.topAnchor="20.0" 
                AnchorPane.rightAnchor="30.0"/>
+        <Label fx:id="lblLevel" 
+               text="LEVEL: 1" 
+               styleClass="hud-score" 
+               AnchorPane.topAnchor="50.0" 
+               AnchorPane.rightAnchor="30.0"/>
     </AnchorPane>
 
     <VBox fx:id="gameOverPane"

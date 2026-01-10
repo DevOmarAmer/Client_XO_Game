@@ -30,6 +30,8 @@ public class SnakeController {
     @FXML
     private Label lblLiveScore;    // Live score in HUD
     @FXML
+    private Label lblLevel;        // Live level in HUD
+    @FXML
     private VBox gameOverPane;
 
     private GraphicsContext gc;
@@ -52,10 +54,13 @@ public class SnakeController {
     private Direction nextDirection = Direction.RIGHT;
     private Point food;
     private int score = 0;
+    private int level = 1;
+    private int foodsEatenInCurrentLevel = 0;
+    private static final int LEVEL_UP_FOOD_THRESHOLD = 5; // Eat 5 foods to level up
 
     private AnimationTimer gameLoop;
     private long lastUpdate = 0;
-    private static final long MOVE_INTERVAL = 80_000_000;
+    private static final long BASE_MOVE_INTERVAL = 100_000_000; // Slower base speed
     private boolean isGameRunning = false;
 
     @FXML
@@ -104,6 +109,8 @@ public class SnakeController {
         direction = Direction.RIGHT;
         nextDirection = Direction.RIGHT;
         score = 0;
+        level = 1; // Initialize level
+        foodsEatenInCurrentLevel = 0; // Reset food count for current level
         updateScoreUI();
 
         spawnFood();
@@ -123,7 +130,8 @@ public class SnakeController {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (now - lastUpdate >= MOVE_INTERVAL) {
+                long currentMoveInterval = getSpeedForLevel(level);
+                if (now - lastUpdate >= currentMoveInterval) {
                     update();
                     draw();
                     lastUpdate = now;
@@ -131,6 +139,13 @@ public class SnakeController {
             }
         };
         gameLoop.start();
+    }
+
+    private long getSpeedForLevel(int currentLevel) {
+        // Adjust the multiplier to control how much faster each level gets
+        // Example: Level 1 = 100ms, Level 2 = 90ms, Level 3 = 80ms, etc.
+        long interval = BASE_MOVE_INTERVAL - (currentLevel - 1) * 10_000_000;
+        return Math.max(interval, 30_000_000); // Minimum interval (max speed)
     }
 
     private void update() {
@@ -164,6 +179,12 @@ public class SnakeController {
 
         if (newHead.equals(food)) {
             score++;
+            foodsEatenInCurrentLevel++;
+            if (foodsEatenInCurrentLevel >= LEVEL_UP_FOOD_THRESHOLD) {
+                level++;
+                foodsEatenInCurrentLevel = 0; // Reset for the new level
+                // Game speed will automatically update due to getSpeedForLevel in gameLoop
+            }
             updateScoreUI();
             spawnFood();
         } else {
@@ -173,6 +194,7 @@ public class SnakeController {
 
     private void updateScoreUI() {
         lblLiveScore.setText("SCORE: " + score);
+        lblLevel.setText("LEVEL: " + level);
     }
 
     private void draw() {
