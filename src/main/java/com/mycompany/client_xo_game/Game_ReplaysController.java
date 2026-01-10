@@ -141,42 +141,45 @@ public class Game_ReplaysController {
         }
     }
 
-    @FXML
-    private void handleWatch() {
-        int selectedIndex = replaysList.getSelectionModel().getSelectedIndex();
+   
+@FXML
+private void handleWatch() {
+    int selectedIndex = replaysList.getSelectionModel().getSelectedIndex();
 
-        // Basic validation
-        if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
-            return;
-        }
-
-        File selectedFile = gameFiles[selectedIndex];
-        JsonObject record = GameRecorder.loadGameRecord(selectedFile);
-
-        if (record == null) {
-            System.err.println("Error loading record");
-            return;
-        }
-
-        System.out.println("Loading replay: " + selectedFile.getName());
-
-        // Navigate to Gameboard with Replay Data
-        playExitTransition(() -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/Gameboard.fxml"));
-                Parent root = loader.load();
-
-                GameboardController controller = loader.getController();
-                controller.setReplayMode(record);
-
-                if (rootPane.getScene() != null) {
-                    rootPane.getScene().setRoot(root);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+    // Check if no selection or invalid index
+    if (selectedIndex < 0 || gameFiles == null || selectedIndex >= gameFiles.length) {
+        showAlert("Please select a replay to watch");
+        return;
     }
+
+    File selectedFile = gameFiles[selectedIndex];
+    JsonObject record = GameRecorder.loadGameRecord(selectedFile);
+
+    if (record == null) {
+        showAlert("Error loading replay");
+        return;
+    }
+
+    System.out.println("Loading replay: " + selectedFile.getName());
+
+    // Navigate to Gameboard with Replay Data
+    playExitTransition(() -> {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/Gameboard.fxml"));
+            Parent root = loader.load();
+
+            GameboardController controller = loader.getController();
+            controller.setReplayMode(record);
+
+            if (rootPane.getScene() != null) {
+                rootPane.getScene().setRoot(root);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error loading replay: " + e.getMessage());
+        }
+    });
+}
 
     @FXML
     private void handleDelete() {
@@ -191,9 +194,8 @@ public class Game_ReplaysController {
 
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
 
-        // --- STYLE APPLIED HERE ---
         styleDialog(confirmAlert);
-        // --------------------------
+       
 
         confirmAlert.setTitle("Delete Replay");
         confirmAlert.setHeaderText("Delete this replay?");
