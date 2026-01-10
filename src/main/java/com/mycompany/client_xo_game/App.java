@@ -10,6 +10,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.media.Media;       
+import javafx.scene.media.MediaPlayer; 
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import java.io.IOException;
@@ -19,6 +21,9 @@ public class App extends Application {
 
     private static Scene scene;
     private static Stage stage;
+
+    // Keep the player static so it survives scene changes
+    private static MediaPlayer backgroundMusicPlayer;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -30,21 +35,60 @@ public class App extends Application {
         stage.initStyle(StageStyle.UNDECORATED);
         scene = new Scene(loadFXML("Splash"), 1400, 800);
 
-        // --- SAFELY LOAD CSS ---
-        // Looks for file in src/main/resources/styles/styles.css
+        // --- LOAD CSS ---
         var cssUrl = getClass().getResource("/styles/styles.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());
         } else {
-            System.out.println("⚠️ WARNING: Could not find styles.css in /styles/ folder.");
+            System.out.println("⚠️ WARNING: Could not find styles.css");
         }
 
         setupGlobalKeys();
         setupWindowDragging();
 
+        // --- START MUSIC HERE ---
+        playBackgroundMusic();
+
         stage.setScene(scene);
         stage.setTitle("XO Game");
         stage.show();
+    }
+
+    private void playBackgroundMusic() {
+        try {
+            // Load the file from resources
+            var musicFile = getClass().getResource("/assets/game_sound.mp3");
+
+            if (musicFile != null) {
+                Media media = new Media(musicFile.toExternalForm());
+                backgroundMusicPlayer = new MediaPlayer(media);
+
+                // Set volume (0.0 to 1.0)
+                backgroundMusicPlayer.setVolume(0.5);
+
+                // Loop the music indefinitely
+                backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
+                backgroundMusicPlayer.play();
+            } else {
+                System.out.println("⚠️ WARNING: Could not find game_music.mp3");
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Error playing music: " + e.getMessage());
+        }
+    }
+
+    // --- OPTIONAL: Method to toggle sound from other controllers ---
+    public static void toggleMusic() {
+        if (backgroundMusicPlayer == null) {
+            return;
+        }
+
+        if (backgroundMusicPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+            backgroundMusicPlayer.pause();
+        } else {
+            backgroundMusicPlayer.play();
+        }
     }
 
     private void setupGlobalKeys() {
@@ -72,7 +116,6 @@ public class App extends Application {
         });
     }
 
-    // --- EXIT ALERT WITH CUSTOM THEME ---
     public static void showExitAlert() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit Game");
@@ -86,12 +129,9 @@ public class App extends Application {
         ButtonType buttonStay = new ButtonType("STAY");
         alert.getButtonTypes().setAll(buttonExit, buttonStay);
 
-        // --- APPLY CSS ID TO ALERT ---
         DialogPane dialogPane = alert.getDialogPane();
-        // This ID matches the "#xo-alert" in your CSS file
         dialogPane.setId("xo-alert");
 
-        // Add the stylesheet to the alert explicitly
         var cssUrl = App.class.getResource("/styles/styles.css");
         if (cssUrl != null) {
             dialogPane.getStylesheets().add(cssUrl.toExternalForm());
@@ -99,6 +139,10 @@ public class App extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonExit) {
+            // Stop music before exiting (good practice)
+            if (backgroundMusicPlayer != null) {
+                backgroundMusicPlayer.stop();
+            }
             Platform.exit();
             System.exit(0);
         }
