@@ -1,10 +1,16 @@
 package com.mycompany.client_xo_game;
 
+import com.mycompany.client_xo_game.model.GameSession;
 import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
 import com.mycompany.client_xo_game.util.ClientUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.json.JSONObject;
 
 public abstract class AbstractNetworkController {
@@ -61,8 +67,71 @@ public abstract class AbstractNetworkController {
         // Default empty implementation, subclasses can override
     }
 
+    
     protected void handleGameInvite(JSONObject response) {
-        // Default empty implementation, subclasses can override
+        String from = response.getString("from");
+        boolean inviterWantsRecording = response.optBoolean("recordGame", false);
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        ClientUtils.styleAlert(alert);
+        alert.setTitle("Game Invitation");
+
+        String recordingNote = inviterWantsRecording
+                ? " and wants to record the game"
+                : "";
+        alert.setHeaderText(from + " wants to play with you" + recordingNote);
+
+        CheckBox recordCheckbox = new CheckBox("I also want to record this game (saved to MY records)");
+        recordCheckbox.setSelected(false);
+        recordCheckbox.setStyle("-fx-text-fill: white;"); // Apply style here
+
+        VBox dialogContent = new VBox(10);
+        dialogContent.getChildren().add(recordCheckbox);
+
+        Label explanationLabel = new Label();
+        if (inviterWantsRecording) {
+            explanationLabel.setText(from + " will have this game saved to their records.\n"
+                    + "You can also save it to YOUR records by checking the box above.\n"
+                    + "Each player gets their own recording with their name first.");
+        } else {
+            explanationLabel.setText("Check the box if you want to save this game to YOUR records.\n"
+                    + "The file will have YOUR name first in the filename.");
+        }
+        explanationLabel.setWrapText(true);
+        explanationLabel.setStyle("-fx-text-fill: white;"); // Apply style here
+        dialogContent.getChildren().add(explanationLabel);
+
+        alert.getDialogPane().setContent(dialogContent);
+
+        ButtonType acceptBtn = new ButtonType("Accept");
+        ButtonType declineBtn = new ButtonType("Decline", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(acceptBtn, declineBtn);
+
+        alert.showAndWait().ifPresent(button -> {
+            boolean receiverWantsRecording = recordCheckbox.isSelected();
+
+            JSONObject inviteResponse = new JSONObject();
+            inviteResponse.put("type", "invite_response");
+            inviteResponse.put("from", from);
+            inviteResponse.put("accepted", button == acceptBtn);
+
+            if (button == acceptBtn) {
+                inviteResponse.put("inviterWantsRecording", inviterWantsRecording);
+                inviteResponse.put("receiverWantsRecording", receiverWantsRecording);
+
+                if (receiverWantsRecording) {
+                    GameSession.startOnlineRecording(currentUsername, from);
+                    System.out.println("Recording started for " + currentUsername + " (YOU are player1 in your file)");
+                }
+
+                System.out.println("Invitation accepted"
+                        + (receiverWantsRecording ? " with your recording enabled" : ""));
+            } else {
+                System.out.println("Invitation declined");
+            }
+
+            NetworkConnection.getInstance().sendMessage(inviteResponse);
+        });
     }
 
     protected void handleInviteResponse(JSONObject response) {
@@ -70,7 +139,14 @@ public abstract class AbstractNetworkController {
     }
 
     protected void handleGameStart(JSONObject response) {
-        // Default empty implementation, subclasses can override
+        String opponent = response.getString("opponent");
+        String yourSymbol = response.getString("yourSymbol");
+        boolean yourTurn = response.getBoolean("yourTurn");
+
+        System.out.println("Game starting! Opponent: " + opponent + ", Symbol: " + yourSymbol + ", Turn: " + yourTurn);
+
+        // Navigate to online gameboard
+        Navigation.goToOnlineGame(opponent, yourSymbol, yourTurn);
     }
 
     protected void handleInviteSent(JSONObject response) {
