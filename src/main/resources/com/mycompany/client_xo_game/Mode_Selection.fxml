@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
-<?import java.lang.String?>
+
 <StackPane fx:id="rootPane"
            prefWidth="900" prefHeight="700"
            stylesheets="@/styles/mode_selection.css"
@@ -59,11 +59,26 @@
                     text="View Previous Matches"
                     onAction="#onViewPreviousMatches"
                     maxWidth="Infinity"
-                    styleClass = "xo-btn pink-glow">
-    
-    
-    
-            </Button>
+                    styleClass="xo-btn pink-glow"/>
         </VBox>
     </VBox>
+
+    <AnchorPane pickOnBounds="false">
+        <HBox spacing="15" alignment="CENTER_RIGHT"
+              AnchorPane.topAnchor="30.0" 
+              AnchorPane.rightAnchor="30.0">
+            
+            <Slider fx:id="volumeSlider" 
+                    min="0" max="1" value="0.3" 
+                    blockIncrement="0.1" 
+                    prefWidth="100"
+                    styleClass="volume-slider"/>
+
+            <Button fx:id="btnMute" 
+                    text="🔊" 
+                    onAction="#toggleMute"
+                    styleClass="icon-btn"/>
+        </HBox>
+    </AnchorPane>
+
 </StackPane>

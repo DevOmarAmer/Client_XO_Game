@@ -10,8 +10,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.media.Media;       
-import javafx.scene.media.MediaPlayer; 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import java.io.IOException;
@@ -22,8 +22,10 @@ public class App extends Application {
     private static Scene scene;
     private static Stage stage;
 
-    // Keep the player static so it survives scene changes
+    // --- AUDIO SYSTEM ---
     private static MediaPlayer backgroundMusicPlayer;
+    private static boolean isMuted = false;
+    private static double lastVolume = 0.3;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -35,7 +37,7 @@ public class App extends Application {
         stage.initStyle(StageStyle.UNDECORATED);
         scene = new Scene(loadFXML("Splash"), 1400, 800);
 
-        // --- LOAD CSS ---
+        // Load CSS
         var cssUrl = getClass().getResource("/styles/styles.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());
@@ -46,7 +48,7 @@ public class App extends Application {
         setupGlobalKeys();
         setupWindowDragging();
 
-        // --- START MUSIC HERE ---
+        // Start Music
         playBackgroundMusic();
 
         stage.setScene(scene);
@@ -54,43 +56,59 @@ public class App extends Application {
         stage.show();
     }
 
+    // --- AUDIO LOGIC ---
     private void playBackgroundMusic() {
         try {
-            // Load the file from resources
             var musicFile = getClass().getResource("/assets/game_sound.mp3");
-
             if (musicFile != null) {
                 Media media = new Media(musicFile.toExternalForm());
                 backgroundMusicPlayer = new MediaPlayer(media);
-
-                // Set volume (0.0 to 1.0)
-                backgroundMusicPlayer.setVolume(0.5);
-
-                // Loop the music indefinitely
+                backgroundMusicPlayer.setVolume(lastVolume);
                 backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-
                 backgroundMusicPlayer.play();
             } else {
-                System.out.println("⚠️ WARNING: Could not find game_music.mp3");
+                System.out.println("⚠️ WARNING: Could not find /sounds/game_music.mp3");
             }
         } catch (Exception e) {
-            System.out.println("❌ Error playing music: " + e.getMessage());
+            System.out.println("❌ Error loading music: " + e.getMessage());
         }
     }
 
-    // --- OPTIONAL: Method to toggle sound from other controllers ---
-    public static void toggleMusic() {
+    public static void setVolume(double volume) {
+        if (backgroundMusicPlayer != null) {
+            backgroundMusicPlayer.setVolume(volume);
+            if (volume > 0) {
+                isMuted = false;
+                lastVolume = volume;
+            }
+        }
+    }
+
+    public static boolean toggleMute() {
         if (backgroundMusicPlayer == null) {
-            return;
+            return false;
         }
 
-        if (backgroundMusicPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-            backgroundMusicPlayer.pause();
+        isMuted = !isMuted;
+        if (isMuted) {
+            lastVolume = backgroundMusicPlayer.getVolume();
+            backgroundMusicPlayer.setMute(true);
         } else {
-            backgroundMusicPlayer.play();
+            backgroundMusicPlayer.setMute(false);
+            backgroundMusicPlayer.setVolume(lastVolume);
         }
+        return isMuted;
     }
 
+    public static double getVolume() {
+        return (backgroundMusicPlayer != null && !isMuted) ? backgroundMusicPlayer.getVolume() : 0.0;
+    }
+
+    public static boolean isMuted() {
+        return isMuted;
+    }
+
+    // --- WINDOW & NAV LOGIC ---
     private void setupGlobalKeys() {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.F11) {
@@ -139,10 +157,6 @@ public class App extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == buttonExit) {
-            // Stop music before exiting (good practice)
-            if (backgroundMusicPlayer != null) {
-                backgroundMusicPlayer.stop();
-            }
             Platform.exit();
             System.exit(0);
         }

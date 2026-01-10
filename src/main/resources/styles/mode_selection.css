@@ -99,3 +99,44 @@
     -fx-scale-x: 0.96;
     -fx-scale-y: 0.96;
 }
+
+/* ======================================
+   NEW: AUDIO CONTROLS
+   ====================================== */
+.icon-btn {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-text-fill: #00fff0;
+    -fx-font-size: 20px;
+    -fx-min-width: 45px;
+    -fx-min-height: 45px;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(0, 255, 240, 0.3);
+}
+
+.icon-btn:hover {
+    -fx-background-color: rgba(0, 255, 240, 0.2);
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* Customizing the Volume Slider */
+.volume-slider {
+    -fx-cursor: hand;
+}
+.volume-slider .track {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-pref-height: 4px;
+    -fx-background-radius: 5px;
+}
+.volume-slider .thumb {
+    -fx-background-color: #00d2ff;
+    -fx-pref-width: 14px;
+    -fx-pref-height: 14px;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, #00d2ff, 5, 0.5, 0, 0);
+}
+.volume-slider:disabled {
+    -fx-opacity: 0.5;
+}
