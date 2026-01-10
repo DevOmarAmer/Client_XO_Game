@@ -13,6 +13,7 @@ import com.mycompany.client_xo_game.navigation.Navigation;
 import com.mycompany.client_xo_game.navigation.Routes;
 import com.mycompany.client_xo_game.model.GameSession;
 import javafx.application.Platform;
+import javafx.stage.StageStyle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -429,14 +430,24 @@ public class Online_PlayersController implements Runnable {
         playExitTransition(() -> Navigation.goTo(Routes.LEADERBOARD));
     }
 
-    private void styleAlert(Alert alert) {
-        var dialogPane = alert.getDialogPane();
+private void styleAlert(Alert alert) {
+        // 1. Remove the "X" Window Bar
+        alert.initStyle(StageStyle.UNDECORATED);
 
+        // 2. Set the owner to App.getStage() so it stays on top of the app
+        if (App.getStage() != null) {
+            alert.initOwner(App.getStage());
+        }
+
+        // 3. Apply CSS
+        var dialogPane = alert.getDialogPane();
         dialogPane.setId("xo-alert");
 
-        dialogPane.getStylesheets().add(
-                getClass().getResource("/styles/alert.css").toExternalForm()
-        );
+        // Use the global styles.css we created earlier
+        var cssUrl = getClass().getResource("/styles/styles.css");
+        if (cssUrl != null) {
+            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
+        }
     }
 
 }

@@ -32,6 +32,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,6 +44,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.json.JSONObject;
 
 public class GameboardController implements Initializable {
@@ -297,23 +299,38 @@ public class GameboardController implements Initializable {
         boolean draw = result.equals("draw");
         showOnlineGameOverDialog(won, draw, isForfeit || opponentForfeited, forfeiter);
     }
-
-    private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeiter) {
+private void showOnlineGameOverDialog(boolean won, boolean draw, boolean isForfeit, String forfeiter) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/client_xo_game/GameOverDialog.fxml"));
             Parent root = loader.load();
 
+            GameOverDialogController controller = loader.getController();
+
+            // 1. Create a NEW Stage
             Stage dialogStage = new Stage();
 
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setTitle("Game Over");
-            dialogStage.setScene(new Scene(root));
+            // 2. THIS REMOVES THE X BUTTON AND BORDERS (From alert-decoration branch)
+            dialogStage.initStyle(StageStyle.UNDECORATED); 
+            // Note: Use StageStyle.TRANSPARENT if you want rounded corners, but remember to set scene fill to null
 
-            GameOverDialogController controller = loader.getController();
+            // 3. Keep it on top of the game (From alert-decoration branch)
+            if (App.getStage() != null) {
+                dialogStage.initOwner(App.getStage());
+                dialogStage.initModality(Modality.APPLICATION_MODAL); // Block clicking the game behind
+            }
+
+            // 4. Pass Data
             controller.setDialogStage(dialogStage);
-            controller.initData(won, draw, isForfeit, opponentName);
+            // We use 'opponentName' (the class variable) because we want to show who we were playing against
+            controller.initData(won, draw, isForfeit, opponentName); 
 
+            // 5. Set Scene
+            Scene scene = new Scene(root);
+            // scene.setFill(null); // Uncomment this if you change StageStyle to TRANSPARENT above
+            
+            dialogStage.setScene(scene);
             dialogStage.showAndWait();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -901,7 +918,7 @@ private void goBack() {
 
                     highlightWinningCells(winnerCell);
 
-                    showGameEndDialog("It's a Win!", "Congrats you won");
+                    showGameEndDialog("It's a Winn!", "Congrats you won");
                     actionTaken = true;
                 } else if (gameBoard.isFull()) {
                     gameEnded = true;
@@ -988,18 +1005,34 @@ private void goBack() {
         alert.showAndWait();
     }
 
- 
+    // ==========================================
+    //  STYLING METHODS
+    // ==========================================
     private void styleAlert(Alert alert) {
         styleDialog(alert);
     }
 
+    // UPDATED GENERIC METHOD: Removes X button and links to global styles
+private void styleDialog(Dialog<?> dialog) {
+        // 1. Remove the "X" Window Bar
+        dialog.initStyle(StageStyle.UNDECORATED);
 
-    private void styleDialog(Dialog<?> dialog) {
+        // 2. Set the owner to App.getStage() so it stays on top
+        if (App.getStage() != null) {
+            dialog.initOwner(App.getStage());
+        }
+
+        // 3. Apply CSS
         var dialogPane = dialog.getDialogPane();
-        dialogPane.setId("xo-alert"); 
-        dialogPane.getStylesheets().add(
-                getClass().getResource("/styles/alert.css").toExternalForm()
-        );
+        dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
+
+        // MERGED: Use the global styles.css with the safety check
+        var cssUrl = getClass().getResource("/styles/styles.css");
+        if (cssUrl != null) {
+            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
+        } else {
+            System.err.println("WARNING: Could not find /styles/styles.css");
+        }
     }
 
     // ==================== UTILITY METHODS ====================

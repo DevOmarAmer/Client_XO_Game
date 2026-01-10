@@ -13,6 +13,7 @@ import com.mycompany.client_xo_game.navigation.Routes;
 import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.StageStyle;
 import org.json.JSONObject;
 
 public class ProfileController {
@@ -245,18 +246,29 @@ public class ProfileController {
     // ==========================================
     //  STYLING METHODS
     // ==========================================
-    // Original method redirected to new one
     private void styleAlert(Alert alert) {
         styleDialog(alert);
     }
 
-    // NEW GENERIC METHOD: Works for both Alerts and Dialogs
+    // UPDATED GENERIC METHOD: Removes X button and links to global styles
     private void styleDialog(Dialog<?> dialog) {
+        // 1. Remove the "X" Window Bar
+        dialog.initStyle(StageStyle.UNDECORATED);
+
+        // 2. Set the owner to App.getStage() so it stays on top
+        if (App.getStage() != null) {
+            dialog.initOwner(App.getStage());
+        }
+
+        // 3. Apply CSS
         var dialogPane = dialog.getDialogPane();
         dialogPane.setId("xo-alert"); // Reuses the ID from your CSS
-        dialogPane.getStylesheets().add(
-                getClass().getResource("/styles/alert.css").toExternalForm()
-        );
+
+        // Use the global styles.css we created
+        var cssUrl = getClass().getResource("/styles/styles.css");
+        if (cssUrl != null) {
+            dialogPane.getStylesheets().add(cssUrl.toExternalForm());
+        }
     }
 
     @FXML
