@@ -20,7 +20,7 @@
     <AnchorPane pickOnBounds="false">
         <Button text="← EXIT" 
                 onAction="#goToMenu" 
-                styleClass="hud-btn" 
+                styleClass="exit-btn" 
                 AnchorPane.topAnchor="20.0" 
                 AnchorPane.leftAnchor="20.0"/>
 

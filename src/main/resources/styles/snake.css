@@ -1,6 +1,6 @@
 /* resources/styles/snake.css */
 
-/* 1. CYBERPUNK BACKGROUND WITH ANIMATED GRID */
+/* 1. CYBERPUNK BACKGROUND */
 .main-root {
     -fx-background-color: #0a0a1a;
 }
@@ -19,13 +19,14 @@
     -fx-border-radius: 8;
     -fx-padding: 8 16;
     -fx-effect: dropshadow(gaussian, #00f3ff, 3, 0.2, 0, 0);
+    transition: all 0.2s;
 }
 
 .hud-btn:hover {
-  
-    
-    -fx-border-color: #66ffff;
-    -fx-effect: dropshadow(gaussian, #66ffff, 7, 0.4, 0, 0);
+    -fx-background-color: rgba(0, 243, 255, 0.15); /* Subtle cyan tint */
+    -fx-border-color: #00ffff;      /* Brighter border */
+    -fx-text-fill: #00ffff;         /* Brighter text */
+    -fx-effect: dropshadow(gaussian, #00ffff, 8, 0.4, 0, 0); /* Sharper glow */
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
@@ -43,14 +44,14 @@
     -fx-border-radius: 8;
 }
 
-/* 3. ENHANCED GAME OVER PANEL */
+/* 3. GAME OVER PANEL - SHARP & CLEAN */
 .game-over-panel {
-    -fx-background-color: rgba(10, 10, 26, 0.98);
-    -fx-background-radius: 20;
+    -fx-background-color: #0d0d21;
+    -fx-background-radius: 12;
     -fx-border-color: #ff00ff;
     -fx-border-width: 2px;
-    -fx-border-radius: 20;
-    -fx-effect: dropshadow(gaussian, #ff00ff, 10, 0.3, 0, 0);
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, #ff00ff, 4, 0.0, 0, 0);
     -fx-padding: 30;
     -fx-max-width: 450;
     -fx-min-width: 400;
@@ -61,17 +62,17 @@
     -fx-font-family: "Impact", "Arial Black", sans-serif;
     -fx-font-size: 52px;
     -fx-font-weight: bold;
-    -fx-letter-spacing: 3px;
-    -fx-stroke: #ffffff; /* White stroke for sharper definition */
-    -fx-stroke-width: 1px; /* Subtle stroke width */
-    -fx-effect: dropshadow(gaussian, #ff00ff, 7, 0.4, 0, 0); /* Reduced glow */
+    -fx-letter-spacing: 2px;
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 1px;
+    -fx-effect: null; /* Clean, no glow */
 }
 
 .separator-line {
     -fx-stroke: #00f3ff;
-    -fx-stroke-width: 3;
-    -fx-opacity: 0.7;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 5, 0.3, 0, 0);
+    -fx-stroke-width: 2;
+    -fx-opacity: 0.8;
+    -fx-effect: null; /* Clean, no glow */
 }
 
 .final-score {
@@ -79,49 +80,68 @@
     -fx-font-family: "Courier New", monospace;
     -fx-font-size: 32px;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 3, 0.2, 0, 0);
+    -fx-effect: null; /* Clean, no glow */
 }
 
-/* 4. CYBERPUNK BUTTONS */
+/* 4. ACTION BUTTONS (Cyan, Pink, Red) */
 .action-btn {
     -fx-font-family: "Courier New", monospace;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
     -fx-padding: 15 35;
-    -fx-background-radius: 8;
+    -fx-background-radius: 6;
     -fx-border-width: 2px;
-    -fx-border-radius: 8;
+    -fx-border-radius: 6;
     -fx-min-width: 300;
+    -fx-background-color: rgba(10, 10, 26, 0.8);
+    transition: all 0.2s ease-in-out;
 }
 
-/* Cyan Button Style (Play Again) */
+/* --- CYAN BUTTON (Play Again) --- */
 .cyan-btn {
-    -fx-background-color: rgba(0, 243, 255, 0.15);
-    -fx-border-color: #00f3ff;
-    -fx-text-fill: #00f3ff;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 4, 0.25, 0, 0);
+    -fx-border-color: #00b8c4;
+    -fx-text-fill: #00b8c4;
+    -fx-effect: dropshadow(gaussian, #00b8c4, 2, 0.0, 0, 0);
 }
 
 .cyan-btn:hover {
-    -fx-background-color: #00f3ff;
-    -fx-text-fill: #0a0a1a;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 10, 0.5, 0, 0);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
+    -fx-background-color: rgba(0, 255, 240, 0.15); /* Transparent Cyan wash */
+    -fx-border-color: #00f3ff;      /* Bright Cyan Border */
+    -fx-text-fill: #00f3ff;         /* Bright Cyan Text */
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
-/* Pink Button Style (Abort/Menu) */
+/* --- PINK BUTTON (Menu) --- */
 .pink-btn {
-    -fx-background-color: rgba(255, 0, 255, 0.15);
-    -fx-border-color: #ff00ff;
-    -fx-effect: dropshadow(gaussian, #ff00ff, 4, 0.25, 0, 0);
+    -fx-border-color: #c400c4;
+    -fx-text-fill: #c400c4;
+    -fx-effect: dropshadow(gaussian, #c400c4, 2, 0.0, 0, 0);
 }
 
 .pink-btn:hover {
-    -fx-background-color: #ff00ff;
-    -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(gaussian, #ff00ff, 10, 0.5, 0, 0);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
+    -fx-background-color: rgba(255, 0, 255, 0.15); /* Transparent Pink wash */
+    -fx-border-color: #ff00ff;      /* Bright Pink Border */
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-effect: dropshadow(gaussian, #ff00ff, 15, 0.6, 0, 0); /* Intense Glow */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* --- EXIT BUTTON (Red) --- */
+.exit-btn {
+    -fx-border-color: #c40000;
+    -fx-text-fill: #c40000;
+    -fx-effect: dropshadow(gaussian, #c40000, 2, 0.0, 0, 0);
+}
+
+.exit-btn:hover {
+    -fx-background-color: rgba(255, 0, 0, 0.15); /* Transparent Red wash */
+    -fx-border-color: #ff0000;      /* Bright Red Border */
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-effect: dropshadow(gaussian, #ff0000, 15, 0.6, 0, 0); /* Intense Glow */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
