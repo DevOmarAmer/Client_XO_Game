@@ -142,6 +142,14 @@ public class LoginController {
                 System.out.println("Login successful for user: " + username);
 
                 CurrentUser.setUsername(usernameField.getText().trim());
+
+                // After successful login, send a status update to the server
+                JSONObject statusUpdateJson = new JSONObject();
+                statusUpdateJson.put("type", "status_update");
+                statusUpdateJson.put("username", username);
+                statusUpdateJson.put("status", "ONLINE");
+                NetworkConnection.getInstance().sendMessage(statusUpdateJson);
+
                 playExitTransition(() -> Navigation.goTo(Routes.ONLINE_PLAYERS));
             } else {
                 messageLabel.setText("Login Failed: " + json.optString("reason", "Unknown error"));
