@@ -36,7 +36,7 @@ public class Game_ReplaysController extends AbstractNetworkController {
     private File[] gameFiles;
     private final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
     private final DateTimeFormatter isoFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    private String currentUsername;
+    
 
     @FXML
     public void initialize() {
