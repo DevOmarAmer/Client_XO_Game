@@ -1,108 +1,127 @@
 /* resources/styles/snake.css */
 
-/* 1. BACKGROUND */
+/* 1. CYBERPUNK BACKGROUND WITH ANIMATED GRID */
 .main-root {
-    -fx-background-color: #050510;
-    /* Cyber Grid */
-    -fx-background-image:
-        linear-gradient(rgba(0, 255, 240, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 240, 0.05) 1px, transparent 1px);
-    -fx-background-size: 40px 40px;
+    -fx-background-color: #0a0a1a;
 }
 
 /* 2. HUD (Heads-Up Display) */
 .hud-btn {
-    -fx-background-color: rgba(255, 255, 255, 0.05);
-    -fx-text-fill: rgba(255, 255, 255, 0.7);
-    -fx-font-family: "Courier New";
+    -fx-background-color: rgba(10, 10, 26, 0.8);
+    -fx-text-fill: #00f3ff;
+    -fx-font-family: "Courier New", monospace;
     -fx-font-weight: bold;
-    -fx-background-radius: 5;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8;
     -fx-cursor: hand;
-    -fx-border-color: rgba(255, 255, 255, 0.2);
-    -fx-border-radius: 5;
+    -fx-border-color: #00f3ff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8;
+    -fx-padding: 8 16;
+    -fx-effect: dropshadow(gaussian, #00f3ff, 8, 0.4, 0, 0);
 }
+
 .hud-btn:hover {
-    -fx-background-color: rgba(255, 0, 127, 0.2);
-    -fx-text-fill: #ff007f;
-    -fx-border-color: #ff007f;
+  
+    
+    -fx-border-color: #66ffff;
+    -fx-effect: dropshadow(gaussian, #66ffff, 15, 0.8, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 
 .hud-score {
     -fx-text-fill: #00f3ff;
-    -fx-font-family: "Courier New";
-    -fx-font-size: 20px;
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 10, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, #00f3ff, 12, 0.6, 0, 0);
+    -fx-background-color: rgba(10, 10, 26, 0.7);
+    -fx-padding: 8 16;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(0, 243, 255, 0.3);
+    -fx-border-width: 1px;
+    -fx-border-radius: 8;
 }
 
-/* 3. IMPROVED GAME OVER PANEL */
+/* 3. ENHANCED GAME OVER PANEL */
 .game-over-panel {
-    -fx-background-color: rgba(5, 5, 16, 0.95);
-    -fx-background-radius: 15;
-    -fx-border-color: #ff007f; /* Neon Pink Border */
+    -fx-background-color: rgba(10, 10, 26, 0.98);
+    -fx-background-radius: 20;
+    -fx-border-color: #ff00ff;
     -fx-border-width: 3px;
-    -fx-border-radius: 15;
-    -fx-effect: dropshadow(three-pass-box, #ff007f, 30, 0.6, 0, 0); /* Strong Glow */
-    -fx-padding: 40;
-    -fx-max-width: 400;
-    -fx-min-width: 350;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, #ff00ff, 40, 0.7, 0, 0);
+    -fx-padding: 50;
+    -fx-max-width: 450;
+    -fx-min-width: 400;
 }
 
 .game-over-title {
-    -fx-text-fill: #ff007f;
-    -fx-font-family: "Impact"; /* Strong header font */
-    -fx-font-size: 48px;
-    -fx-letter-spacing: 2px;
-    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.5, 0, 0);
+    -fx-text-fill: #ff00ff;
+    -fx-font-family: "Impact", "Arial Black", sans-serif;
+    -fx-font-size: 52px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 3px;
+    -fx-effect: dropshadow(gaussian, #ff00ff, 20, 0.8, 0, 0);
 }
 
 .separator-line {
-    -fx-stroke: #00fff0;
-    -fx-stroke-width: 2;
-    -fx-opacity: 0.5;
-    -fx-effect: dropshadow(gaussian, #00fff0, 10, 0.5, 0, 0);
+    -fx-stroke: #00f3ff;
+    -fx-stroke-width: 3;
+    -fx-opacity: 0.7;
+    -fx-effect: dropshadow(gaussian, #00f3ff, 12, 0.6, 0, 0);
 }
 
 .final-score {
-    -fx-text-fill: white;
-    -fx-font-family: "Courier New";
-    -fx-font-size: 28px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 32px;
     -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 8, 0.5, 0, 0);
 }
 
-/* 4. BUTTONS */
+/* 4. CYBERPUNK BUTTONS */
 .action-btn {
-    -fx-font-family: "Courier New";
-    -fx-font-size: 18px;
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
-    -fx-padding: 12 30;
-    -fx-background-radius: 5;
+    -fx-padding: 15 35;
+    -fx-background-radius: 8;
     -fx-border-width: 2px;
-    -fx-border-radius: 5;
-    -fx-min-width: 250;
+    -fx-border-radius: 8;
+    -fx-min-width: 300;
 }
 
 /* Cyan Button Style (Play Again) */
 .cyan-btn {
-    -fx-background-color: rgba(0, 243, 255, 0.1);
+    -fx-background-color: rgba(0, 243, 255, 0.15);
     -fx-border-color: #00f3ff;
     -fx-text-fill: #00f3ff;
+    -fx-effect: dropshadow(gaussian, #00f3ff, 10, 0.5, 0, 0);
 }
+
 .cyan-btn:hover {
     -fx-background-color: #00f3ff;
-    -fx-text-fill: #050510;
-    -fx-effect: dropshadow(gaussian, #00f3ff, 15, 0.8, 0, 0);
+    -fx-text-fill: #0a0a1a;
+    -fx-effect: dropshadow(gaussian, #00f3ff, 20, 0.9, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
 
 /* Pink Button Style (Abort/Menu) */
 .pink-btn {
-    -fx-background-color: rgba(255, 0, 127, 0.1);
-    -fx-border-color: #ff007f;
-    -fx-text-fill: #ff007f;
+    -fx-background-color: rgba(255, 0, 255, 0.15);
+    -fx-border-color: #ff00ff;
+    -fx-text-fill: #ff00ff;
+    -fx-effect: dropshadow(gaussian, #ff00ff, 10, 0.5, 0, 0);
 }
+
 .pink-btn:hover {
-    -fx-background-color: #ff007f;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, #ff007f, 15, 0.8, 0, 0);
+    -fx-background-color: #ff00ff;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #ff00ff, 20, 0.9, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
