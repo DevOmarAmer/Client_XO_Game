@@ -5,7 +5,6 @@
     -fx-background-color: #080a12;
     -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #1a0b2e 0%, #080a12 100%);
 }
-
 .bg-symbol-x {
     -fx-font-size: 250px;
     -fx-font-family: "Arial Black";
@@ -16,7 +15,6 @@
     -fx-font-family: "Arial Black";
     -fx-text-fill: rgba(0, 255, 240, 0.04);
 }
-
 /* ======================================
    GLASS PANEL & TITLE
    ====================================== */
@@ -28,14 +26,12 @@
     -fx-padding: 40;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.9), 60, 0, 0, 0);
 }
-
 .title-neon-purple {
     -fx-fill: #d845ff;
     -fx-font-family: "Impact";
     -fx-font-size: 48px;
     -fx-effect: dropshadow(gaussian, #d845ff, 10, 0.1, 0, 0);
 }
-
 /* ======================================
    LIST VIEW STYLING
    ====================================== */
@@ -46,7 +42,6 @@
     -fx-border-radius: 20;
     -fx-padding: 10;
 }
-
 .neon-list-view .list-cell {
     -fx-text-fill: white;
     -fx-font-size: 16px;
@@ -57,7 +52,19 @@
     -fx-font-weight: bold;
 }
 
-.neon-list-view .list-cell:selected {
+/* CRITICAL FIX: Only show hover/selection on cells with actual content */
+.neon-list-view .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-cursor: default;
+}
+
+.neon-list-view .list-cell:empty:hover {
+    -fx-background-color: transparent;
+    -fx-cursor: default;
+}
+
+.neon-list-view .list-cell:filled:selected {
     -fx-background-color: rgba(191, 0, 255, 0.2);
     -fx-text-fill: #d845ff;
     -fx-border-color: #d845ff;
@@ -65,7 +72,7 @@
     -fx-border-radius: 10;
 }
 
-.neon-list-view .list-cell:hover {
+.neon-list-view .list-cell:filled:hover {
     -fx-background-color: rgba(191, 0, 255, 0.1);
     -fx-cursor: hand;
 }
@@ -73,7 +80,6 @@
 /* ======================================
    BUTTONS
    ====================================== */
-
 /* MATCHING BACK BUTTON STYLE */
 .xo-back-btn {
     -fx-background-color: transparent;
@@ -86,13 +92,11 @@
     -fx-padding: 10 25;
     -fx-cursor: hand;
 }
-
 .xo-back-btn:hover {
     -fx-background-color: rgba(0, 255, 240, 0.12);
     -fx-border-color: #00fff0;
     -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 10, 0.5, 0, 0);
 }
-
 /* WATCH BUTTON (Inner Glow Style) */
 .action-btn {
     -fx-background-color: transparent;
@@ -107,19 +111,16 @@
     -fx-font-size: 14px;
     -fx-transition: all 0.3s ease;
 }
-
 .action-btn:hover {
     -fx-background-color: rgba(216, 69, 255, 0.15);
     -fx-background-radius: 30;
     /* Inner shadow glow matching the purple theme */
     -fx-effect: innershadow(gaussian, #d845ff, 20, 0, 0, 0);
 }
-
 .hint-label {
     -fx-text-fill: rgba(255, 255, 255, 0.5);
     -fx-font-size: 12px;
 }
-
 /* Custom Scrollbar (Purple Theme) */
 .list-view .scroll-bar:vertical .thumb {
     -fx-background-color: rgba(191, 0, 255, 0.3);

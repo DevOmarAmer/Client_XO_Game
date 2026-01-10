@@ -1,12 +1,10 @@
-/*
- * Empty Stylesheet file.
- */
-/* Inherit base styles */
+/* ======================================
+   THEMATIC BACKGROUND
+   ====================================== */
 .main-root {
     -fx-background-color: #080a12;
     -fx-background-image: radial-gradient(center 50% 50%, radius 100%, #1a0b2e 0%, #080a12 100%);
 }
-
 .bg-symbol-x {
     -fx-font-size: 250px;
     -fx-font-family: "Arial Black";
@@ -14,97 +12,118 @@
 }
 .bg-symbol-o {
     -fx-font-size: 200px;
-    -fx-font-family: "Arial Black";
+/*    -fx-font-family: "Arial Black";*/
     -fx-text-fill: rgba(0, 255, 240, 0.04);
 }
 
 .xo-glass-panel {
-    -fx-background-color: rgba(255, 255, 255, 0.03);
-    -fx-background-radius: 30;
+    -fx-background-color: rgba(255, 255, 255, 0.02);
+    -fx-background-radius: 40;
     -fx-border-color: rgba(191, 0, 255, 0.2);
-    -fx-border-radius: 30;
-    -fx-padding: 30;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 40, 0, 0, 0);
+    -fx-border-radius: 40;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.9), 60, 0, 0, 0);
 }
-
 .title-neon-purple {
     -fx-fill: #d845ff;
     -fx-font-family: "Impact";
     -fx-font-size: 48px;
     -fx-effect: dropshadow(gaussian, #d845ff, 10, 0.1, 0, 0);
 }
-
+/* ======================================
+   LIST VIEW STYLING
+   ====================================== */
 .neon-list-view {
-    -fx-background-color: rgba(0, 0, 0, 0.2);
-    -fx-background-radius: 15;
-    -fx-border-color: rgba(191, 0, 255, 0.2);
-    -fx-border-radius: 15;
-    -fx-padding: 5;
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(191, 0, 255, 0.3);
+    -fx-border-radius: 20;
+    -fx-padding: 10;
 }
-
 .neon-list-view .list-cell {
     -fx-text-fill: white;
     -fx-font-size: 16px;
-    -fx-padding: 12;
+    -fx-padding: 15;
     -fx-background-color: transparent;
     -fx-border-color: rgba(255, 255, 255, 0.05);
     -fx-border-width: 0 0 1 0;
+    -fx-font-weight: bold;
 }
 
-.neon-list-view .list-cell:selected {
+/* CRITICAL FIX: Only show hover/selection on cells with actual content */
+.neon-list-view .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-cursor: default;
+}
+
+.neon-list-view .list-cell:empty:hover {
+    -fx-background-color: transparent;
+    -fx-cursor: default;
+}
+
+.neon-list-view .list-cell:filled:selected {
     -fx-background-color: rgba(191, 0, 255, 0.2);
     -fx-text-fill: #d845ff;
+    -fx-border-color: #d845ff;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.neon-list-view .list-cell:filled:hover {
+    -fx-background-color: rgba(191, 0, 255, 0.1);
+    -fx-cursor: hand;
 }
 
 /* ======================================
-   UNIFIED BUTTON STYLES
+   BUTTONS
    ====================================== */
-
-/* 1. The Back Button (Now matches Action) */
+/* MATCHING BACK BUTTON STYLE */
 .xo-back-btn {
-    -fx-background-color: rgba(255, 255, 255, 0.05);
-    -fx-border-color: #d845ff;
-    -fx-border-radius: 20;
-    -fx-background-radius: 20;
-    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(0, 255, 240, 0.4);
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+    -fx-background-insets: 0;
+    -fx-text-fill: #00fff0;
     -fx-font-weight: bold;
-    -fx-padding: 10 30;
+    -fx-padding: 10 25;
     -fx-cursor: hand;
-    -fx-transition: 0.3s; /* Smooth animation */
 }
-
 .xo-back-btn:hover {
-    -fx-background-color: #d845ff;
-    -fx-text-fill: #080a12;
-    /* Purple glow instead of Cyan */
-    -fx-effect: dropshadow(gaussian, #d845ff, 20, 0.4, 0, 0);
+    -fx-background-color: rgba(0, 255, 240, 0.12);
+    -fx-border-color: #00fff0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 240, 0.6), 10, 0.5, 0, 0);
 }
-
-/* 2. The Action Button */
+/* ACTION BUTTONS (Inner Glow Style) */
 .action-btn {
-    -fx-background-color: rgba(255, 255, 255, 0.05);
-    -fx-border-color: #d845ff;
-    -fx-border-radius: 20;
-    -fx-background-radius: 20;
-    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-background-radius: 30;
+    -fx-border-color: #d845ff; /* Purple Border */
+    -fx-border-radius: 30;
+    -fx-text-fill: #d845ff;
     -fx-font-weight: bold;
-    -fx-padding: 10 30;
+    -fx-min-width: 250;
+    -fx-padding: 12;
     -fx-cursor: hand;
-    -fx-transition: 0.3s;
+    -fx-font-size: 14px;
+    -fx-transition: all 0.3s ease;
 }
-
 .action-btn:hover {
-    -fx-background-color: #d845ff;
-    -fx-text-fill: #080a12;
-    /* Added matching glow */
-    -fx-effect: dropshadow(gaussian, #d845ff, 20, 0.4, 0, 0);
+    -fx-background-color: rgba(216, 69, 255, 0.15);
+    -fx-background-radius: 30;
+    /* Inner shadow glow matching the purple theme */
+    -fx-effect: innershadow(gaussian, #d845ff, 20, 0, 0, 0);
 }
-
 .hint-label {
-    -fx-text-fill: gray;
+    -fx-text-fill: rgba(255, 255, 255, 0.5);
     -fx-font-size: 12px;
 }
+/* Custom Scrollbar (Purple Theme) */
 .list-view .scroll-bar:vertical .thumb {
     -fx-background-color: rgba(191, 0, 255, 0.3);
+    -fx-background-radius: 10;
 }
-
+.list-view .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
