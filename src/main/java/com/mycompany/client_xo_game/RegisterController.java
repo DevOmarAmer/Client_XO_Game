@@ -101,6 +101,18 @@ public class RegisterController {
             return;
         }
 
+        // Email validation
+        if (!emailField.getText().trim().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            messageLabel.setText("Invalid email format!");
+            return;
+        }
+
+        // Password length validation
+        if (passwordField.getText().trim().length() < 6) {
+            messageLabel.setText("Password must be at least 6 characters long!");
+            return;
+        }
+
         if (!passwordField.getText().equals(confirmPasswordField.getText())) {
             messageLabel.setText("Passwords do not match!");
             return;
