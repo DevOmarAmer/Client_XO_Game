@@ -167,7 +167,7 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/mycompany/client_xo_game/" + fxml + ".fxml"));
         return loader.load();
     }
 
