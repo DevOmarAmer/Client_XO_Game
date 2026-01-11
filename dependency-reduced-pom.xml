@@ -50,9 +50,7 @@
             </configuration>
           </execution>
         </executions>
-        <configuration>
-          <mainClass>com.mycompany.client_xo_game.App</mainClass>
-        </configuration>
+        <configuration />
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>

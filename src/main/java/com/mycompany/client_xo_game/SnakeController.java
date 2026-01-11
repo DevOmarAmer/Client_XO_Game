@@ -76,6 +76,14 @@ public class SnakeController {
 
         setupControls();
         Platform.runLater(this::startNewGame);
+
+        // Diagnostic: Programmatically load CSS to ensure it's applied
+        var cssUrl = getClass().getResource("/styles/snake.css");
+        if (cssUrl != null) {
+            root.getStylesheets().add(cssUrl.toExternalForm());
+        } else {
+            System.err.println("ERROR: Could not find /styles/snake.css in SnakeController.");
+        }
     }
 
     private void handleResize() {
