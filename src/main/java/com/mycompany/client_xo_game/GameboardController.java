@@ -976,7 +976,6 @@ private void handleOfflineCellClick(MouseEvent event) {
         }
     }
 }
-
 private void executeAIMove() {
     Move bestMove = ai.getBestMove(gameBoard, difficulty);
     if (bestMove != null) {
@@ -994,6 +993,7 @@ private void executeAIMove() {
         Cell winnerCell = gameBoard.checkWinner();
         if (winnerCell != Cell.EMPTY) {
             gameEnded = true;
+            board.setDisable(false); // Re-enable board for dialog interaction
             if (winnerCell == Cell.O) {
                 handleGameEndOffline(false, false);
                 turnLabel.setText("Computer Wins!");
@@ -1002,6 +1002,7 @@ private void executeAIMove() {
                 turnLabel.setText("You Win!");
             }
         } else if (gameBoard.isFull()) {
+            board.setDisable(false); // Re-enable board for dialog interaction
             handleGameEndOffline(false, true);
             gameEnded = true;
             turnLabel.setText("It's a Draw!");
@@ -1011,7 +1012,60 @@ private void executeAIMove() {
         }
     }
 }
+private void showGameEndDialog(String title, String header) {
 
+    Dialog<ButtonType> dialog = new Dialog<>();
+    dialog.setTitle(title);
+    dialog.setHeaderText(header);
+
+    // Apply your CSS styling
+    ClientUtils.styleDialog(dialog);
+
+    // Buttons
+    ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
+    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+    dialog.getDialogPane().getButtonTypes().addAll(playAgainBtn, closeBtn);
+
+    dialog.showAndWait().ifPresent(response -> {
+
+        if (response == playAgainBtn) {
+            // Clear the board and reset for a new game in the SAME mode
+            gameEnded = false;
+            gameBoard = new Board();
+            Xturn = true;
+            
+            // Clear the board UI
+            clearHighlights();
+            for (var node : board.getChildren()) {
+                if (node instanceof StackPane) {
+                    ((StackPane) node).getChildren().clear();
+                }
+            }
+            
+            // Re-enable the board for the new game
+            if (board != null) {
+                board.setDisable(false);
+            }
+            
+            // Update labels for new game
+            updatePlayersLabels();
+            
+            // DON'T navigate - just reset the current game
+            // The players, mode, and difficulty are still set in GameSession
+
+        } else if (response == closeBtn) {
+            // Clear session and go back to appropriate menu
+            if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
+                GameSession.clearSession();
+                Navigation.goTo(Routes.LEVEL_SELECTION);
+            } else {
+                GameSession.clearSession();
+                Navigation.goTo(Routes.MODE_SELECTION);
+            }
+        }
+    });
+}
 // UPDATE handleGameEndOffline to use Platform.runLater for dialogs
 private void handleGameEndOffline(boolean playerWon, boolean isDraw) {
     gameEnded = true;
@@ -1109,55 +1163,6 @@ private void handleGameEndOffline(boolean playerWon, boolean isDraw) {
     }
 
 
-    private void showGameEndDialog(String title, String header) {
-
-    Dialog<ButtonType> dialog = new Dialog<>();
-    dialog.setTitle(title);
-    dialog.setHeaderText(header);
-
-    // Apply your CSS styling
-    ClientUtils.styleDialog(dialog);
-
-    // Buttons
-    ButtonType playAgainBtn = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
-    ButtonType closeBtn = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-    dialog.getDialogPane().getButtonTypes().addAll(playAgainBtn, closeBtn);
-
-    dialog.showAndWait().ifPresent(response -> {
-
-        if (response == playAgainBtn) {
-            // Clear the board and reset for a new game in the SAME mode
-            gameEnded = false;
-            gameBoard = new Board();
-            Xturn = true;
-            
-            // Clear the board UI
-            clearHighlights();
-            for (var node : board.getChildren()) {
-                if (node instanceof StackPane) {
-                    ((StackPane) node).getChildren().clear();
-                }
-            }
-            
-            // Update labels for new game
-            updatePlayersLabels();
-            
-            // DON'T navigate - just reset the current game
-            // The players, mode, and difficulty are still set in GameSession
-
-        } else if (response == closeBtn) {
-            // Clear session and go back to appropriate menu
-            if (mode == GameMode.HUMAN_VS_COMPUTER_MODE) {
-                GameSession.clearSession();
-                Navigation.goTo(Routes.LEVEL_SELECTION);
-            } else {
-                GameSession.clearSession();
-                Navigation.goTo(Routes.MODE_SELECTION);
-            }
-        }
-    });
-}
 
     private void placeMove(StackPane cell, Cell symbol) {
         Image img = symbol == Cell.X ? xImage : oImage;
